@@ -1,0 +1,30 @@
+<mat-drawer-container>
+
+  <mat-drawer #drawer mode="side" [(opened)]="opened">
+
+    <app-sidenav></app-sidenav>
+
+  </mat-drawer>
+
+  <mat-drawer-content>
+
+    @if (!hideHeader){
+      <div id="header-wrapper" class="mat-elevation-z3">
+        <app-header (sidebarToggle)="drawer.toggle(!opened)"></app-header>
+      </div>
+    }
+
+    <div id="main-wrapper">
+
+      <div id="app-body">
+
+        <div class="h-full w-full">
+          <router-outlet></router-outlet>
+        </div>
+
+      </div>
+    </div>
+
+  </mat-drawer-content>
+
+</mat-drawer-container>

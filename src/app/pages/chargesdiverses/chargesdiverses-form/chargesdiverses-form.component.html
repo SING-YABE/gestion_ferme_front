@@ -1,0 +1,106 @@
+<button 
+  *ngIf="mode === 'create'" 
+  pButton 
+  icon="pi pi-plus" 
+  label="Nouvelle charge"
+  class="p-button-success"
+  style="background:#2E7D32; border-color:#2E7D32;"
+  (click)="handleShow()">
+</button>
+
+<button 
+  *ngIf="mode === 'edit'" 
+  pButton 
+  icon="pi pi-pencil" 
+  class="p-button-rounded" 
+  style="background:#4CAF50; border-color:#4CAF50;"
+  (click)="handleShow()">
+</button>
+
+<p-dialog 
+  [(visible)]="showForm" 
+  [modal]="true"
+  appendTo="body"
+  header="Charge Diverse"
+  [style]="{width: '650px'}"
+  styleClass="farm-dialog"
+>
+  <form [formGroup]="form" id="chargesForm" (ngSubmit)="handleSubmit()">
+
+    <div class="field">
+      <label>Date</label>
+      <input type="date" pInputText formControlName="date">
+    </div>
+
+    <div class="field">
+      <label>Type Dépense</label>
+      <p-dropdown 
+        formControlName="typeDepenseId"
+        [options]="typeDepenses"
+        optionLabel="nom"
+        optionValue="id"
+        placeholder="Sélectionner un type"
+      ></p-dropdown>
+    </div>
+
+    <div class="field">
+      <label>Description</label>
+      <input pInputText formControlName="description">
+    </div>
+
+    <div class="field">
+      <label>Montant (FCFA)</label>
+      <input
+        pInputText
+        type="number"
+        formControlName="montant"
+        (input)="formatMontant()"
+      />
+
+      <div class="mt-2 flex gap-2">
+        <button 
+          *ngFor="let m of montantPresets"
+          pButton 
+          class="p-button-outlined p-button-sm"
+          style="border-color:#2E7D32; color:#2E7D32;"
+          (click)="applyMontant(m)">
+          {{ m | number }} FCFA
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Mode de paiement</label>
+      <input pInputText formControlName="modePaiement">
+    </div>
+
+    <div class="field">
+      <label>Observations</label>
+      <textarea pInputTextarea rows="3" formControlName="observations"></textarea>
+    </div>
+
+  </form>
+
+  <ng-template pTemplate="footer">
+
+    <button 
+      pButton 
+      class="p-button-outlined mr-2"
+      style="color:#2E7D32; border-color:#2E7D32;" 
+      (click)="showForm = false">
+      Annuler
+    </button>
+
+    <button 
+      pButton 
+      class="p-button-success"
+      form="chargesForm"
+      type="submit"
+      [loading]="processing"
+      style="background:#1B5E20; border-color:#1B5E20;">
+      Enregistrer
+    </button>
+
+  </ng-template>
+
+</p-dialog>

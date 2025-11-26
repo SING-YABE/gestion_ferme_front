@@ -1,0 +1,35 @@
+<p-dropdown dataKey="cuid"
+            [(ngModel)]="value"
+            [optionLabel]="optionLabel"
+            [showClear]="true"
+            [optionValue]="optionValue"
+            emptyMessage="Aucune proposition trouvé !"
+            emptyFilterMessage="Aucune proposition trouvé !"
+            appendTo="body" [filter]="true"
+            [disabled]="disabled"
+            (onBlur)="onTouched()"
+            (onChange)="onDropdownChange($event)"
+            [options]="users" id="executeurs" placeholder="Porteur">
+
+  <ng-template pTemplate="filter" let-options="options">
+    <div class="flex gap-1">
+      <div class="p-inputgroup" (click)="$event.stopPropagation()">
+        <span class="p-inputgroup-addon bg-white"><i class="pi pi-search"></i></span>
+        <input
+          type="text"
+          pInputText
+          placeholder="Rechercher ..."
+          (input)="handleFilter($event)" />
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="item" let-item>
+    <div class="flex align-items-center gap-2">
+      <fa-icon [icon]="faUser"></fa-icon>
+      <div class="flex-1">{{ item.displayname??item.displayName }}</div>
+      <div class="mr-2"><p-badge [value]="item.cuid"></p-badge></div>
+    </div>
+  </ng-template>
+
+</p-dropdown>

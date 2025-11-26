@@ -1,0 +1,69 @@
+<div class="odyssey-shadow-low bg-white border-round">
+    <div class="px-4 py-2 flex gap-3 align-items-center">
+      <div class="flex-1">
+        <h5 class="m-0">Gestion des critères stratégiques</h5>
+      </div>
+      <div>
+        <app-strategic-criterion-form (onUpdate)="loadData()"></app-strategic-criterion-form>
+      </div>
+    </div>
+  
+    <div>
+      <p-table
+        [loading]="loading"
+        [lazy]="false"
+        [rows]="pageSize"
+        [rowsPerPageOptions]="[5, 10, 30, 40]"
+        [value]="strategicCriterions"
+        [paginator]="true"
+        [paginator]="strategicCriterions.length > pageSize"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="name">Nom du critères stratégiques <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
+            <th style="width: 150px; text-align: center;">Actions</th>
+          </tr>
+        </ng-template>
+  
+        <ng-template pTemplate="body" let-strategicCriterion>
+          <tr>
+            <td>
+              <span class="p-column-title">Nom du critère</span>
+              <strong>{{ strategicCriterion.name }}</strong>
+            </td>
+            <td>
+              <span class="p-column-title">Description</span>
+              <span>{{ strategicCriterion.description || 'Non renseignée' }}</span>
+            </td>
+            <td>
+              <div class="flex gap-2 justify-content-center">
+                <app-strategic-criterion-form
+                  [target]="strategicCriterion"
+                  mode="edit"
+                  (onUpdate)="loadData()"
+                ></app-strategic-criterion-form>
+                <button
+                  pButton
+                  class="p-button-danger p-button-rounded"
+                  icon="pi pi-trash"
+                  (click)="confirmDelete(strategicCriterion)"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+  
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3" class="text-center py-4">
+              <i class="pi pi-inbox mr-2"></i>
+              Aucun critère stratégique trouvé
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

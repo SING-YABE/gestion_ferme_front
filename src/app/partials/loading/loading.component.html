@@ -1,0 +1,22 @@
+@if (mode == 'spinner') {
+  <div class="flex flex-column justify-content-center align-items-center py-8">
+
+    <div>
+      <p-progressSpinner [strokeWidth]="'3px'" animationDuration="500ms"></p-progressSpinner>
+    </div>
+    <div>
+      {{ message }}
+    </div>
+
+  </div>
+} @else {
+  <div class="mb-2">
+
+    <p-progressBar [color]="color" styleClass="h-1rem" mode="indeterminate"></p-progressBar>
+
+    <div class="text-center mt-2">
+      <p>{{ message }}</p>
+    </div>
+
+  </div>
+}

@@ -1,0 +1,90 @@
+<!-- <div class="p-3">
+    <h2 class="text-center">{{ dialogTitle }}</h2>
+    
+    <form [formGroup]="suspensionForm" (ngSubmit)="onSubmit()">
+      <div class="p-field mb-3">
+        <label for="comment" class="font-bold block mb-2">
+          {{ isSuspended ? 'Motif de réactivation' : 'Motif de suspension' }} <span class="text-red-500">*</span>
+        </label>
+        <textarea 
+          id="comment" 
+          pInputTextarea 
+          formControlName="comment" 
+          rows="5" 
+          [placeholder]="isSuspended ? 'Veuillez indiquer le motif de réactivation du projet' : 'Veuillez indiquer le motif de suspension du projet'"
+          class="w-full"
+        ></textarea>
+        <small 
+          *ngIf="suspensionForm.get('comment')?.invalid && suspensionForm.get('comment')?.touched" 
+          class="p-error block mt-1"
+        >
+          Le motif est requis et doit comporter au moins 10 caractères
+        </small>
+      </div>
+  
+      <div class="flex justify-content-end gap-2 mt-4">
+        <button 
+          type="button" 
+          pButton 
+          label="Annuler" 
+          class="p-button-outlined" 
+          (click)="cancel()"
+        ></button>
+        <button 
+          type="submit" 
+          pButton 
+          [label]="actionButtonText" 
+          [class]="actionButtonClass" 
+          [loading]="loading"
+          [disabled]="suspensionForm.invalid"
+        ></button>
+      </div>
+    </form>
+  </div> -->
+<div class="p-4 max-w-md mx-auto">
+  <h3 class="text-lg font-semibold mb-2 text-center">{{ dialogTitle }}</h3>
+  <form [formGroup]="suspensionForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <div>
+      <label for="comment" class="block text-sm font-medium mb-2">
+        {{ isSuspended ? 'Motif de réactivation' : 'Motif de suspension' }}
+        <span class="text-red-500 ml-1">*</span>
+      </label>
+      
+      <textarea
+        id="comment"
+        pInputTextarea
+        formControlName="comment"
+        rows="3"
+        [placeholder]="isSuspended ? 'Motif de réactivation...' : 'Motif de suspension...'"
+        class="w-full text-sm resize-none"
+      ></textarea>
+      
+      <small
+        *ngIf="suspensionForm.get('comment')?.invalid && suspensionForm.get('comment')?.touched"
+        class="text-red-500 text-xs mt-1 block"
+      >
+        Minimum 10 caractères requis
+      </small>
+    </div>
+
+    <div class="flex gap-2 pt-2">
+      <button
+        type="button"
+        pButton
+        label="Annuler"
+        class="p-button-outlined p-button-sm flex-1"
+        (click)="cancel()"
+      ></button>
+      
+      <button
+        type="submit"
+        pButton
+        [label]="actionButtonText"
+        [class]="actionButtonClass + ' p-button-sm flex-1'"
+        [loading]="loading"
+        [disabled]="suspensionForm.invalid"
+      ></button>
+    </div>
+  </form>
+</div>
+

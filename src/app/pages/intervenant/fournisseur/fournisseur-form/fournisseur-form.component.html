@@ -1,0 +1,34 @@
+<!-- Bouton Ajouter / Éditer -->
+<button *ngIf="mode === 'create'" pButton label="Ajouter fournisseur" icon="pi pi-plus"
+        class="p-button-success p-button-rounded" (click)="handleShow()">
+</button>
+
+<button *ngIf="mode === 'edit'" pButton icon="pi pi-pencil"
+        class="p-button-rounded p-button-warning" (click)="handleShow()">
+</button>
+
+<p-dialog header="{{ mode === 'create' ? 'Nouveau fournisseur' : 'Modifier fournisseur' }}"
+          [(visible)]="showForm" [modal]="true" [style]="{width:'500px'}">
+
+  <form [formGroup]="form">
+    <div class="field mb-3">
+      <label for="nom">Nom</label>
+      <input id="nom" type="text" formControlName="nom" pInputText placeholder="Ex: Fournisseur A" />
+    </div>
+    <div class="field mb-3">
+      <label for="contact">Contact</label>
+      <input id="contact" type="text" formControlName="contact" pInputText placeholder="Ex: 77 00 00 00" />
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button type="button" pButton class="p-button-outlined p-button-danger mr-2" (click)="showForm=false">
+      Annuler
+    </button>
+    <button type="submit" pButton [disabled]="form.invalid" [loading]="processing"
+            class="p-button-success" (click)="handleSubmit()">
+      Enregistrer
+    </button>
+  </ng-template>
+
+</p-dialog>

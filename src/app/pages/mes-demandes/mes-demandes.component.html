@@ -1,0 +1,425 @@
+<div class="card">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- En-tête avec bouton nouvelle demande -->
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h2>Mes Demandes</h2>
+    <div class="flex align-items-center gap-3">
+      <!-- Affichage de l'utilisateur connecté -->
+      <div *ngIf="utilisateurConnecte" class="flex align-items-center gap-2 text-color-secondary">
+        <i class="pi pi-user"></i>
+        <span class="text-sm">{{ utilisateurConnecte.prenom }} {{ utilisateurConnecte.nom }}</span>
+      </div>
+      <p-button 
+        icon="pi pi-plus" 
+        label="Nouvelle Demande" 
+        (click)="openNouvelleDemandeModal()"
+        [disabled]="!utilisateurConnecte">
+      </p-button>
+    </div>
+  </div>
+
+  <!-- Barre de recherche et filtres -->
+  <div class="mb-4 p-fluid">
+    <div class="field grid">
+      <div class="col-12 md:col-4">
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-search"></i>
+          <input 
+            type="text" 
+            pInputText 
+            [(ngModel)]="termeRecherche" 
+            (input)="filtrerDemandes()"
+            placeholder="Rechercher par ID, catégorie, bénéficiaire..."
+            class="w-full">
+        </span>
+      </div>
+      
+      <div class="col-12 md:col-3">
+        <p-dropdown
+          [(ngModel)]="statutFiltre"
+          [options]="statutOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Filtrer par statut"
+          (onChange)="filtrerDemandes()"
+          class="w-full">
+        </p-dropdown>
+      </div>
+
+      <div class="col-12 md:col-2">
+        <p-button 
+          label="Effacer" 
+          icon="pi pi-times" 
+          severity="secondary" 
+          (click)="reinitialiserFiltres()"
+          class="w-full">
+        </p-button>
+      </div>
+
+      <div class="col-12 md:col-3 flex align-items-center justify-content-end">
+        <small class="text-color-secondary">
+          {{ demandesFiltres.length }} demande(s) trouvée(s)
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicateur de chargement global -->
+  <div *ngIf="loading" class="flex justify-content-center p-4">
+    <div class="flex flex-column align-items-center gap-3">
+      <i class="pi pi-spinner pi-spin" style="font-size: 2rem"></i>
+      <span class="text-color-secondary">Chargement de vos demandes...</span>
+    </div>
+  </div>
+
+  <!-- Tableau des demandes -->
+  <p-table 
+    *ngIf="!loading"
+    [value]="demandesFiltres" 
+    [paginator]="true" 
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} demandes"
+    [rowsPerPageOptions]="[10,25,50]"
+    [loading]="loading">
+    
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="idDemande" style="width: 80px">
+          ID <p-sortIcon field="idDemande"></p-sortIcon>
+        </th>
+        <th pSortableColumn="dateCreation">
+          Date <p-sortIcon field="dateCreation"></p-sortIcon>
+        </th>
+        <th pSortableColumn="categorieNom">
+          Catégorie <p-sortIcon field="categorieNom"></p-sortIcon>
+        </th>
+        <th pSortableColumn="beneficiaireNom">
+          Bénéficiaire <p-sortIcon field="beneficiaireNom"></p-sortIcon>
+        </th>
+        <th pSortableColumn="statut">
+          Statut <p-sortIcon field="statut"></p-sortIcon>
+        </th>
+        <th>Progression</th>
+        <th style="width: 180px">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-demande>
+      <tr>
+        <td>
+          <strong>#{{ demande.idDemande }}</strong>
+        </td>
+        <td>{{ demande.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ demande.categorieNom }}</td>
+        <td>
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-user"></i>
+            <span>{{ demande.beneficiaireNom || 'Moi-même' }}</span>
+          </div>
+        </td>
+        <td>
+          <p-tag 
+            [value]="getStatutLabel(demande.statut)" 
+            [severity]="getStatutBadge(demande.statut)">
+          </p-tag>
+        </td>
+        <td>
+          <div *ngIf="demande.statut !== 'NON_SOUMISE' && demande.statut !== 'REJETEE'; else sansProgression">
+            <div class="flex align-items-center gap-2">
+              <p-progressBar 
+                [value]="getProgression(demande)" 
+                [showValue]="false"
+                styleClass="w-8rem"
+                [style]="{'height': '8px'}">
+              </p-progressBar>
+              <small>{{ getProgression(demande) | number:'1.0-0' }}%</small>
+            </div>
+            <small class="text-color-secondary">
+              {{ getEtapesValideesCount(demande) }}/3 étapes
+            </small>
+          </div>
+          <ng-template #sansProgression>
+            <span class="text-color-secondary">-</span>
+          </ng-template>
+        </td>
+        <td>
+          <div class="flex gap-2">
+            <!-- Bouton Détails -->
+            <p-button 
+              icon="pi pi-eye" 
+              severity="info" 
+              (click)="openDetailModal(demande)"
+              pTooltip="Voir les détails"
+              tooltipPosition="top">
+            </p-button>
+
+            <!-- Bouton Soumettre - seulement si non soumise -->
+            <p-button 
+              *ngIf="peutSoumettre(demande)"
+              icon="pi pi-send" 
+              severity="success" 
+              (click)="soumettreDemande(demande)"
+              pTooltip="Soumettre pour validation"
+              tooltipPosition="top">
+            </p-button>
+
+            <!-- Bouton Supprimer - seulement si non soumise -->
+            <p-button 
+              *ngIf="peutSupprimer(demande)"
+              icon="pi pi-trash" 
+              severity="danger" 
+              (click)="confirmDelete(demande)"
+              pTooltip="Supprimer la demande"
+              tooltipPosition="top">
+            </p-button>
+
+            <!-- Indicateur pour demandes en cours -->
+            <span *ngIf="!peutSoumettre(demande) && !peutSupprimer(demande)" 
+                  class="text-color-secondary text-sm flex align-items-center">
+              <i class="pi pi-clock mr-2"></i>
+              En cours
+            </span>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7" class="text-center p-4">
+          <div *ngIf="termeRecherche || statutFiltre !== 'TOUS'; else noData" class="text-color-secondary">
+            <i class="pi pi-search" style="font-size: 2rem"></i>
+            <p class="mt-2">Aucune demande trouvée avec les filtres actuels</p>
+            <p-button 
+              label="Réinitialiser les filtres" 
+              icon="pi pi-refresh" 
+              (click)="reinitialiserFiltres()"
+              class="mt-2">
+            </p-button>
+          </div>
+          <ng-template #noData>
+            <i class="pi pi-inbox" style="font-size: 2rem"></i>
+            <p class="mt-2">Aucune demande trouvée</p>
+            <p class="text-sm">Cliquez sur "Nouvelle Demande" pour créer votre première demande</p>
+          </ng-template>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td colspan="7" class="text-center p-4">
+          <i class="pi pi-spinner pi-spin" style="font-size: 2rem"></i>
+          <p class="mt-2">Chargement des demandes...</p>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Modal Nouvelle Demande -->
+  <p-dialog 
+    [(visible)]="displayModal" 
+    [style]="{ width: '500px' }"
+    header="Nouvelle Demande"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <div class="p-fluid">
+      <div class="field">
+        <label for="categorie" class="block font-medium mb-2">Catégorie d'équipement *</label>
+        <p-dropdown
+          id="categorie"
+          [(ngModel)]="demandeForm.categorieId"
+          [options]="categories"
+          optionLabel="nom"
+          optionValue="idCategorieEquipement"
+          placeholder="Sélectionnez une catégorie"
+          [showClear]="true"
+          class="w-full">
+          <ng-template pTemplate="empty">
+            <div class="p-2 text-center text-color-secondary">
+              {{ categories.length === 0 ? 'Chargement des catégories...' : 'Aucune catégorie disponible' }}
+            </div>
+          </ng-template>
+        </p-dropdown>
+      </div>
+
+      <div class="field">
+        <label for="beneficiaire" class="block font-medium mb-2">Bénéficiaire</label>
+        <p-dropdown
+          id="beneficiaire"
+          [(ngModel)]="demandeForm.beneficiaireId"
+          [options]="utilisateurs"
+          optionLabel="nom"
+          optionValue="idUtilisateur"
+          placeholder="Sélectionnez un bénéficiaire"
+          [showClear]="true"
+          class="w-full">
+          <ng-template pTemplate="selectedItem">
+            <div *ngIf="estUtilisateurConnecte(demandeForm.beneficiaireId)" class="flex align-items-center gap-2">
+              <i class="pi pi-user"></i>
+              <span>Moi-même</span>
+            </div>
+            <div *ngIf="!estUtilisateurConnecte(demandeForm.beneficiaireId) && demandeForm.beneficiaireId" class="flex align-items-center gap-2">
+              <span>{{ getNomCompletUtilisateur(demandeForm.beneficiaireId) }}</span>
+            </div>
+          </ng-template>
+          <ng-template let-utilisateur pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-user"></i>
+              <span>{{ utilisateur.prenom }} {{ utilisateur.nom }}</span>
+              <span *ngIf="estUtilisateurConnecte(utilisateur.idUtilisateur)" class="text-color-secondary text-sm">(Moi)</span>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="empty">
+            <div class="p-2 text-center text-color-secondary">
+              {{ utilisateurs.length === 0 ? 'Chargement des utilisateurs...' : 'Aucun utilisateur disponible' }}
+            </div>
+          </ng-template>
+        </p-dropdown>
+        <small class="text-color-secondary">
+          Laisser "Moi-même" si la demande est pour vous
+        </small>
+      </div>
+
+      <div class="mt-4 p-3 border-round surface-section">
+        <h4 class="mt-0 mb-2">Processus de validation</h4>
+        <p class="text-sm text-color-secondary mb-2">
+          Après création, vous devrez soumettre la demande pour déclencher le processus de validation.
+        </p>
+        <div class="flex flex-column gap-2">
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-check-circle text-green-500"></i>
+            <span class="text-sm">3 étapes de validation successives</span>
+          </div>
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-check-circle text-green-500"></i>
+            <span class="text-sm">Assignation automatique si validée</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Annuler" 
+        icon="pi pi-times" 
+        (click)="displayModal = false" 
+        severity="secondary">
+      </p-button>
+      <p-button 
+        label="Créer la demande" 
+        icon="pi pi-check" 
+        (click)="submitForm()" 
+        [disabled]="!demandeForm.categorieId || !utilisateurConnecte">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Modal Détails Demande -->
+  <p-dialog 
+    [(visible)]="displayDetailModal" 
+    [style]="{ width: '700px' }"
+    [header]="'Détails de la demande #' + (demandeDetail?.idDemande || '')"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <div *ngIf="demandeDetail" class="p-fluid">
+      <!-- Informations générales -->
+      <div class="grid">
+        <div class="col-6">
+          <div class="field">
+            <label class="font-medium">Date de création</label>
+            <p>{{ demandeDetail.dateCreation | date:'dd/MM/yyyy à HH:mm' }}</p>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="field">
+            <label class="font-medium">Statut</label>
+            <div>
+              <p-tag 
+                [value]="getStatutLabel(demandeDetail.statut)" 
+                [severity]="getStatutBadge(demandeDetail.statut)">
+              </p-tag>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="field">
+            <label class="font-medium">Catégorie</label>
+            <p>{{ demandeDetail.categorieNom }}</p>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="field">
+            <label class="font-medium">Bénéficiaire</label>
+            <p>{{ demandeDetail.beneficiaireNom || 'Moi-même' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workflow de validation -->
+      <div class="mt-4">
+        <h4>Workflow de validation</h4>
+        <div *ngIf="demandeDetail.etapesValidation.length > 0; else aucuneEtape" class="mt-3">
+          <div class="flex flex-column gap-3">
+            <div *ngFor="let etape of demandeDetail.etapesValidation" 
+                 class="p-3 border-round surface-ground">
+              <div class="flex justify-content-between align-items-center">
+                <div class="flex align-items-center gap-3">
+                  <i [class]="getEtapeIcon(etape.statut)" 
+                     [style]="getEtapeColor(etape.statut)"
+                     style="font-size: 1.5rem"></i>
+                  <div>
+                    <h5 class="mt-0 mb-1">Étape {{ etape.ordre }}</h5>
+                    <p class="text-sm mb-1">{{ etape.approbateurNom }}</p>
+                    <p-tag 
+                      [value]="getStatutValidationLabel(etape.statut)" 
+                      [severity]="etape.statut === 'VALIDE' ? 'success' : etape.statut === 'REJETEE' ? 'danger' : 'warning'"
+                      styleClass="text-xs">
+                    </p-tag>
+                  </div>
+                </div>
+                <div *ngIf="etape.statut === 'EN_ATTENTE'" class="text-orange-500">
+                  <i class="pi pi-clock mr-1"></i>
+                  <span class="text-sm">En attente</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #aucuneEtape>
+          <div class="p-3 text-center border-round surface-section">
+            <i class="pi pi-info-circle text-color-secondary" style="font-size: 2rem"></i>
+            <p class="mt-2 text-color-secondary">Demande non soumise</p>
+            <p class="text-sm text-color-secondary">
+              Soumettez la demande pour lancer le processus de validation
+            </p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Actions -->
+      <div class="mt-4 flex gap-2 justify-content-end">
+        <p-button 
+          *ngIf="peutSoumettre(demandeDetail)"
+          label="Soumettre pour validation" 
+          icon="pi pi-send" 
+          (click)="soumettreDemande(demandeDetail); displayDetailModal = false">
+        </p-button>
+        <p-button 
+          *ngIf="peutSupprimer(demandeDetail)"
+          label="Supprimer" 
+          icon="pi pi-trash" 
+          severity="danger"
+          (click)="confirmDelete(demandeDetail); displayDetailModal = false">
+        </p-button>
+      </div>
+    </div>
+  </p-dialog>
+</div>

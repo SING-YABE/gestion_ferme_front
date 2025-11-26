@@ -1,0 +1,46 @@
+# cache:
+#   paths:
+#     - node_modules/
+
+# stages:
+#   - build
+#   - deploy
+
+
+# build_angular_for_preprod:
+#   stage: build
+#   only:
+#     - main
+#     - develop
+#   tags:
+#     - WEB2SMS
+#   script:
+#     - PROXY_URL="http://172.20.73.5:3128/"
+#     - export http_proxy="$PROXY_URL"
+#     - export https_proxy="$PROXY_URL"
+#     - export ftp_proxy="$PROXY_URL"
+#     - export no_proxy="127.0.0.1,172.25.0.178,localhost"
+#     - npm i -f
+#     - ng build --configuration staging --aot --output-hashing=all --base-href=/shamsy/ --deploy-url=/shamsy/
+#   artifacts:
+#     paths:
+#       - dist/
+#     expire_in: 1 hours
+
+
+# deploy_app_60:
+#   stage: deploy
+#   only:
+#     - develop
+#   tags:
+#     - PREPROD
+#   needs:
+#     - job: build_angular_for_preprod
+#       artifacts: true
+#   script:
+#     - cd dist/shamsy/browser && ls -la
+#     - eval $(ssh-agent -s)
+#     - ssh-add <(echo "$PREPROD_60")
+#     - mkdir -p ~/.ssh
+#     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+#     - rsync -rltvz --omit-dir-times --exclude .htaccess --delete -e "ssh -p 922" ./ PVGD2773@172.20.107.60:/app/shamsy/web-content/

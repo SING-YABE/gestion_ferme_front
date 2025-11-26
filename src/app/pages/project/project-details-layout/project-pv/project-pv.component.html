@@ -1,0 +1,97 @@
+<div>
+  <div style="margin-top: -10px; margin-left: -30px;  margin-right: -30px; background-color: #f16e00" class="flex mb-3 gap-3 pl-3 pr-3 pb-2 align-items-center h-10rem" >
+    <div style="margin-top: -35px" class="flex-1 pl-3">
+      <h4 class="text-white">{{projectId}} > Liste des PV</h4>
+    </div>
+
+ <!--    <button pButton class="p-button-white p-button-rounded no-print" icon="pi pi-file-excel" label="Exporter" (click)="exportToExcel()"></button>-->
+
+    <div style="margin-top: -40px">
+      <app-pv-form (onDone)="loadData()"></app-pv-form>
+    </div>
+  </div>
+
+  <div style="margin-top: -95px" class="odyssey-shadow-low border-round">
+
+    <div class="">
+      <p-table [loading]="loading" [value]="processVerbals" [rows]="20" [paginator]="true">
+        <ng-template pTemplate="header">
+          <tr class="bg-white">
+            <th style="font-size:16px; font-weight: bold" pSortableColumn="numeroPo">Numéro PV<p-sortIcon field="type"></p-sortIcon></th>
+            <th style="font-size:16px; font-weight: bold" pSortableColumn="fournisseur">PO <p-sortIcon field="dateDepense"></p-sortIcon></th>
+            <th style="font-size:16px; font-weight: bold" pSortableColumn="label">Date d'émission <p-sortIcon field="label"></p-sortIcon></th>
+            <th style="font-size:16px; font-weight: bold" pSortableColumn="amount">Montant total <p-sortIcon field="amount"></p-sortIcon></th>
+            <th style="font-size:16px; font-weight: bold" >Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-po>
+          <tr>
+            <td>
+              <p class="mb-1">{{ po?.numeroPv }}</p>
+            </td>
+            <td>
+              <span> {{ po?.projectLigneDTO?.productOrderDTO?.numeroPo}} </span>
+            </td>
+            <td>
+              <span> {{ formatDate(po.dateEmission) }} </span>
+            </td>
+            <td>
+              <span class="font-bold">{{ po?.totalAmount | number: '':'fr' }} XOF</span>
+            </td>
+            <td>
+              <div class="flex align-content-end gap-2 align-items-center">
+                <app-pv-form (onDone)="loadData()" mode="edit" [target]="po"></app-pv-form>
+                <button (click)="showBudgetDetails(po)" class="p-button-rounded" pButton icon="pi pi-eye"></button>
+                <button (click)="handleDelete(po)" class="p-button-rounded p-button-danger" pButton icon="pi pi-trash"></button>
+              </div>
+            </td>
+          </tr>
+
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td class="text-center px-2 py-3" colspan="6">
+              <div>
+                <h3 class="font-normal">Aucun po trouvé</h3>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modale détails du budget -->
+<p-dialog [(visible)]="showDetailsModal" [modal]="true" [dismissableMask]="true" [style]="{width: '700px'}">
+  <ng-template pTemplate="header">
+    <h4 class="m-0">Détails du PV</h4>
+  </ng-template>
+
+  <div class="pt-2">
+    <div class="field"><label>Code Budgetaire:</label>
+      <p>
+        {{selectedPv?.projectLigneDTO?.ligneBudgetDTO?.codeBudgetDto?.code}}
+      </p>
+    </div>
+    <div *ngIf="selectedPv !== null" class="field"><label>Date d'émission :</label><p>{{ formatDate(selectedPv?.dateEmission) }}</p></div>
+    <div class="field"><label>Numéro PO :</label><p>{{ selectedPv?.projectLigneDTO?.productOrderDto?.numeroPo}}</p></div>
+    <div class="field"><label>Montant payé:</label><p class="font-bold">{{ selectedPv?.totalAmount | number: '':'fr' }} XOF</p></div>
+    <div class="field"><label>Reste après payement:</label><p class="font-bold">{{ (selectedPv?.projectLigneDTO?.productOrderDto.totalAmount - selectedPv?.totalAmount) | number: '':'fr' }} XOF</p></div>
+
+    <div class="field"><label>Description:</label><p>{{ selectedPv?.description }}</p></div>
+    <div class="field"><label>Fichier joint:</label><p><i class="pi pi-download text-primary"
+                                                          style="cursor: pointer; font-size: 1.2rem; margin-left: 10px;"
+                                                          (click)="downloadFiles()"
+                                                          title="Télécharger">
+    </i></p></div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button (click)="showDetailsModal = false" pButton label="Fermer" icon="pi pi-times"></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog appendTo="body"></p-confirmDialog>

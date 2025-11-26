@@ -1,0 +1,144 @@
+// flow-form.component.scss
+
+.container {
+  max-width: 700px;
+  margin: 4rem auto;
+  padding: 2rem;
+}
+
+.form-wrapper {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.form-header {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  padding: 1.5rem;
+  text-align: center;
+  
+  .title {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.form-content {
+  padding: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #2d3748;
+  font-size: 0.95rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+// Custom dropdown styling
+:host ::ng-deep {
+  .p-dropdown {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    
+    &:hover {
+      border-color: #ff6b35;
+    }
+    
+    &.p-focus {
+      border-color: #ff6b35;
+      box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+    }
+    
+    .p-dropdown-label {
+      padding: 0.75rem;
+      
+      &.p-placeholder {
+        color: #a0aec0;
+      }
+    }
+  }
+  
+  .p-dropdown-panel {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    
+    .p-dropdown-item {
+      padding: 0.75rem;
+      
+      &:hover {
+        background: #fff5f0;
+        color: #ff6b35;
+      }
+      
+      &.p-highlight {
+        background: #ff6b35;
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+// Custom button styling
+:host ::ng-deep {
+  .btn-cancel {
+    &.p-button {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      color: #4a5568;
+      
+      &:hover {
+        background: #edf2f7;
+        border-color: #cbd5e0;
+      }
+    }
+  }
+  
+  .btn-submit {
+    &.p-button {
+      background: #ff6b35;
+      border: 1px solid #ff6b35;
+      
+      &:hover:not(:disabled) {
+        background: #e55a2b;
+        border-color: #e55a2b;
+      }
+      
+      &:disabled {
+        background: #cbd5e0;
+        border-color: #cbd5e0;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .container {
+    margin: 1rem;
+    padding: 0.5rem;
+  }
+  
+  .form-content {
+    padding: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}

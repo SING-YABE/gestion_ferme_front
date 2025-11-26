@@ -1,0 +1,81 @@
+<div>
+  <div class="bg-white mb-3 p-3 odyssey-shadow-low border-round">
+    <div class="flex gap-3 align-items-center">
+      <div class="flex-1">
+        <h5 class="m-0">Gestion des directions</h5>
+      </div>
+      <div fxFlex="300px">
+        <div class="p-inputgroup">
+          <input type="search" pInputText class="w-full" placeholder="Rechercher" 
+                [(ngModel)]="searchQuery" 
+                (input)="onSearch($event)" />
+          <button type="button" pButton icon="pi pi-search" (click)="searchDirections()"></button>
+        </div>
+      </div>
+      <div>
+        <app-direction-form (onUpdate)="loadData()"></app-direction-form>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white odyssey-shadow-low mb-7">
+    <p-table [loading]="loading"
+            [lazy]="true" 
+            [rows]="pageSize"
+            [totalRecords]="directions.totalElements"
+            (onLazyLoad)="handleNext($event)" 
+            [rowsPerPageOptions]="[10,30,40]" 
+            [value]="directions.content" 
+            [paginator]="true">
+    <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="description">Nom <p-sortIcon field="description"></p-sortIcon></th>
+            <th pSortableColumn="name">Abrégé <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="director">Directeur <p-sortIcon field="director"></p-sortIcon></th>
+            <th style="text-align: center;">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-direction>
+          <tr>
+            <td>
+              <span class="p-column-title">Nom</span>
+              <strong> <fa-icon class="mr-2 text-primary" [icon]="faBuilding"></fa-icon> {{ direction.description }} </strong>
+            </td>
+            <td>
+              <span class="p-column-title">Abrege</span>
+              <span> {{ direction.name }} </span>
+            </td>
+            <td>
+              <span class="p-column-title">Directeur</span>
+              @if (direction.directorName) {
+                <div class="flex align-items-center">
+                  <i class="pi pi-user text-primary mr-2"></i>
+                  <span class="p-tag p-tag-rounded p-tag-info">{{ direction.directorName }}</span>
+                </div>
+              } @else if (direction.directorCuid) {
+                <div class="flex align-items-center">
+                  <i class="pi pi-user text-secondary mr-2"></i>
+                  <span class="p-tag p-tag-rounded p-tag-secondary">{{ direction.directorCuid }}</span>
+                </div>
+              }
+            </td>
+            <td>
+              <div class="flex gap-2 justify-content-center">
+                <app-direction-form [target]="direction" mode="edit" (onUpdate)="loadData()"></app-direction-form>
+                <button pButton class="p-button-danger p-button-rounded" icon="pi pi-trash" (click)="confirmDelete(direction)"></button>
+
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center p-4">
+              <h1 class="font-normal m-0">Aucune direction trouvée !</h1>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+<p-confirmDialog appendTo="body" [style]="{width: '450px'}"></p-confirmDialog>

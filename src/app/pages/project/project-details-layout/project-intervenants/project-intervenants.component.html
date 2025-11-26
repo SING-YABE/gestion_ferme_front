@@ -1,0 +1,356 @@
+<div>
+  <div
+    style="
+      margin-top: -10px;
+      margin-left: -30px;
+      margin-right: -30px;
+    "
+    class="h-10rem"
+  >
+
+  </div>
+  <div style="margin-top: -140px" class="sira-table">
+    <div  class="flex gap-3 pl-3 pr-3 align-items-center bg-gray-700">
+      <div class="flex-1 pl-3">
+        <h4 class="text-white mt-3">
+          {{ projectId }} > Liste des intervenants du projet
+        </h4>
+      </div>
+      <div class="mt-3">
+        <app-project-intervenant-form
+          (onUpdate)="loadData()"
+        ></app-project-intervenant-form>
+      </div>
+    </div>
+    <div>
+      <p-table
+        [loading]="loading"
+        (onLazyLoad)="paginate($event)"
+        [lazy]="true"
+        [totalRecords]="user?.totalElements"
+        [rows]="5"
+        [rowsPerPageOptions]="[5, 10, 30, 40]"
+        [value]="user?.data"
+        [paginator]="true"
+      >
+        <ng-template pTemplate="header">
+          <tr >
+            <th
+              style="font-size: 16px; font-weight: bold"
+              pSortableColumn="type"
+            >
+              CUID <p-sortIcon field="type"></p-sortIcon>
+            </th>
+            <th
+              style="font-size: 16px; font-weight: bold"
+              pSortableColumn="label"
+            >
+              Nom & Prénom <p-sortIcon field="label"></p-sortIcon>
+            </th>
+            <th
+              style="font-size: 16px; font-weight: bold"
+              pSortableColumn="year"
+            >
+              Roles <p-sortIcon field="year"></p-sortIcon>
+            </th>
+            <th
+              style="font-size: 16px; font-weight: bold"
+              pSortableColumn="year"
+            >
+              Phases <p-sortIcon field="year"></p-sortIcon>
+            </th>
+            <th style="font-size: 16px; font-weight: bold">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td>
+              <span class="p-column-title">CUID</span>
+              <span> {{ item.member.user.cuid }} </span>
+            </td>
+            <td>
+              <span class="p-column-title">Nom & Prénom </span>
+              <span> {{ item.member.user.displayName }} </span>
+            </td>
+            <td>
+              <span class="p-column-title">Role </span>
+              <span> {{ item.role }} </span>
+            </td>
+            <td>
+              <p-chip
+                class="mr-2"
+                *ngFor="let phase of item.phases"
+                [label]="phase.name"
+              />
+
+              <!--              <ul>-->
+              <!--                <li *ngFor="let phase of item.phases">{{phase.name}}</li>-->
+              <!--              </ul>-->
+            </td>
+            <td>
+              <div class="flex align-content-end gap-2 align-items-center">
+                <button
+                  pButton
+                  class="p-button-info p-button-rounded"
+                  icon="pi pi-eye"
+                  (click)="showIntervenantDetails(item)"
+                ></button>
+                <button
+                  class="p-button-rounded p-button-sm"
+                  pButton
+                  (click)="getMemberyId(item)"
+                  icon="pi pi-pencil"
+                ></button>
+                <button
+                  (click)="handleDelete(item)"
+                  class="p-button-rounded p-button-danger"
+                  pButton
+                  icon="pi pi-trash"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td class="text-center px-2 py-3" colspan="5">
+              <div>
+                <h3 class="font-normal">Aucun intervenant trouvé</h3>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  header="Mise à jour d'un intervenant"
+  appendTo="body"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [(visible)]="showImporterUpdate"
+  [closable]="true"
+>
+  <div *ngIf="loading" class="text-center p-4">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <p>Chargement des données...</p>
+  </div>
+
+  <form [formGroup]="memberForm" *ngIf="!loading && memberDetails">
+    <div class="flex gap-3">
+      <div class="field w-6">
+        <label for="lastname">Nom</label>
+        <input
+          formControlName="lastname"
+          pInputText
+          id="lastname"
+          class="w-full"
+        />
+      </div>
+
+      <div class="field w-6">
+        <label for="firstname">Prénom</label>
+        <input
+          formControlName="firstname"
+          pInputText
+          id="firstname"
+          class="w-full"
+        />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="role">Rôle</label>
+      <p-dropdown
+        formControlName="role"
+        placeholder="Sélectionner un rôle"
+        appendTo="body"
+        [emptyMessage]="emptyMessage"
+        id="role"
+        optionLabel="name"
+        optionValue="id"
+        [options]="roles"
+        class="w-full"
+      ></p-dropdown>
+    </div>
+
+    <div class="field">
+      <label for="phases">Phases</label>
+      <p-multiSelect
+        formControlName="phases"
+        placeholder="Sélectionner une ou plusieurs phase(s)"
+        appendTo="body"
+        [emptyMessage]="emptyMessage"
+        id="phases"
+        optionLabel="name"
+        optionValue="id"
+        [options]="projectPhases"
+        class="w-full"
+      ></p-multiSelect>
+    </div>
+
+    <div class="field">
+      <label for="permissionsIntervenant">Permissions</label>
+      <p-multiSelect
+        id="permissionsIntervenant"
+        formControlName="permissionsIntervenant"
+        placeholder="Sélectionner une ou plusieurs permissions"
+        appendTo="body"
+        optionLabel="name"
+        optionValue="id"
+        [options]="permissions"
+      >
+      </p-multiSelect>
+    </div>
+
+    <!-- <div class="field">
+        <label for="validator">Validateur</label>
+        <p-selectButton
+          formControlName="isValidator"
+          id="validator"
+          [options]="validatorOptions"
+        ></p-selectButton>
+      </div> -->
+    <div class="field">
+      <label for="validator">Envoyé un mail ?</label>
+      <p-selectButton
+        formControlName="sendMail"
+        id="sendMail"
+        [options]="sendMail"
+      ></p-selectButton>
+    </div>
+  </form>
+
+  <div *ngIf="!loading && !memberDetails" class="text-center p-4">
+    <i
+      class="pi pi-exclamation-triangle text-yellow-500"
+      style="font-size: 2rem"
+    ></i>
+    <p>Impossible de charger les données de l'intervenant.</p>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      (click)="showImporterUpdate = false"
+      pButton
+      class="p-button-danger mr-2 p-button-outlined"
+    >
+      Annuler
+    </button>
+    <button
+      [disabled]="loading || !memberDetails || memberForm.invalid"
+      [loading]="processing"
+      (click)="submitForm(memberForm.value)"
+      pButton
+    >
+      Enregistrer
+    </button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [(visible)]="showDetailsDialog"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '60vw' }"
+>
+  <p-header class="custom-header">
+    <i class="pi pi-user orange-icon"></i>
+    <span class="orange-text"> Détails de l'Intervenant</span>
+  </p-header>
+  <div *ngIf="selectedIntervenant" class="p-4">
+    <div class="custom-grid">
+      <!-- Nom et CUID -->
+      <div class="p-col-12 p-md-6">
+        <p>
+          <i class="pi pi-id-card p-mr-2"></i><strong>CUID :</strong> &nbsp;{{
+            selectedIntervenant.memberCuid
+          }}
+        </p>
+      </div>
+      <div class="p-col-12 p-md-6">
+        <p>
+          <i class="pi pi-user p-mr-2"></i><strong>Nom :</strong> &nbsp;{{
+            selectedIntervenant.member.user.displayName
+          }}
+        </p>
+      </div>
+
+      <!-- Rôle et Statut -->
+      <div class="p-col-12 p-md-6">
+        <p>
+          <i class="pi pi-lock p-mr-2"></i><strong>Rôle :</strong> &nbsp;
+          <span class="p-tag p-tag-info">{{ selectedIntervenant.role }}</span>
+        </p>
+      </div>
+      <div class="p-col-12 p-md-6">
+        <p>
+          <i class="pi pi-check-circle p-mr-2"></i
+          ><strong>Statut :</strong> &nbsp;
+          <span
+            [ngClass]="{
+              'p-tag p-tag-success': selectedIntervenant.isActif,
+              'p-tag p-tag-danger': !selectedIntervenant.isActif
+            }"
+          >
+            {{ selectedIntervenant.isActif ? "Actif" : "Inactif" }}
+          </span>
+        </p>
+      </div>
+      <div class="p-col-12 p-md-6">
+        <p>
+          <i class="pi pi-check-circle p-mr-2"></i
+          ><strong>Département :</strong> &nbsp;
+          <span class="p-tag p-tag-info">{{
+            selectedIntervenant.member.departmentName
+          }}</span>
+        </p>
+      </div>
+
+      <!-- Phases et Département sur une même ligne -->
+      <div class="full-width-row">
+        <div class="phases-department-container">
+          <div class="phases-section">
+            <p>
+              <i class="pi pi-check-circle p-mr-2"></i
+              ><strong>Phases :</strong> &nbsp;
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <p-chip
+                *ngFor="let phase of selectedIntervenant.phases"
+                [label]="phase.name"
+              ></p-chip>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Permissions en bas -->
+      <div class="full-width-row permissions-section">
+        <p>
+          <i class="pi pi-shield p-mr-2"></i
+          ><strong>Permissions :</strong> &nbsp;
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <p-chip
+            *ngFor="let permission of selectedIntervenant.permissions"
+            [label]="permission"
+          ></p-chip>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <button
+      pButton
+      label="Fermer"
+      icon="pi pi-times"
+      (click)="showDetailsDialog = false"
+      class="p-button-text"
+    ></button>
+  </p-footer>
+</p-dialog>
+
+<p-confirmDialog appendTo="body"></p-confirmDialog>

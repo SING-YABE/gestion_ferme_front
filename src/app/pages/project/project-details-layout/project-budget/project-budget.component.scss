@@ -1,0 +1,28 @@
+.field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+  }
+  
+  .field label {
+    font-weight: 600;
+    color: #333;
+    flex: 1; /* Permet à l'étiquette d'occuper l'espace disponible */
+    text-align: left;
+  }
+  
+  .field p, .field p-tag {
+    flex: 2; /* Permet au contenu de prendre plus d'espace */
+    margin: 0;
+    text-align: left;
+  }
+  
+  p-tag {
+    display: inline-block;
+  }
+  
+  

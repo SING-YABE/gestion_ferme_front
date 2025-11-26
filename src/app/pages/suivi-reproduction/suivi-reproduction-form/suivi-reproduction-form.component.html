@@ -1,0 +1,83 @@
+<button pButton class="p-button-success" icon="pi pi-plus" label="Ajouter reproduction" (click)="handleShow()"
+    *ngIf="mode==='create'"></button>
+
+<p-dialog header="Suivi Reproduction" [(visible)]="showForm" [modal]="true" [style]="{width: '700px'}" appendTo="body">
+
+    <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+
+        <div class="field">
+            <label>Truie</label>
+            <p-dropdown [options]="truies" optionLabel="label" optionValue="value" formControlName="truieCode"
+                placeholder="Sélectionner une truie">
+            </p-dropdown>
+        </div>
+
+        <div class="field">
+            <label>Verrat</label>
+            <p-dropdown [options]="verrats" optionLabel="label" optionValue="value" formControlName="verratCode"
+                placeholder="Sélectionner un verrat">
+            </p-dropdown>
+        </div>
+
+        <!-- <div class="field">
+            <label>Date Saillie</label>
+            <input pInputText formControlName="dateSaillie" placeholder="JJ/MM/AAAA">
+        </div> -->
+        <div class="field">
+            <label>Date Saillie</label>
+            <p-calendar formControlName="dateSaillie" dateFormat="dd/mm/yy" [showIcon]="true" inputId="dateSaillie">
+            </p-calendar>
+        </div>
+
+        <!-- <div class="field">
+            <label>Date Mise Bas Prévue</label>
+            <input pInputText formControlName="dateMiseBasPrevue" placeholder="JJ/MM/AAAA">
+        </div> -->
+           <div class="field">
+            <label>Date Mise Bas Prévue</label>
+            <p-calendar formControlName="dateMiseBasPrevue" dateFormat="dd/mm/yy" [showIcon]="true" inputId="dateMiseBasPrevue">
+            </p-calendar>
+        </div>
+<!-- 
+        <div class="field">
+            <label>Date Mise Bas Réelle</label>
+            <input pInputText formControlName="dateMiseBasReelle" placeholder="JJ/MM/AAAA">
+        </div> -->
+         <div class="field">
+            <label>Date Mise Bas Réelle</label>
+            <p-calendar formControlName="dateMiseBasReelle" dateFormat="dd/mm/yy" [showIcon]="true" inputId="dateMiseBasReelle">
+            </p-calendar>
+        </div>
+
+        <div class="field">
+            <label>Nb Nés Vivants</label>
+            <input pInputText formControlName="nbNesVivants">
+        </div>
+
+        <div class="field">
+            <label>Nb Morts Nés</label>
+            <input pInputText formControlName="nbMortsNes">
+        </div>
+
+        <div class="field">
+            <label>Nb Sevrés</label>
+            <input pInputText formControlName="nbSevres">
+        </div>
+
+        <div class="field">
+            <label>Observations</label>
+            <input pInputText formControlName="observations">
+        </div>
+
+    </form>
+
+    <ng-template pTemplate="footer">
+        <button type="button" pButton label="Annuler" class="p-button-outlined mr-2" (click)="showForm=false">
+        </button>
+
+        <button type="submit" pButton label="Enregistrer" [disabled]="form.invalid" [loading]="processing"
+            class="p-button-success" (click)="handleSubmit()">
+        </button>
+    </ng-template>
+
+</p-dialog>

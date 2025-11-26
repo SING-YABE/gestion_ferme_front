@@ -1,0 +1,47 @@
+// src/app/components/stat-card/stat-card.component.scss
+.stat-card {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+
+  .stat-icon {
+    margin-right: 1rem;
+    
+    i {
+      font-size: 2rem;
+      color: var(--primary-color);
+      opacity: 0.8;
+    }
+  }
+
+  .stat-content {
+    flex: 1;
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--text-color);
+      margin-bottom: 0.25rem;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary-color);
+      font-weight: 500;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .stat-card {
+    .stat-icon i {
+      font-size: 1.5rem;
+    }
+    
+    .stat-content .stat-value {
+      font-size: 1.5rem;
+    }
+  }
+}

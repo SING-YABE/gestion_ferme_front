@@ -1,0 +1,159 @@
+<div>
+  <!-- <div class="bg-white mb-3 p-3 odyssey-shadow-low border-round">
+    <div class="flex gap-3">
+      <div class="field m-0" style="flex-grow: 1;">
+        <div fxFlex="300px">
+          <input type="search" pInputText class="w-full" placeholder="Rechercher" />
+        </div>
+      </div>
+    
+      <div style="width: 300px;">
+        <app-user-importer (onUpdate)="handleUpdate()"></app-user-importer>
+      </div>
+    </div>
+  </div> -->
+
+  <div class="bg-white mb-3 p-3 odyssey-shadow-low border-round">
+    <div class="flex gap-3">
+      <div class="field m-0" style="flex-grow: 1;">
+        <div fxFlex="300px">
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon bg-white"><i class="pi pi-search"></i></span>
+            <input 
+              type="search" 
+              pInputText 
+              class="w-full" 
+              placeholder="Rechercher un utilisateur" 
+              [(ngModel)]="searchTerm" 
+              (input)="onSearchInput($event)" />
+          </div>
+        </div>
+      </div>
+      
+      <div style="width: 300px;">
+        <app-user-importer (onUpdate)="handleUpdate()"></app-user-importer>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white odyssey-shadow-low mb-7">
+    <p-table [loading]="loading" 
+             [lazy]="true" 
+             [totalRecords]="usersPage.totalElements" 
+             (onLazyLoad)="paginate($event)" 
+             [rows]="10" 
+             [rowsPerPageOptions]="[10,30,40]" 
+             [value]="usersPage.content" 
+             [paginator]="true"
+             styleClass="w-full">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="cuid">CUID <p-sortIcon field="cuid"></p-sortIcon></th>
+          <th pSortableColumn="displayName">Nom & Prénom <p-sortIcon field="displayName"></p-sortIcon></th>
+          <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+          <th pSortableColumn="departmentName">Département <p-sortIcon field="departmentName"></p-sortIcon></th>
+          <th pSortableColumn="roleName">Rôle <p-sortIcon field="roleName"></p-sortIcon></th>
+          <th style="text-align: center;">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>
+            <span class="p-column-title">CUID</span>
+            <strong>{{ item?.user?.cuid }}</strong>
+          </td>
+          <td>
+            <span class="p-column-title">Nom & Prénom</span>
+            <span>{{ item?.user?.displayName }}</span>
+          </td>
+          <td>
+            <span class="p-column-title">Email</span>
+            <span>{{ item?.user?.email }}</span>
+          </td>
+          <td>
+            <span class="p-column-title">Département</span>
+            {{ item?.departmentName || 'N/A' }}
+          </td>
+          <td>
+            <span class="p-column-title">Rôle</span>
+            <span>{{ item?.user?.role?.name }}</span>
+          </td>
+          <td>
+            <div class="flex gap-2 justify-content-center">
+              <button (click)="showUserDetails(item)" class="p-button-rounded" pButton icon="pi pi-eye"></button>
+              <button (click)="editUser(item)" class="p-button-rounded p-button-warning" pButton icon="pi pi-pencil"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center p-4">
+            <h1 class="font-normal m-0">Aucun utilisateur trouvé !</h1>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="paginatorleft">
+        <div>Total: {{usersPage.totalElements}} utilisateurs</div>
+      </ng-template>
+    </p-table>
+
+    <!-- édition et affich details -->
+    <p-dialog [(visible)]="displayUserEditorModal" [modal]="true" [style]="{width: '600px'}" header="Édition Utilisateur">
+      <app-user-editor [user]="selectedUser" (onUpdate)="handleUpdate()" (onClose)="displayUserEditorModal = false"></app-user-editor>
+    </p-dialog>
+
+    <p-dialog [(visible)]="displayUserModal" [modal]="true" [closable]="false" [style]="{width: '65vw'}">
+      <p-header class="custom-header">
+        <i class="pi pi-user orange-icon"></i><span class="orange-text"> Détails de l'utilisateur</span>
+      </p-header>
+
+      <div *ngIf="selectedUser" class="p-4">
+        <div class="p-grid p-align-center p-justify-start custom-grid">
+          <div class="p-col-12 p-md-6">
+            <p><i class="pi pi-id-card p-mr-2"></i><strong>CUID :</strong> &nbsp;{{ selectedUser.user.cuid }}</p>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <p><i class="pi pi-user p-mr-2"></i><strong>Nom complet : </strong> &nbsp;{{ selectedUser.user.displayName }}</p>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <p><i class="pi pi-envelope p-mr-2"></i><strong>Email : </strong> &nbsp;{{ selectedUser.user.email || 'N/A' }}</p>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <p><i class="pi pi-phone p-mr-2"></i><strong>Téléphone : </strong> &nbsp;{{ selectedUser.user.msisdn || 'N/A' }}</p>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <p><i class="pi pi-sitemap p-mr-2"></i><strong>Direction : </strong> &nbsp;{{ selectedUser.department?.direction?.name || 'N/A' }}</p>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <p><i class="pi pi-building p-mr-2"></i><strong>Département : </strong> &nbsp;{{ selectedUser.department?.name || 'N/A' }}</p>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <p><i class="pi pi-lock p-mr-2"></i><strong>Rôle : </strong> &nbsp;{{ selectedUser.user.role?.name || 'N/A' }}</p>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <p><i class="pi pi-calendar p-mr-2"></i><strong>Dernière connexion : </strong> &nbsp;{{ selectedUser.lastLogin ? (selectedUser.lastLogin | date:'dd/MM/yyyy HH:mm:ss') : 'Non connecté' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <p-footer>
+        <button pButton label="Fermer" icon="pi pi-times" (click)="displayUserModal = false"></button>
+      </p-footer>
+    </p-dialog>
+  </div>
+</div>
+<p-confirmDialog appendTo="body" [style]="{width: '450px'}"></p-confirmDialog>
+
+
+
+
+
+
+
+
+
+
+
+
+

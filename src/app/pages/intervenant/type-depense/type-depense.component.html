@@ -1,0 +1,68 @@
+<div class="odyssey-shadow-low border-round" style="background:#F5F0E6; border:1px solid #D9D2C2;">
+  <div class="px-4 py-2 flex gap-3 align-items-center" style="background:#16A34A; color:white; border-radius:8px 8px 0 0;">
+    <div class="flex-1">
+      <h5 class="m-0">Gestion des types de dépense</h5>
+    </div>
+
+    <button (click)="handleShow('create')" pButton class="p-button-success" label="Type dépense" icon="pi pi-plus"></button>
+  </div>
+
+  <p-table
+    [loading]="loading"
+    [rows]="pageSize"
+    [rowsPerPageOptions]="[5, 10, 30, 40]"
+    [value]="typeDepenses"
+    [paginator]="typeDepenses.length > pageSize"
+    styleClass="p-datatable-sm"
+  >
+    <ng-template pTemplate="header">
+      <tr style="background:#DCFCE7;">
+        <th pSortableColumn="nom">Nom <p-sortIcon field="nom"></p-sortIcon></th>
+        <th style="width: 150px; text-align: center;">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-typeDepense>
+      <tr>
+        <td><strong>{{ typeDepense.nom }}</strong></td>
+        <td>
+          <div class="flex gap-2 justify-content-center">
+            <button
+              pButton
+              icon="pi pi-pencil"
+              class="p-button-rounded"
+              style="background: #8B5E3C; border-color: #8B5E3C;"
+              (click)="handleShow('edit', typeDepense)"
+            ></button>
+
+            <button
+              pButton
+              icon="pi pi-trash"
+              class="p-button-rounded"
+              style="background:#B91C1C; border-color:#B91C1C;"
+              (click)="confirmDelete(typeDepense)"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="2" class="text-center py-4">
+          <i class="pi pi-inbox mr-2"></i>
+          Aucun type de dépense trouvé
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<app-type-depense-form
+  [mode]="mode"
+  [target]="selectedTypeDepense"
+  [(showForm)]="showForm"
+  (onUpdate)="loadData()"
+></app-type-depense-form>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

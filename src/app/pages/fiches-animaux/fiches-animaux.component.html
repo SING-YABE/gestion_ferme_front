@@ -1,0 +1,168 @@
+<div class="odyssey-shadow-low border-round" style="border:1px solid #D9D2C2;">
+    <div class="px-4 py-2 flex gap-3 align-items-center"
+        style="background:#16A34A; color:white; border-radius:8px 8px 0 0;">
+        <div class="flex-1">
+            <h5 class="m-0">Gestion des fiches Animaux</h5>
+        </div>
+        <div>
+            <app-fichesanimaux-form (onUpdate)="loadData()" mode="create"></app-fichesanimaux-form>
+        </div>
+    </div>
+
+    <div class="p-4">
+
+        <!-- <div class="p-4 border rounded shadow-sm" style=" border:1px solid #D9D2C2;">
+            <h4 class="mb-4 fw-bold" style="color:#16A34A;">Recherche et filtres</h4>
+
+            <div class="d-flex gap-3 flex-wrap">
+
+                <ng-container *ngFor="let item of [1,2,3,4]; let i = index">
+                    <div style="flex:1; min-width:200px;">
+                        <label class="form-label fw-bold fs-5">
+                            <ng-container [ngSwitch]="i">
+                                <i *ngSwitchCase="0" class="fas fa-search me-2"></i>
+                                <i *ngSwitchCase="1" class="fas fa-filter me-2"></i>
+                                <i *ngSwitchCase="2" class="fas fa-building me-2"></i>
+                                <i *ngSwitchCase="3" class="fas fa-redo me-2"></i>
+                            </ng-container>
+
+                            <ng-container [ngSwitch]="i">
+                                <span *ngSwitchCase="0">Code Animal</span>
+                                <span *ngSwitchCase="1">Type d'Animal</span>
+                                <span *ngSwitchCase="2">Bâtiment</span>
+                                <span *ngSwitchCase="3">&nbsp;</span>
+                            </ng-container>
+                        </label>
+
+                        <ng-container [ngSwitch]="i">
+                            <input *ngSwitchCase="0" type="text" class="form-control form-control-lg fs-5"
+                                [(ngModel)]="rechercheCode" (ngModelChange)="onRechercheChange()"
+                                placeholder="Ex: P2, V5..." />
+
+                            <select *ngSwitchCase="1" class="form-select form-select-lg fs-5"
+                                [(ngModel)]="filtreTypeAnimal" (ngModelChange)="onFiltreChange()">
+                                <option [ngValue]="null">Tous les types</option>
+                                <option *ngFor="let type of typesAnimaux" [ngValue]="type.id">{{ type.nom }}</option>
+                            </select>
+
+                            <select *ngSwitchCase="2" class="form-select form-select-lg fs-5"
+                                [(ngModel)]="filtreBatiment" (ngModelChange)="onFiltreChange()">
+                                <option [ngValue]="null">Tous les bâtiments</option>
+                                <option *ngFor="let bat of batiments" [ngValue]="bat.id">{{ bat.nom }}</option>
+                            </select>
+
+                            <button *ngSwitchCase="3" class="btn btn-outline-secondary btn-lg w-100 fs-5 mt-4"
+                                (click)="resetFiltres()">
+                                <i class="fas fa-redo me-2"></i>Réinitialiser
+                            </button>
+                        </ng-container>
+                    </div>
+                </ng-container>
+
+            </div>
+        </div> -->
+        <div class="filters-card">
+    <div class="filters-header">
+        <div class="d-flex align-items-center gap-2">
+            <div class="icon-badge">
+                <i class="fas fa-sliders-h"></i>
+            </div>
+            <h4 class="filters-title mb-0">Filtres et recherche</h4>
+        </div>
+        <button class="btn-reset" (click)="resetFiltres()">
+            <i class="fas fa-redo me-2"></i>Réinitialiser
+        </button>
+    </div>
+
+    <div class="filters-body">
+        <div class="d-flex gap-3 align-items-end flex-wrap">
+            <!-- Recherche par code -->
+            <div class="filter-item">
+                <label class="filter-label">
+                    <i class="fas fa-search me-1"></i>Code Animal
+                </label>
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    [(ngModel)]="rechercheCode" 
+                    (ngModelChange)="onRechercheChange()"
+                    placeholder="Ex: P2, V5..." />
+            </div>
+
+            <!-- Type d'Animal -->
+            <div class="filter-item">
+                <label class="filter-label">
+                    <i class="fas fa-paw me-1"></i>Type d'Animal
+                </label>
+                <select 
+                    class="form-select" 
+                    [(ngModel)]="filtreTypeAnimal" 
+                    (ngModelChange)="onFiltreChange()">
+                    <option [ngValue]="null">Tous les types</option>
+                    <option *ngFor="let type of typesAnimaux" [ngValue]="type.id">{{ type.nom }}</option>
+                </select>
+            </div>
+
+            <!-- Bâtiment -->
+            <div class="filter-item">
+                <label class="filter-label">
+                    <i class="fas fa-warehouse me-1"></i>Bâtiment
+                </label>
+                <select 
+                    class="form-select" 
+                    [(ngModel)]="filtreBatiment" 
+                    (ngModelChange)="onFiltreChange()">
+                    <option [ngValue]="null">Tous les bâtiments</option>
+                    <option *ngFor="let bat of batiments" [ngValue]="bat.id">{{ bat.nom }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Tableau -->
+        <p-table [value]="animalsFiltres" [paginator]="animalsFiltres.length > pageSize" [rows]="pageSize"
+            styleClass="p-datatable-sm">
+            <ng-template pTemplate="header">
+                <tr style="background:#DCFCE7;">
+                    <th>Code Animal</th>
+                    <th>Type</th>
+                    <th>Date d'Entrée</th>
+                    <th>Poids Initial (kg)</th>
+                    <th>État de Santé</th>
+                    <th>Bâtiment</th>
+                    <th>Observations</th>
+                    <th style="text-align:center;">Actions</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-animal>
+                <tr>
+                    <td><span class="badge bg-info text-dark">{{ animal.codeAnimal }}</span></td>
+                    <td>{{ animal.typeAnimal.nom }}</td>
+                    <td>{{ animal.dateEntree }}</td>
+                    <td>{{ animal.poidsInitial }} kg</td>
+                    <td><span class="badge bg-success">{{ animal.etatSante.description }}</span></td>
+                    <td>{{ animal.batiment.nom }}</td>
+                    <td>{{ animal.observations || '-' }}</td>
+                    <td class="text-center">
+                        <app-fichesanimaux-form [target]="animal" mode="edit"
+                            (onUpdate)="loadData()"></app-fichesanimaux-form>
+
+                        <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                            (click)="deleteAnimal(animal.id)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="8" class="text-center py-4">
+                        <i class="pi pi-inbox mr-2"></i>
+                        Aucun animal trouvé
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

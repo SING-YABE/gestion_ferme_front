@@ -1,0 +1,151 @@
+<div class="flex flex-column align-items-center justify-content-center">
+
+  <div class="h-30 w-full m-2 flex flex-row align-items-center">
+
+    <div class="w-full gap-2 flex flex-row flex-1 m-0 h-50 align-items-center justify-content-center">
+      <p-iconField class="flex flex-row align-items-center justify-content-center" iconPosition="left">
+        <input style="width: 300px !important;" class="flex-1 w-full" type="text" pInputText
+          placeholder="Rechercher un évênement" />
+      </p-iconField>
+      <p-button class="" icon="pi pi-search" />
+    </div>
+
+    <div class="card flex-1 flex justify-content-center">
+      <p-dropdown
+        [options]="eventTypes"
+        [(ngModel)]="eventType"
+        optionLabel="name"
+        [filter]="true"
+        filterBy="name"
+        [showClear]="true"
+        placeholder="Filtrer par type"
+        styleClass="w-20rem"
+        (onChange)="eventTypeChange($event)"
+        >
+
+        <ng-template pTemplate="filter" let-options="options">
+          <div class="flex gap-1">
+            <div class="p-inputgroup" (click)="$event.stopPropagation()">
+              <span class="p-inputgroup-addon"><i class="pi pi-search"></i></span>
+              <input type="text" pInputText placeholder="Filter" [(ngModel)]="eventTypeFilterValue"
+                (keyup)="customFilterFunction($event, options)" />
+            </div>
+            <button pButton icon="pi pi-times" (click)="resetFunction(options)"></button>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="selectedItem" let-selectedOption>
+          <div class="flex align-items-center gap-2">
+
+            <div class="rounded-5 flex align-items-center justify-content-center"
+              [style]="{ 'background-color': '#ff821b' }" style="height: 35px; width: 35px;">
+              <i class="pi {{selectedOption.icon}} text-white"></i>
+            </div>
+
+            <div>{{ selectedOption.name }}</div>
+          </div>
+        </ng-template>
+
+        <ng-template let-type pTemplate="item">
+          <div class="flex align-items-center gap-2">
+            <div class="rounded-5 flex align-items-center justify-content-center"
+              [style]="{ 'background-color': '#ff821b' }" style="height: 35px; width: 35px;">
+              <i class="pi {{type.icon}} text-white"></i>
+            </div>
+            <div>{{ type.name }}</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+
+    </div>
+  </div>
+
+  <div class="card w-full">
+
+    <!-- <p-timeline [value]="events" onscroll="onScroll($event)" styleClass="gap-3">
+      <ng-template pTemplate="marker" let-event>
+        <span class="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle z-1 shadow-1"
+          [style]="{ 'background-color': event.color }">
+          <i class="pi {{event.icon}}"></i>
+        </span>
+      </ng-template>
+
+      <ng-template pTemplate="content" let-event>
+        <p-card [header]="event.typeDisplayName"
+          subheader="{{event.eventDate | date:'dd/MM/YYYY'}}, par {{event.authorName}}">
+          <p>{{event.comment}}</p>
+          <p *ngIf="event.suspensionComment!==null"> <span class="font-bold underline">Cause:</span> <b
+              class="text-primary"> {{event.suspensionComment}}</b></p>
+        </p-card>
+      </ng-template>
+    </p-timeline> -->
+
+    <div *ngIf="filteredEvents.length===0">
+      <h2 class="text-center">
+        Aucun évênement {{ events.length===0 ? "pour ce projet": "avec ces filtres"}} !
+      </h2>
+    </div>
+
+    <p-scroller #scroller [items]="filteredEvents" scrollHeight="550px" class="w-full" styleClass="border-1 surface-border"
+      [numToleratedItems]="events.length" [delay]="250" [loading]="loader">
+      <ng-template pTemplate="item" let-event let-options="options">
+        <div class="flex px-2 py-1 justify-content-center" style="min-height: 100px;">
+
+          <!-- <div class="flex-1">
+            <div  class="p-2">
+              <p-card [header]="event.typeDisplayName"
+                subheader="{{event.eventDate | date:'dd/MM/YYYY'}}, par {{event.authorName}}">
+                <p>{{event.comment}}</p>
+                <p-panel *ngIf="event.suspensionComment!==null" [style]="{ 'max-width': '590px' }" header="RAISON">
+                  <div>
+                    <b style="overflow-wrap: break-word;" class="text-primary break-all">
+                      {{event.suspensionComment}}
+                    </b>
+                  </div>
+                </p-panel>
+              </p-card>
+            </div>
+          </div> -->
+
+          <div class="flex flex-column align-items-center">
+            <div class="rounded-5 flex align-items-center justify-content-center"
+              [style]="{ 'background-color': event.color }" style="height: 35px; width: 35px;">
+              <i class="pi {{event.icon}} text-white"></i>
+            </div>
+            <div class="flex-1 " [style]="{ 'background-color': event.color }" style="height: 100px; width:2px">
+
+            </div>
+          </div>
+
+          <div class="flex-1">
+            <div class="flex-1 p-2">
+              <div class="max-w-50 bg-white p-3">
+                <div>
+                  <b style="overflow-wrap: break-word;">
+                    {{event.comment}}
+                  </b>
+                  <p>{{event.eventDate | date:'dd/MM/YYYY'}}, par {{event.authorName}}</p>
+                </div>
+                <p-panel *ngIf="event.suspensionComment!==null" header="RAISON">
+                  <div>
+                    <b style="overflow-wrap: break-word;" class="text-primary break-all">
+                      {{event.suspensionComment}}
+                    </b>
+                  </div>
+                </p-panel>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="event.scrollEnd">
+          <h2 class="text-center">
+            Fin de la liste
+          </h2>
+        </div>
+      </ng-template>
+
+    </p-scroller>
+
+  </div>
+</div>

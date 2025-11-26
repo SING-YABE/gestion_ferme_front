@@ -1,0 +1,70 @@
+.task-container{
+  height: 100%;
+  position: absolute;
+  margin-top: -30px;
+  margin-left: -30px;
+  width: 280px;
+}
+
+.task-card {
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 100%;
+  border-bottom: 1px solid lightgray;
+  overflow: hidden;
+  text-wrap: wrap;
+
+  .project-text {
+    width: 90%;
+    overflow: hidden;
+    margin-left: 5px;
+
+    p {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+    }
+  }
+}
+
+.task-card:hover{
+  width: 100%;
+  background-color: rgba(255, 121, 0, 0.26);
+  cursor: pointer !important;
+  transition: .3s;
+  color: black;
+
+  .project-badge{
+    background-color: #fff;
+    padding: 7px;
+    border-radius: 15px;
+    color: black;
+    font-size: small;
+  }
+
+}
+
+.task-card-active{
+  background-color: rgba(255, 121, 0, 1);
+  color: #ffffff;
+}
+
+.task-card-active:hover{
+  background-color: rgba(255, 121, 0, 1);
+  color: #ffffff;
+}
+
+.project-badge{
+  background-color: #f82;
+  padding: 7px;
+  border-radius: 15px;
+  color: white;
+  font-size: small;
+}
+
+.details{
+  background-color: #f82;
+  width: 100%;
+  margin-left: 260px
+}
+

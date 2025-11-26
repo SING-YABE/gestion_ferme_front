@@ -1,0 +1,206 @@
+<div class="dashboard-container p-4" style="overflow-y: auto; max-height: calc(100vh - 100px)">
+
+  <div class="grid">
+    <!--Total-->
+    <div class="col-12 md:col-4">
+      <div class="card p-4 shadow-2 border-round">
+        <div class="flex justify-content-between align-items-center mb-3">
+          <h5>Total Projets</h5>
+          <button class="p-button p-button-text p-button-sm" (click)="loadKpiData()" [disabled]="isLoading">
+            <i class="pi" [ngClass]="{ 'pi-spinner pi-spin': isLoading, 'pi-refresh': !isLoading }"></i>
+          </button>
+        </div>
+        <div *ngIf="isLoading" class="text-center">Chargement...</div>
+        <div *ngIf="!isLoading && kpiData">
+          <div class="text-3xl font-bold text-blue-600">{{ kpiData.totalProjects }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-4">
+      <div class="card p-4 shadow-2 border-round">
+        <div class="flex justify-content-between align-items-center mb-3">
+          <h5>Progrès Moyen</h5>
+          <button class="p-button p-button-text p-button-sm" (click)="loadKpiData()" [disabled]="isLoading">
+            <i class="pi" [ngClass]="{ 'pi-spinner pi-spin': isLoading, 'pi-refresh': !isLoading }"></i>
+          </button>
+        </div>
+        <div *ngIf="isLoading" class="text-center">Chargement...</div>
+        <div *ngIf="!isLoading && kpiData">
+          <div class="text-3xl font-bold text-orange-600">
+            {{ kpiData.averageProgress | number:'1.2-2' }}%
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-4">
+      <div class="card p-4 shadow-2 border-round">
+        <div class="flex justify-content-between align-items-center mb-3">
+          <h5>Budget Restant</h5>
+          <button class="p-button p-button-text p-button-sm" (click)="loadKpiData()" [disabled]="isLoading">
+            <i class="pi" [ngClass]="{ 'pi-spinner pi-spin': isLoading, 'pi-refresh': !isLoading }"></i>
+          </button>
+        </div>
+        <div *ngIf="isLoading" class="text-center">Chargement...</div>
+        <div *ngIf="!isLoading && kpiData">
+          <div class="text-3xl font-bold text-green-600">
+            {{ formatCurrency(kpiData.remainingBudget || 0) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="card p-4 shadow-2 border-round" style="height: 400px;">
+        <div class="flex justify-content-between align-items-center mb-3">
+          <h5>Répartition par Statut</h5>
+          <button class="p-button p-button-text p-button-sm" (click)="loadKpiData()" [disabled]="isLoading">
+            <i class="pi" [ngClass]="{ 'pi-spinner pi-spin': isLoading, 'pi-refresh': !isLoading }"></i>
+          </button>
+        </div>
+        <div *ngIf="isLoading" class="text-center">Chargement...</div>
+        <p-chart *ngIf="!isLoading && statusChartData"
+         type="bar"
+         [data]="statusChartData"
+         [options]="chartOptions"
+         styleClass="w-full h-18rem"></p-chart>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <div class="card p-4 shadow-2 border-round" style="height: 400px;">
+        <div class="flex justify-content-between align-items-center mb-3">
+          <h5>Répartition par Priorité</h5>
+          <button class="p-button p-button-text p-button-sm" (click)="loadKpiData()" [disabled]="isLoading">
+            <i class="pi" [ngClass]="{ 'pi-spinner pi-spin': isLoading, 'pi-refresh': !isLoading }"></i>
+          </button>
+        </div>
+        <div *ngIf="isLoading" class="text-center">Chargement...</div>
+        <p-chart *ngIf="!isLoading && priorityChartData"
+         type="bar"
+         [data]="priorityChartData"
+         [options]="chartOptions"
+         styleClass="w-full h-18rem"></p-chart>
+      </div>
+    </div>
+
+
+  <div *ngIf="isDirector" class="col-12 md:col-6">
+   <div class="card p-4 shadow-2 border-round" style="height: 400px;">
+    <div class="flex justify-content-between align-items-center mb-3">
+      <h5>Projets par Département</h5>
+    </div>
+    <p-chart 
+      type="bar"
+      [data]="departmentChartData"
+      [options]="chartOptions"
+      styleClass="w-full h-18rem">
+    </p-chart>
+  </div>
+</div>
+
+    <div *ngIf="isDirector" class="col-12 md:col-6">
+  <div class="card p-4 shadow-2 border-round" style="height: 400px;">
+    <div class="flex justify-content-between align-items-center mb-3">
+      <h5>???</h5>
+    </div>
+    <p-chart 
+      >
+    </p-chart>
+  </div>
+</div>
+  
+
+    
+  </div>
+
+  <div class="pl-6 mt-4">
+    <h3>Détails des projets</h3>
+  </div>
+
+  <div *ngIf="kpiData?.projectByStatus" 
+       class="count-card flex justify-content-between p-3 flex-nowrap gap-3" 
+       style="margin-left:40px; margin-right:40px; overflow-x:auto;">
+
+    <div style="width: 24%" class="card p-2 h-6rem bg-white text-blue-600" [class.active]="selectedStatus === 'PLANNED'"
+         (click)="changeDisplayedStatus('PLANNED')">
+      <div class="card-icon"><div class="status-indicator status-info"></div></div>
+      <div class="card-content">
+        <h3 class="mt-1">Etude</h3>
+        <p class="count text-xl font-bold">{{ kpiData?.projectByStatus?.PLANNED || 0 }}</p>
+
+      </div>
+    </div>
+
+    <div style="width: 24%" class="card p-2 h-6rem border-left-2 bg-white text-yellow-500" [class.active]="selectedStatus === 'IN_PROGRESS'"
+         (click)="changeDisplayedStatus('IN_PROGRESS')">
+      <div class="card-icon"><div class="status-indicator status-warning"></div></div>
+      <div class="card-content">
+        <h3 class="mt-1">En cours</h3>
+        <p class="count text-xl font-bold">{{ kpiData?.projectByStatus?.IN_PROGRESS || 0 }}</p>
+
+      </div>
+    </div>
+
+    <div style="width: 24%" class="card p-2 h-6rem border-left-2 bg-white text-green-600" [class.active]="selectedStatus === 'COMPLETED'"
+         (click)="changeDisplayedStatus('COMPLETED')">
+      <div class="card-icon"><div class="status-indicator status-success"></div></div>
+      <div class="card-content">
+        <h3 class="mt-1">Terminés</h3>
+        <p class="count text-xl font-bold">{{ kpiData?.projectByStatus?.COMPLETED || 0 }}</p>
+      </div>
+    </div>
+
+    <div style="width: 24%" class="card p-2 h-6rem border-left-2 bg-white text-red-500" [class.active]="selectedStatus === 'CANCELED'"
+         (click)="changeDisplayedStatus('CANCELED')">
+      <div class="card-icon"><div class="status-indicator status-danger"></div></div>
+      <div class="card-content">
+        <h3 class="mt-1">Annulés</h3>
+        <p class="count text-xl font-bold">{{ kpiData?.projectByStatus?.CANCELED || 0 }}</p>
+
+      </div>
+    </div>
+
+    <div style="width: 24%" class="card p-2 h-6rem border-left-2 bg-white text-purple-500" [class.active]="selectedStatus === 'SUSPENDED'"
+         (click)="changeDisplayedStatus('SUSPENDED')">
+      <div class="card-icon"><div class="status-indicator status-purple"></div></div>
+      <div class="card-content">
+        <h3 class="mt-1">Suspendus</h3>
+        <p class="count text-xl font-bold">{{ kpiData?.projectByStatus?.SUSPENDED || 0 }}</p>
+
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="kpiData?.projectByPriority" 
+       class="count-card flex justify-content-between p-3 flex-nowrap gap-3" 
+       style="margin-left:40px; margin-right:40px; overflow-x:auto; margin-top:20px;">
+
+    <div style="width: 32%" class="card p-2 h-6rem bg-white text-green-700" [class.active]="selectedStatus === 'LOW'"
+         (click)="changeDisplayedStatus('LOW')">
+      <div class="card-content">
+        <h3 class="mt-1">Priorité Basse</h3>
+        <p class="count text-xl font-bold">{{ kpiData?.projectByPriority?.LOW || 0 }}</p>
+
+      </div>
+    </div>
+
+    <div style="width: 32%" class="card p-2 h-6rem border-left-2 bg-white text-orange-600" [class.active]="selectedStatus === 'MEDIUM'"
+         (click)="changeDisplayedStatus('MEDIUM')">
+      <div class="card-content">
+        <h3 class="mt-1">Priorité Moyenne</h3>
+        <p class="count text-xl font-bold">{{ kpiData?.projectByPriority?.MEDIUM || 0 }}</p>
+
+      </div>
+    </div>
+
+    <div style="width: 32%" class="card p-2 h-6rem border-left-2 bg-white text-red-600" [class.active]="selectedStatus === 'HIGH'"
+         (click)="changeDisplayedStatus('HIGH')">
+      <div class="card-content">
+        <h3 class="mt-1">Priorité Haute</h3>
+        <p class="count text-xl font-bold">{{ kpiData?.projectByPriority?.HIGH || 0 }}</p>
+      </div>
+    </div>
+  </div>
+</div>

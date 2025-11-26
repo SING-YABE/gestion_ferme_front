@@ -1,0 +1,73 @@
+<!-- Bouton pour créer un nouveau type animal -->
+<button 
+  (click)="handleShow()" 
+  pButton 
+  class="p-button-success" 
+  *ngIf="mode == 'create'" 
+  label="Type animal" 
+  icon="pi pi-plus">
+</button>
+
+<button 
+  (click)="handleShow()" 
+  pButton 
+  *ngIf="mode == 'edit'" 
+  icon="pi pi-pencil" 
+  class="p-button-rounded" 
+  style="background:#16A34A ; border-color: #16A34A ;color:white;"
+        (click)="handleShow()">
+</button>
+
+<p-dialog 
+  header="Nouveau type animal" 
+  appendTo="body" 
+  [modal]="true" 
+  [style]="{width: '800px'}" 
+  [(visible)]="showForm"
+  [baseZIndex]="9000"
+  styleClass="farm-dialog"
+>
+  <div>
+    <form id="typeAnimauxForm" [formGroup]="typeAnimalForm" (ngSubmit)="handleSubmit()">
+      <div class="field">
+        <label for="nom">Nom du type animal</label>
+        <input 
+          placeholder="ex : Truie, Verrat, Porcelet..." 
+          formControlName="nom" 
+          pInputText 
+          id="nom"
+        />
+      </div>
+      
+      <div class="field">
+        <label for="description">Description</label>
+        <input 
+          placeholder="Description détaillée du type d'animal" 
+          formControlName="description" 
+          pInputText 
+          id="description"
+        />
+      </div>
+    </form>
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <button 
+      (click)="showForm = false" 
+      pButton 
+      class="p-button-outlined mr-2" 
+      style="color:#8B5E3C; border-color:#8B5E3C;">
+      Annuler
+    </button>
+
+    <button 
+      type="submit" 
+      [disabled]="typeAnimalForm.invalid" 
+      form="typeAnimauxForm" 
+      [loading]="processing" 
+      pButton 
+      class="p-button-success">
+      Enregistrer
+    </button>
+  </ng-template>
+</p-dialog>

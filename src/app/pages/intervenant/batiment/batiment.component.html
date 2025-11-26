@@ -1,0 +1,46 @@
+
+<div class="odyssey-shadow-low border-round" style="background:#F5F0E6; border:1px solid #D9D2C2;">
+  <div class="px-4 py-2 flex gap-3 align-items-center" style="background:#16A34A; color:white; border-radius:8px 8px 0 0;">
+    <div class="flex-1">
+      <h5 class="m-0">Gestion des bâtiments</h5>
+    </div>
+    <div>
+      <app-batiment-form (onUpdate)="loadData()" mode="create"></app-batiment-form>
+    </div>
+  </div>
+
+  <p-table [value]="batiments" [loading]="loading" [rows]="pageSize" [rowsPerPageOptions]="[5, 10, 30, 40]"
+           [paginator]="batiments.length > pageSize" styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr style="background:#DCFCE7;">
+        <th pSortableColumn="nom">Nom <p-sortIcon field="nom"></p-sortIcon></th>
+        <th pSortableColumn="localisation">Localisation <p-sortIcon field="localisation"></p-sortIcon></th>
+        <th style="width:150px; text-align:center;">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-batiment>
+      <tr>
+        <td><strong>{{ batiment.nom }}</strong></td>
+        <td>{{ batiment.localisation || 'Non renseignée' }}</td>
+        <td>
+          <div class="flex gap-2 justify-content-center">
+            <app-batiment-form [target]="batiment" mode="edit" (onUpdate)="loadData()"></app-batiment-form>
+            <button pButton icon="pi pi-trash" class="p-button-rounded" style="background:#B91C1C; border-color:#B91C1C;" (click)="confirmDelete(batiment)"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="3" class="text-center py-4">
+          <i class="pi pi-inbox mr-2"></i>
+          Aucun bâtiment trouvé
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>

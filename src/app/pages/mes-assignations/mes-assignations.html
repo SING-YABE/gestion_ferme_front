@@ -1,0 +1,317 @@
+<!-- src/app/pages/mes-assignations/mes-assignations.component.html -->
+<div class="card">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- En-tête -->
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h2>Mes Assignations</h2>
+    <div class="flex align-items-center gap-3">
+      <p-button 
+        icon="pi pi-refresh" 
+        label="Actualiser" 
+        (click)="loadMesAssignations()"
+        [disabled]="loading">
+      </p-button>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="mb-4">
+    <div class="flex gap-2 align-items-center">
+      <label class="font-medium">Filtrer par statut:</label>
+      <p-dropdown
+        [(ngModel)]="statutFiltre"
+        [options]="[
+          { label: 'Tous les statuts', value: 'TOUS' },
+          { label: 'En attente', value: 'EN_ATTENTE' },
+          { label: 'Confirmées', value: 'CONFIRMEE' },
+          { label: 'Annulées', value: 'ANNULEE' }
+        ]"
+        optionLabel="label"
+        optionValue="value"
+        (onChange)="filtrerAssignations()"
+        styleClass="w-12rem">
+      </p-dropdown>
+    </div>
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div *ngIf="loading" class="flex justify-content-center p-4">
+    <div class="flex flex-column align-items-center gap-3">
+      <i class="pi pi-spinner pi-spin" style="font-size: 2rem"></i>
+      <span class="text-color-secondary">Chargement de vos assignations...</span>
+    </div>
+  </div>
+
+  <!-- Tableau des assignations -->
+  <p-table 
+    *ngIf="!loading"
+    [value]="mesAssignationsFiltrees" 
+    [paginator]="true" 
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} assignations"
+    [rowsPerPageOptions]="[10,25,50]">
+    
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 80px">ID</th>
+        <th>Demande</th>
+        <th>Categorie</th>
+        <th>Beneficiaire</th>
+        <th>Equipement</th>
+        <th>Statut</th>
+        <th>Date creation</th>
+        <th style="width: 200px">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-assignation>
+      <tr>
+        <td><strong>#{{ assignation.idAssignation }}</strong></td>
+        <td>Demande #{{ assignation.demandeId }}</td>
+        <td>{{ assignation.categorieNom || 'Non specifiee' }}</td>
+        <td>
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-user"></i>
+            <!-- MODIFICATION ICI : Afficher le nom complet -->
+            <span>{{ assignation.beneficiairePrenom }} {{ assignation.beneficiaireNom }}</span>
+          </div>
+        </td>
+        <td>
+          <!-- MODIFICATION ICI : Afficher le nom de l'équipement -->
+          <span *ngIf="assignation.equipementId; else sansEquipement">
+            {{ assignation.equipementNom || 'Équipement #' + assignation.equipementId }}
+          </span>
+          <ng-template #sansEquipement>
+            <span class="text-color-secondary">-</span>
+          </ng-template>
+        </td>
+        <td>
+          <p-tag 
+            [value]="getStatutLabel(assignation.statut)" 
+            [severity]="getStatutBadge(assignation.statut)">
+          </p-tag>
+        </td>
+        <td>{{ assignation.dateCreation | date:'dd/MM/yyyy' }}</td>
+        <td>
+          <div class="flex gap-2">
+            <!-- Bouton Selectionner Equipement -->
+            <p-button 
+              *ngIf="peutSelectionnerEquipement(assignation)"
+              icon="pi pi-desktop" 
+              label="Choisir equipement" 
+              severity="info"
+              (click)="openSelectionModal(assignation)"
+              pTooltip="Selectionner un equipement disponible"
+              tooltipPosition="top">
+            </p-button>
+
+            <!-- Bouton Confirmer -->
+            <p-button 
+              *ngIf="peutConfirmer(assignation)"
+              icon="pi pi-check" 
+              label="Confirmer" 
+              severity="success"
+              (click)="openConfirmationModal(assignation)"
+              pTooltip="Confirmer l'assignation"
+              tooltipPosition="top">
+            </p-button>
+
+            <!-- Bouton Annuler -->
+            <p-button 
+              *ngIf="peutSelectionnerEquipement(assignation) || peutConfirmer(assignation)"
+              icon="pi pi-times" 
+              label="Annuler" 
+              severity="danger"
+              (click)="annulerAssignation(assignation)"
+              pTooltip="Annuler l'assignation"
+              tooltipPosition="top">
+            </p-button>
+
+            <!-- Indicateur pour assignations terminees -->
+            <span *ngIf="!peutSelectionnerEquipement(assignation) && !peutConfirmer(assignation)" 
+                  class="text-color-secondary text-sm flex align-items-center">
+              <i class="pi pi-check-circle mr-2"></i>
+              Terminee
+            </span>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="8" class="text-center p-4">
+          <i class="pi pi-inbox" style="font-size: 2rem"></i>
+          <p class="mt-2">Aucune assignation trouvee</p>
+          <p class="text-sm text-color-secondary">
+            Vous n'avez aucune assignation en cours. Les nouvelles assignations vous seront notifiees.
+          </p>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Modal de Selection d'Equipement -->
+  <p-dialog 
+    [(visible)]="displaySelectionModal" 
+    [style]="{ width: '500px' }"
+    header="Selectionner un equipement"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <div *ngIf="assignationEnCours" class="p-fluid">
+      <!-- Informations sur la demande -->
+      <div class="mb-4 p-3 border-round surface-ground">
+        <h4 class="mt-0 mb-2">Details de l'assignation</h4>
+        <div class="grid text-sm">
+          <div class="col-6">
+            <strong>ID Assignation:</strong> #{{ assignationEnCours.idAssignation }}
+          </div>
+          <div class="col-6">
+            <strong>Demande:</strong> #{{ assignationEnCours.demandeId }}
+          </div>
+          <div class="col-6">
+            <strong>Categorie:</strong> {{ assignationEnCours.categorieNom }}
+          </div>
+          <div class="col-6">
+            <!-- MODIFICATION ICI : Afficher le nom complet du bénéficiaire -->
+            <strong>Beneficiaire:</strong> {{ assignationEnCours.beneficiairePrenom }} {{ assignationEnCours.beneficiaireNom }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Selection de l'equipement -->
+      <div class="field">
+        <label for="equipement" class="block font-medium mb-2">Equipement disponible *</label>
+        <p-dropdown
+          id="equipement"
+          [(ngModel)]="equipementSelectionne"
+          [options]="equipementsDisponibles"
+          optionLabel="nom"
+          optionValue="idEquipement"
+          placeholder="Selectionnez un equipement disponible"
+          [showClear]="true"
+          class="w-full">
+          <ng-template let-equipement pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-desktop"></i>
+              <div>
+                <div class="font-medium">{{ equipement.nom }}</div>
+                <div class="text-sm text-color-secondary">
+                  {{ equipement.modele }} - {{ equipement.numeroSerie }}
+                </div>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="empty">
+            <div class="p-2 text-center text-color-secondary">
+              {{ equipementsDisponibles.length === 0 ? 'Aucun equipement disponible pour cette categorie' : 'Selectionnez un equipement' }}
+            </div>
+          </ng-template>
+        </p-dropdown>
+        <small class="text-color-secondary">
+          Equipements disponibles pour la categorie {{ assignationEnCours.categorieNom }}
+        </small>
+      </div>
+
+      <!-- Avertissement si aucun equipement disponible -->
+      <div *ngIf="equipementsDisponibles.length === 0" class="p-3 border-round surface-orange-100 mt-3">
+        <div class="flex align-items-center gap-2 text-orange-600">
+          <i class="pi pi-exclamation-triangle"></i>
+          <strong>Aucun equipement disponible</strong>
+        </div>
+        <p class="text-sm text-orange-600 mt-1 mb-0">
+          Aucun equipement n'est disponible pour cette categorie. Vous devrez annuler l'assignation ou attendre qu'un equipement soit disponible.
+        </p>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Annuler" 
+        icon="pi pi-times" 
+        (click)="displaySelectionModal = false" 
+        severity="secondary">
+      </p-button>
+      <p-button 
+        label="Selectionner l'equipement" 
+        icon="pi pi-check" 
+        (click)="selectionnerEquipement()"
+        [disabled]="!equipementSelectionne">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Modal de Confirmation -->
+  <p-dialog 
+    [(visible)]="displayConfirmationModal" 
+    [style]="{ width: '500px' }"
+    header="Confirmer l'assignation"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <div *ngIf="assignationEnCours" class="p-fluid">
+      <div class="text-center mb-4">
+        <i class="pi pi-exclamation-triangle text-orange-500" style="font-size: 3rem"></i>
+        <h3 class="mt-3 mb-2">Confirmation finale</h3>
+        <p class="text-color-secondary">
+          Vous etes sur le point de confirmer l'assignation de l'equipement au beneficiaire.
+          Cette action est definitive.
+        </p>
+      </div>
+
+      <div class="p-3 border-round surface-ground">
+        <h4 class="mt-0 mb-2">Resume de l'assignation</h4>
+        <div class="grid text-sm">
+          <div class="col-6">
+            <!-- MODIFICATION ICI : Afficher le nom de l'équipement -->
+            <strong>Equipement:</strong> {{ assignationEnCours.equipementNom || 'Équipement #' + assignationEnCours.equipementId }}
+          </div>
+          <div class="col-6">
+            <!-- MODIFICATION ICI : Afficher le nom complet du bénéficiaire -->
+            <strong>Beneficiaire:</strong> {{ assignationEnCours.beneficiairePrenom }} {{ assignationEnCours.beneficiaireNom }}
+          </div>
+          <div class="col-6">
+            <strong>Categorie:</strong> {{ assignationEnCours.categorieNom }}
+          </div>
+          <div class="col-6">
+            <strong>Demande:</strong> #{{ assignationEnCours.demandeId }}
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 border-round surface-green-100 mt-3">
+        <div class="flex align-items-center gap-2 text-green-600">
+          <i class="pi pi-info-circle"></i>
+          <strong>Consequences</strong>
+        </div>
+        <ul class="text-sm text-green-600 mt-1 mb-0 pl-3">
+          <li>L'equipement sera marque comme "ASSIGNE"</li>
+          <li>L'assignation sera confirmee</li>
+          <li>Le beneficiaire sera notifie</li>
+          <li>La demande sera consideree comme terminee</li>
+        </ul>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Annuler" 
+        icon="pi pi-times" 
+        (click)="displayConfirmationModal = false" 
+        severity="secondary">
+      </p-button>
+      <p-button 
+        label="Confirmer l'assignation" 
+        icon="pi pi-check" 
+        (click)="confirmerAssignation()"
+        severity="success">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+</div>

@@ -1,0 +1,41 @@
+<p-dialog 
+  header="{{ mode === 'create' ? 'Nouveau type de dépense' : 'Modifier type de dépense' }}" 
+  appendTo="body" 
+  [modal]="true" 
+  [(visible)]="showForm"
+  [baseZIndex]="9000"
+  styleClass="farm-dialog"
+>
+  <form [formGroup]="typeDepenseForm" (ngSubmit)="handleSubmit()">
+    <div class="field">
+      <label for="nom">Nom du type de dépense</label>
+      <input 
+        id="nom"
+        placeholder="ex: Transport, Médicaments..." 
+        formControlName="nom" 
+        pInputText
+      />
+    </div>
+  </form>
+
+  <!-- Footer en dehors du form -->
+  <ng-template pTemplate="footer">
+    <button 
+      (click)="showForm = false" 
+      pButton 
+      class="p-button-outlined mr-2" 
+      style="color:#8B5E3C; border-color:#8B5E3C;">
+      Annuler
+    </button>
+
+    <button 
+      type="button"
+      [disabled]="typeDepenseForm.invalid" 
+      [loading]="processing" 
+      pButton 
+      class="p-button-success"
+      (click)="handleSubmit()">
+      Enregistrer
+    </button>
+  </ng-template>
+</p-dialog>

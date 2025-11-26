@@ -1,0 +1,50 @@
+<p-dialog 
+  header="{{ mode === 'create' ? 'Nouveau traitement' : 'Modifier traitement' }}" 
+  appendTo="body" 
+  [modal]="true" 
+  [style]="{width: '600px'}" 
+  [(visible)]="showForm"
+  [baseZIndex]="9000"
+  styleClass="farm-dialog"
+  (onHide)="closeDialog()"
+>
+  <form [formGroup]="traitementForm" (ngSubmit)="handleSubmit()">
+    <div class="field">
+      <label for="nom">Nom du traitement</label>
+      <input 
+        id="nom"
+        placeholder="ex: Vaccination, Antibiotiques..." 
+        formControlName="nom" 
+        pInputText
+      />
+    </div>
+
+    <div class="field">
+      <label for="description">Description</label>
+      <input 
+        id="description"
+        placeholder="Description détaillée" 
+        formControlName="description" 
+        pInputText
+      />
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button 
+        (click)="closeDialog()" 
+        pButton 
+        class="p-button-outlined mr-2" 
+        style="color:#8B5E3C; border-color:#8B5E3C;">
+        Annuler
+      </button>
+
+      <button 
+        type="submit" 
+        [disabled]="traitementForm.invalid || processing" 
+        pButton 
+        class="p-button-success">
+        Enregistrer
+      </button>
+    </ng-template>
+  </form>
+</p-dialog>

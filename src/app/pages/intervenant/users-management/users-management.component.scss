@@ -1,0 +1,54 @@
+.custom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Fixe à 2 colonnes */
+  gap: 1rem;
+}
+
+.custom-grid .p-col-12 {
+  display: flex;
+  align-items: center;
+}
+
+.custom-grid p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.custom-grid p i {
+  margin-right: 0.5rem; /* Espacement entre l'icône et le texte */
+}
+
+.custom-grid p strong {
+  font-weight: bold;
+}
+
+/* Applique le style orange à l'icône et au texte de l'en-tête */
+.custom-header {
+  color: inherit; /* garde la couleur du texte par défaut */
+}
+
+.orange-icon {
+  color: #FF7043; /* couleur orange pour l'icône */
+  margin-right: 0.5rem; /* espacement entre l'icône et le texte */
+}
+
+.custom-header i {
+  font-size: 1.5rem;
+  color: #FF7043; /* applique l'orange à l'icône dans l'en-tête */
+}
+
+.custom-header span {
+  color: #FF7043; /* applique l'orange au texte */
+}
+
+/* Applique la couleur orange à l'icône et au texte "Détails de l'utilisateur" */
+.orange-icon {
+  color: #FF7043; /* couleur orange pour l'icône */
+  margin-right: 0.5rem; /* espacement entre l'icône et le texte */
+}
+
+.orange-text {
+  color: #FF7043; /* couleur orange pour le texte */
+  font-weight: bold; /* met en gras le texte pour plus de visibilité */
+}

@@ -1,0 +1,325 @@
+<div class="card">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- En-tête avec bouton d'ajout -->
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h2>Gestion des Utilisateurs</h2>
+    <p-button 
+      icon="pi pi-plus" 
+      label="Nouvel Utilisateur" 
+      (click)="openAddModal()">
+    </p-button>
+  </div>
+
+  <div class="mb-4 p-fluid">
+    <div class="field grid">
+      <div class="col-12 md:col-4">
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-search"></i>
+          <input 
+            type="text" 
+            pInputText 
+            [(ngModel)]="termeRecherche" 
+            (input)="filtrerUtilisateurs()"
+            placeholder="Rechercher par nom, prénom, email, poste, téléphone, rôle..."
+            class="w-full">
+        </span>
+      </div>
+      <div class="col-12 md:col-2">
+        <p-button 
+          label="Effacer" 
+          icon="pi pi-times" 
+          severity="secondary" 
+          (click)="reinitialiserRecherche()"
+          class="w-full">
+        </p-button>
+      </div>
+      <div class="col-12 md:col-6 flex align-items-center justify-content-end">
+        <small class="text-color-secondary">
+          {{ utilisateursFiltres.length }} utilisateur(s) trouvé(s)
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau des utilisateurs -->
+  <p-table 
+    [value]="utilisateursFiltres" 
+    [paginator]="true" 
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} utilisateurs"
+    [rowsPerPageOptions]="[10,25,50]"
+    [loading]="utilisateurs.length === 0">
+    
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="idUtilisateur" style="width: 80px">
+          ID <p-sortIcon field="idUtilisateur"></p-sortIcon>
+        </th>
+        <th pSortableColumn="nom">
+          Nom <p-sortIcon field="nom"></p-sortIcon>
+        </th>
+        <th pSortableColumn="prenom">
+          Prénom <p-sortIcon field="prenom"></p-sortIcon>
+        </th>
+        <th pSortableColumn="email">
+          Email <p-sortIcon field="email"></p-sortIcon>
+        </th>
+        <th pSortableColumn="poste">
+          Poste <p-sortIcon field="poste"></p-sortIcon>
+        </th>
+        <th pSortableColumn="telephone">
+          Téléphone <p-sortIcon field="telephone"></p-sortIcon>
+        </th>
+        <th pSortableColumn="role.nom">
+          Rôle <p-sortIcon field="role.nom"></p-sortIcon>
+        </th>
+        <th style="width: 150px">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-utilisateur>
+      <tr>
+        <td>{{ utilisateur.idUtilisateur }}</td>
+        <td>{{ utilisateur.nom }}</td>
+        <td>{{ utilisateur.prenom }}</td>
+        <td>{{ utilisateur.email }}</td>
+        <td>{{ utilisateur.poste }}</td>
+        <td>{{ utilisateur.telephone }}</td>
+        <td>
+          <p-tag 
+            *ngIf="utilisateur.role; else sansRole"
+            [value]="utilisateur.role.nom" 
+            [severity]="getRoleBadge(utilisateur.role)">
+          </p-tag>
+          <ng-template #sansRole>
+            <span class="text-color-secondary">Aucun rôle</span>
+          </ng-template>
+        </td>
+        <td>
+          <div class="flex gap-2">
+            <p-button 
+              icon="pi pi-pencil" 
+              severity="warning" 
+              (click)="openEditModal(utilisateur)">
+            </p-button>
+            <p-button 
+              icon="pi pi-key" 
+              severity="info" 
+              (click)="openRoleModal(utilisateur)">
+            </p-button>
+            <p-button 
+              icon="pi pi-trash" 
+              severity="danger" 
+              (click)="confirmDelete(utilisateur)">
+            </p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="8" class="text-center p-4">
+          <div *ngIf="termeRecherche; else noData" class="text-color-secondary">
+            <i class="pi pi-search" style="font-size: 2rem"></i>
+            <p class="mt-2">Aucun utilisateur trouvé pour "{{ termeRecherche }}"</p>
+            <p-button 
+              label="Réinitialiser la recherche" 
+              icon="pi pi-refresh" 
+              (click)="reinitialiserRecherche()"
+              class="mt-2">
+            </p-button>
+          </div>
+          <ng-template #noData>
+            <i class="pi pi-users" style="font-size: 2rem"></i>
+            <p class="mt-2">Aucun utilisateur trouvé</p>
+          </ng-template>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td colspan="8" class="text-center p-4">
+          <i class="pi pi-spinner pi-spin" style="font-size: 2rem"></i>
+          <p class="mt-2">Chargement des utilisateurs...</p>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Modal Ajout/Modification Utilisateur -->
+  <p-dialog 
+    [(visible)]="displayModal" 
+    [style]="{ width: '600px' }"
+    [header]="getModalTitle()"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <div class="grid p-fluid">
+      <div class="field col-6">
+        <label for="nom" class="block font-medium mb-2">Nom *</label>
+        <input 
+          id="nom"
+          type="text" 
+          pInputText 
+          [(ngModel)]="utilisateurForm.nom"
+          class="w-full"
+          placeholder="Entrez le nom"
+          required>
+      </div>
+
+      <div class="field col-6">
+        <label for="prenom" class="block font-medium mb-2">Prénom *</label>
+        <input 
+          id="prenom"
+          type="text" 
+          pInputText 
+          [(ngModel)]="utilisateurForm.prenom"
+          class="w-full"
+          placeholder="Entrez le prénom"
+          required>
+      </div>
+
+      <div class="field col-12">
+        <label for="email" class="block font-medium mb-2">Email *</label>
+        <input 
+          id="email"
+          type="email" 
+          pInputText 
+          [(ngModel)]="utilisateurForm.email"
+          class="w-full"
+          placeholder="Entrez l'email"
+          required>
+      </div>
+
+      <div class="field col-6">
+        <label for="poste" class="block font-medium mb-2">Poste *</label>
+        <input 
+          id="poste"
+          type="text" 
+          pInputText 
+          [(ngModel)]="utilisateurForm.poste"
+          class="w-full"
+          placeholder="Entrez le poste"
+          required>
+      </div>
+
+      <div class="field col-6">
+        <label for="telephone" class="block font-medium mb-2">Téléphone *</label>
+        <input 
+          id="telephone"
+          type="text" 
+          pInputText 
+          [(ngModel)]="utilisateurForm.telephone"
+          class="w-full"
+          placeholder="Entrez le téléphone"
+          required>
+      </div>
+
+      <div class="field col-6">
+        <label for="password" class="block font-medium mb-2">
+          {{ isEditMode ? 'Nouveau mot de passe' : 'Mot de passe *' }}
+        </label>
+        <input 
+          id="password"
+          type="password" 
+          pInputText 
+          [(ngModel)]="utilisateurForm.password"
+          class="w-full"
+          [placeholder]="isEditMode ? 'Laisser vide pour ne pas modifier' : 'Entrez le mot de passe'"
+          [required]="!isEditMode">
+      </div>
+
+      <div class="field col-6">
+        <label for="role" class="block font-medium mb-2">Rôle</label>
+        <p-dropdown
+          id="role"
+          [(ngModel)]="utilisateurForm.roleId"
+          [options]="roles"
+          optionLabel="nom"
+          optionValue="idRole"
+          placeholder="Sélectionnez un rôle"
+          [showClear]="true"
+          class="w-full">
+        </p-dropdown>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Annuler" 
+        icon="pi pi-times" 
+        (click)="displayModal = false" 
+        severity="secondary">
+      </p-button>
+      <p-button 
+        [label]="isEditMode ? 'Modifier' : 'Ajouter'" 
+        icon="pi pi-check" 
+        (click)="submitForm()" 
+        [disabled]="!utilisateurForm.nom || !utilisateurForm.prenom || !utilisateurForm.email || !utilisateurForm.poste || !utilisateurForm.telephone || (!isEditMode && !utilisateurForm.password)">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Modal Assignation de Rôle -->
+  <p-dialog 
+    [(visible)]="displayRoleModal" 
+    [style]="{ width: '500px' }"
+    header="Assigner un rôle"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <div class="p-fluid">
+      <div class="field">
+        <label for="roleAssign" class="block font-medium mb-2">Sélectionner un rôle</label>
+        <p-dropdown
+          id="roleAssign"
+          [(ngModel)]="selectedRoleId"
+          [options]="roles"
+          optionLabel="nom"
+          optionValue="idRole"
+          placeholder="Sélectionnez un rôle"
+          [showClear]="true"
+          class="w-full">
+        </p-dropdown>
+        <small class="text-color-secondary">
+          Laisser vide pour retirer le rôle actuel
+        </small>
+      </div>
+
+      <div *ngIf="selectedUtilisateur" class="mt-3 p-3 surface-ground border-round">
+        <h4 class="mt-0 mb-2">Utilisateur :</h4>
+        <p><strong>Nom :</strong> {{ selectedUtilisateur.prenom }} {{ selectedUtilisateur.nom }}</p>
+        <p><strong>Email :</strong> {{ selectedUtilisateur.email }}</p>
+        <p><strong>Rôle actuel :</strong> 
+          <span *ngIf="selectedUtilisateur.role; else noCurrentRole">
+            <p-tag [value]="selectedUtilisateur.role.nom" [severity]="getRoleBadge(selectedUtilisateur.role)"></p-tag>
+          </span>
+          <ng-template #noCurrentRole>
+            <span class="text-color-secondary">Aucun rôle</span>
+          </ng-template>
+        </p>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Annuler" 
+        icon="pi pi-times" 
+        (click)="displayRoleModal = false" 
+        severity="secondary">
+      </p-button>
+      <p-button 
+        label="Assigner le rôle" 
+        icon="pi pi-key" 
+        (click)="assignerRole()">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+</div>

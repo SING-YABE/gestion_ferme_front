@@ -1,0 +1,33 @@
+<mat-toolbar class="bg-dark-evol mat-elevation-z3 mat-elevation-z3 border-bottom-1 border-gray-200">
+
+  <div class="flex gap-3" style="width: 215px;">
+    <div>
+      <button (click)="sidebarToggle.emit($event)" mat-icon-button><mat-icon>menu</mat-icon></button>
+    </div>
+
+    <div class="align-items-center font-bold flex gap-2">
+
+      <ng-container *ngIf="appService.title | async as title">
+        {{ title }}
+      </ng-container>
+
+    </div>
+  </div>
+
+  <ng-container>
+    <div class="transition-delay-500 fadein">
+      <h4 class="font-light m-0 p-0"></h4>
+    </div>
+  </ng-container>
+
+
+  <span class="flex-1"></span>
+
+  <div class="flex gap-2 align-items-center">
+    <button mat-icon-button>
+      <mat-icon class="mat-18">notifications</mat-icon>
+    </button>
+    <button mat-icon-button><mat-icon class="mat-18">settings</mat-icon></button>
+  </div>
+
+</mat-toolbar>

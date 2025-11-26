@@ -1,0 +1,128 @@
+<div class="flex-column flex gap-3">
+  <div class="flex flex-row justify-content-between gap-2">
+    <div class=" flex-1 p-card h-6rem border-2 border-secondary flex flex-column">
+      <h2 class="mx-4 mt-1 mb-2 text-center" style="color:#8e64c1;">Activités</h2>
+      <div class="border-1 bg-secondary h-1 " style="margin-top:-6px; margin-bottom:6px"></div>
+
+      <div class="flex flex-row justify-content-center">
+
+        <div class="flex-1 p-1 h-5rem ml-2 flex flex-column  justify-content-center">
+          <h2 style="color:#009605;margin-top:-6px">Réalisées</h2>
+          <p style="margin-top:-18px">{{projectKPIs?.realisedTasks}} </p>
+        </div>
+        <div class="border-1 border-gray-300 mr-2 h-3rem " style="margin-top:-2px;"></div>
+
+        <div class="flex-1 p-1 h-5rem flex flex-column justify-content-center">
+          <h2 class="text-nowrap" style="color:#d46600;margin-top:-6px">En cours</h2>
+          <p style="margin-top:-18px">{{projectKPIs?.noRealisedTask}}</p>
+        </div>
+
+        <div class="border-1 border-gray-300 mr-2 h-3rem " style="margin-top:-2px;"></div>
+
+        <div class="flex-1 p-1 h-5rem flex flex-column justify-content-center">
+          <h2 class="text-nowrap" style="color:#eaca00;margin-top:-6px">En attente</h2>
+          <p style="margin-top:-18px">{{projectKPIs?.waitingTask}}</p>
+        </div>
+
+
+      </div>
+    </div>
+
+
+
+    <div class="flex-1 p-card border-2 h-6rem border-secondary flex flex-column justify-content-center">
+      <h2 class="mx-3 mt-1 text-nowrap" style="color:#8e64c1;margin-top:-6px">Risques enregistrés</h2>
+      <p class="mx-3" >{{projectKPIs?.totalRisks}}</p>
+    </div>
+
+    <!-- <div class="flex-1 p-card border-2 h-6rem border-secondary flex flex-column justify-content-center">
+      <h2 class="mx-3 mt-1 text-nowrap" style="color:#8e64c1;margin-top:-6px">Plans d'action enregistrés </h2>
+      <p class="mx-3" >{{projetPlanActionCount?.data}}</p>
+    </div> -->
+
+    <div class=" flex-1 p-card h-6rem border-2 border-secondary flex flex-column">
+      <h2 class="mx-4 mt-1 mb-2 text-center" style="color:#8e64c1;">Phases/Livrables</h2>
+      <div class="border-1 bg-secondary h-1 " style="margin-top:-6px; margin-bottom:6px"></div>
+
+      <div class="flex flex-row justify-content-center">
+
+        <div class="flex-1 p-1 h-5rem flex flex-column  justify-content-center">
+          <h2 style="color:#009605;margin-top:-6px">Terminées</h2>
+          <p style="margin-top:-18px">{{getPhaseCount("GO")}} </p>
+        </div>
+
+        <div class="border-1 border-gray-300 mr-2 h-3rem" style="margin-top:-2px;"></div>
+
+        <div class="flex-1 p-1 h-5rem flex flex-column justify-content-center">
+          <h2 class="text-nowrap" style="color:#d46600;margin-top:-6px">En cours</h2>
+          <p style="margin-top:-18px">{{getPhaseCount("IN_PROGRESS")}}</p>
+        </div>
+        <div class="border-1 border-gray-300 mr-2 h-3rem" style="margin-top:-2px;"></div>
+
+        <div class="flex-1 p-1 h-5rem flex flex-column justify-content-center">
+          <h2 class="text-nowrap" style="color:#eaca00;margin-top:-2px">En attente</h2>
+          <p style="margin-top:-18px">{{getPhaseCount("PENDING")}}</p>
+        </div>
+      </div>
+    </div>
+
+  <div class="flex-1 p-card border-2 h-6rem border-secondary flex flex-row justify-content-center align-items-center">
+  
+  <div class="flex-1 flex flex-column justify-content-center align-items-center text-center px-2">
+    <h2 class="mt-1 text-nowrap" style="color:#069f4b; margin-top:-6px; font-size: 0.9rem;">Fin négociée</h2>
+    <p class="m-0" style="font-size: 0.8rem;">{{ projectKPIs?.plannedEndDate != null ? (projectKPIs?.plannedEndDate | date : 'dd/MM/YYYY') : "Pas de plannedEndDate !" }}</p>
+  </div>
+
+  <div class="border-left-1 border-300 h-4rem"></div>
+  
+  <div class="flex-1 flex flex-column justify-content-center align-items-center text-center px-2">
+    <h2 class="mt-1 text-nowrap" style="color:#8e64c1; margin-top:-6px; font-size: 0.9rem;">Clôture négociée</h2>
+    <p class="m-0" style="font-size: 0.8rem;">{{ projectKPIs?.negoClosingDate != null ? (projectKPIs?.negoClosingDate | date : 'dd/MM/YYYY') : "Pas de negoClosingDate!" }}</p>
+  </div>
+
+  <div class="border-left-1 border-300 h-4rem"></div>
+  
+  <div class="flex-1 flex flex-column justify-content-center align-items-center text-center px-2">
+    <h2 class="mt-1 text-nowrap" style="color:#c92121; margin-top:-6px; font-size: 0.9rem;">Écart</h2>
+    <p class="m-0" style="font-size: 0.8rem;">{{ projectKPIs?.ecartEnJour != null ? projectKPIs.ecartEnJour + ' jours' : 'RAS' }}</p>
+  </div>
+
+</div>
+  </div>
+
+  <div class=" flex gap-3">
+    <div class="p-card p-3 bg-orange-50 h-24rem" style="width: 33%;">
+      <h2>Consommation du budget</h2>
+      <div class="circle-progress" [style.background]="getProgressBackground()"
+        style="width:250px !important; height:250px !important; margin: auto;">
+        <div class="circle-progress__content" style="width: 200px; height: 200px">
+          <span class="circle-progress__value" style="color: #f84; font-size: 30px">{{ projectBudgetCount
+            }}%</span>
+        </div>
+      </div>
+    </div>
+    <div class="p-card p-3 h-24rem" style="width: 33%;">
+      <h2>Risque par catégorie</h2>
+      <div *ngIf="riskCategorie?.length === 0" style="text-align: center;margin-top: 90px">
+        <img src="assets/image/smile.png" alt="">
+        <p class="mt-2">Aucun risque enregistré</p>
+      </div>
+      <div style="width:300px; margin: auto">
+        <p-chart type="pie" [data]="dataRiskCategorie" [options]="options" class="w-full" />
+      </div>
+
+    </div>
+    <div class="p-card p-3 h-24rem" style="width: 33%;">
+      <h2>Risque par statut</h2>
+      <div *ngIf="riskStatut?.length === 0" style="text-align: center; margin-top: 90px">
+        <img src="assets/image/smile.png" alt="">
+        <p class="mt-2">Aucun risque enregistré</p>
+      </div>
+      <div style="width:300px; margin: auto">
+        <p-chart type="pie" [data]="dataRiskStatut" [options]="options" class="w-full" />
+      </div>
+    </div>
+  </div>
+
+
+</div>

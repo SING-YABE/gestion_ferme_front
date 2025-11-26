@@ -1,0 +1,138 @@
+/* Global styles for orange theme */
+:root {
+    --primary-color: #FF6F00; /* Orange color */
+    --hover-color: #FF8F1F;  /* Lighter orange on hover */
+}
+
+/* .user-profile container */
+.user-profile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+}
+
+/* Profile card styling */
+.profile-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+}
+
+/* Profile header styles */
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--primary-color);
+}
+
+.user-role {
+    font-size: 1.2rem;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Profile info section */
+.profile-body {
+    margin-bottom: 30px;
+}
+
+/* Display profile info in two columns */
+.profile-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Affiche deux colonnes */
+    gap: 20px;
+}
+
+/* Email and Expiration side by side */
+.info-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* Align icons and titles side by side */
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.info-item i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+/* Permissions section */
+.permissions-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.permissions-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+}
+
+.permissions-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    color: #555;
+}
+
+.permissions-list i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+/* Footer and button styling */
+.profile-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.p-button {
+    font-size: 1.1rem;
+    padding: 12px 25px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--primary-color);
+    color: rgb(3, 3, 3);
+    border: none;
+}
+
+.p-button:hover {
+    background-color: var(--hover-color);
+}
+
+.p-button .pi {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+}

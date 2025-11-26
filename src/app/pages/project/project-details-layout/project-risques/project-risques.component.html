@@ -1,0 +1,200 @@
+<div>
+
+  <div style="margin-top: -10px; margin-left: -30px; margin-right: -30px" class="flex mb-3 gap-3 pl-3 pr-3 pb-2 align-items-center h-8rem bg-primary">
+    <div style="margin-top: -15px" class="flex-1 pl-3">
+      <h4>{{projectId}} > Liste des risques du projet</h4>
+    </div>
+    <div style="margin-top: -20px">
+      <app-risque-form *appHasPermission="['add_risk']" (onDone)="loadData()"></app-risque-form>
+    </div>
+  </div>
+
+  <div style="margin-top: -75px" class="odyssey-shadow-low border-round">
+    <div>
+      <p-table [loading]="loading" [value]="risques" [rows]="20" [paginator]="true">
+          <ng-template pTemplate="header">
+            <tr class="bg-white">
+              <th pSortableColumn="name">Nom du risque <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="type">Type de risque <p-sortIcon field="type"></p-sortIcon></th>
+              <th pSortableColumn="impact">Impact <p-sortIcon field="impact"></p-sortIcon></th>
+              <th style="text-align: center;">Actions</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-risque>
+            <tr>
+              <td>
+                <a [routerLink]="['risque-action-plans', risque.id]">{{ risque.name }}</a>
+              </td>
+              <td>{{ risque.riskType.name }}</td>
+              <td>{{ risque.impact }}</td>
+              <td>
+                <div class="flex gap-2 justify-content-center">
+                  <app-risque-form *appHasPermission="['update_risk']" [target]="risque" mode="edit" (onDone)="loadData()"></app-risque-form>
+                  <button *appHasPermission="['delete_risk']" (click)="handleDelete(risque)" class="p-button-rounded p-button-danger" pButton icon="pi pi-trash"></button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td class="text-center px-2 py-3" colspan="5">
+                <div>
+                  <h3 class="font-normal">Aucun risque trouvé</h3>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+    </div>
+  </div>
+</div>
+
+<p-dialog [(visible)]="displayDetails" [modal]="true" [header]="'Détails du Risque'" [style]="{width: '50vw'}">
+  <div class="p-fluid modal-grid">
+    <div class="p-field">
+      <label>Nom du risque</label>
+      <p>{{ selectedRisque?.name }}</p>
+    </div>
+    <div class="p-field">
+      <label>Type</label>
+      <p>{{ selectedRisque?.type }}</p>
+    </div>
+    <div class="p-field">
+      <label>Description</label>
+      <p>{{ selectedRisque?.description }}</p>
+    </div>
+
+    <div class="p-field">
+      <label>Impact</label>
+      <p>{{ selectedRisque?.impact }}</p>
+    </div>
+    <div class="p-field">
+      <label>Statut</label>
+      <p>{{ selectedRisque?.status }}</p>
+    </div>
+    <div class="p-field">
+      <label>Types de risque</label>
+      <p>{{ selectedRisque?.riskCategoryId }}</p>
+    </div>
+    <div class="p-field">
+      <label>Plan de mitigation</label>
+      <p>{{ selectedRisque?.mitigationPlan }}</p>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton label="Fermer" icon="pi pi-times" (click)="displayDetails = false"></button>
+  </ng-template>
+</p-dialog>
+
+<style>
+.modal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+</style>
+
+
+<p-confirmDialog appendTo="body"></p-confirmDialog>
+
+<p-dialog [(visible)]="displayDetails" [modal]="true" [header]="'Détails du Risque'" [style]="{width: '50vw'}">
+  <div class="p-fluid modal-grid">
+    <div class="p-field">
+      <label>Nom du risque</label>
+      <p>{{ selectedRisque?.name }}</p>
+    </div>
+    <div class="p-field">
+      <label>Type</label>
+      <p>{{ selectedRisque?.type }}</p>
+    </div>
+    <div class="p-field">
+      <label>Description</label>
+      <p>{{ selectedRisque?.description }}</p>
+    </div>
+
+    <div class="p-field">
+      <label>Impact</label>
+      <p>{{ selectedRisque?.impact }}</p>
+    </div>
+    <div class="p-field">
+      <label>Statut</label>
+      <p>{{ selectedRisque?.status }}</p>
+    </div>
+    <div class="p-field">
+      <label>Type de risque</label>
+      <p>{{ selectedRisque?.riskCategoryId }}</p>
+    </div>
+    <div class="p-field">
+      <label>Plan de mitigation</label>
+      <p>{{ selectedRisque?.mitigationPlan }}</p>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton label="Fermer" icon="pi pi-times" (click)="displayDetails = false"></button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="displayActionPlans"
+ [modal]="true"
+ [header]="'Plans d\'action associés au risque' "
+ [style]="{width: '70vw'}"
+ [maximizable]="true"
+ appendTo="body">
+ <ng-template pTemplate="header">
+  <div class="header-content" style="display: flex; align-items: center; gap: 5px;">
+    <h2 class="mt-2" style="margin: 0; white-space: nowrap;">Plans d'action associés au risque: {{ selectedRisque?.name }}</h2>
+  </div>
+</ng-template>
+
+  <div>
+    <div class="odyssey-shadow-low bg-white border-round">
+      <div *ngIf="loading" class="flex justify-content-center p-4">
+        <p-progressSpinner></p-progressSpinner>
+      </div>
+
+      <div *ngIf="!loading">
+        <p-table [value]="actionPlans" [rows]="5" [paginator]="true">
+          <ng-template pTemplate="header">
+            <tr class="bg-white">
+              <th pSortableColumn="title">Titre <p-sortIcon field="title"></p-sortIcon></th>
+              <th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
+              <th pSortableColumn="deadLine">Date d'échéance <p-sortIcon field="deadLine"></p-sortIcon></th>
+              <th pSortableColumn="progress">Progression <p-sortIcon field="progress"></p-sortIcon></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-plan>
+            <tr>
+              <td>{{ plan.title }}</td>
+              <td>{{ plan.description }}</td>
+              <td>{{ plan.deadLine | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <div class="flex align-items-center">
+                  <p-progressBar [value]="plan.progress" [style]="{'width':'70%'}"></p-progressBar>
+                  <span class="ml-2">{{ plan.progress }}%</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td class="text-center px-2 py-3" colspan="5">
+                <div>
+                  <h3 class="font-normal">Aucun plan d'action trouvé pour ce risque</h3>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="paginatorleft">
+            Total: {{actionPlans.length || 0}} plan(s) d'action
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Fermer" icon="pi pi-times" (click)="displayActionPlans = false" class="p-button-secondary"></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog appendTo="body"></p-confirmDialog>

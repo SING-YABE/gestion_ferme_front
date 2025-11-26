@@ -1,0 +1,65 @@
+<div class="odyssey-shadow-low border-round" style="background:#F5F0E6; border:1px solid #D9D2C2;">
+    
+    <div class="px-4 py-2 flex gap-3 align-items-center"
+        style="background:#16A34A; color:white; border-radius:8px 8px 0 0;">
+        <div class="flex-1">
+            <h5 class="m-0">Suivi des reproductions</h5>
+        </div>
+        <div>
+            <app-suivi-reproduction-form (onUpdate)="loadData()"></app-suivi-reproduction-form>
+        </div>
+    </div>
+
+    <div>
+        <p-table [value]="suivis" [loading]="loading" [rows]="pageSize" [rowsPerPageOptions]="[5,10,20]"
+            [paginator]="suivis.length>pageSize">
+            <ng-template pTemplate="header">
+                <tr style="background:#DCFCE7;">
+                    <th>Truie ID</th>
+                    <th>Verrat ID</th>
+                    <th>Date Saillie</th>
+                    <th>Date Mise Bas Prévue</th>
+                    <th>Nés Vivants</th>
+                    <th>Morts Nés</th>
+                    <th>Sevrés</th>
+                    <th>Observations</th>
+                    <th style="text-align:center; width:150px;">Actions</th>
+                </tr>
+            </ng-template>
+
+
+            <ng-template pTemplate="body" let-suivi>
+                <tr>
+                    <td>{{ suivi.truie.codeAnimal }} ({{ suivi.truie.typeAnimal.nom }})</td>
+                    <td>{{ suivi.verrat.codeAnimal }} ({{ suivi.verrat.typeAnimal.nom }})</td>
+                    <td>{{ suivi.dateSaillie }}</td>
+                    <td>{{ suivi.dateMiseBasPrevue }}</td>
+                    <td>{{ suivi.nbNesVivants || '-' }}</td>
+                    <td>{{ suivi.nbMortsNes || '-' }}</td>
+                    <td>{{ suivi.nbSevres || '-' }}</td>
+                    <td>{{ suivi.observations || '-' }}</td>
+                    <td class="text-center">
+                        <div class="flex gap-2 justify-content-center">
+                            <app-suivi-reproduction-form [target]="suivi" mode="edit" (onUpdate)="loadData()">
+                            </app-suivi-reproduction-form>
+                            <button pButton class="p-button-rounded" icon="pi pi-trash"
+                                style="background:#B91C1C; border-color:#B91C1C;" (click)="confirmDelete(suivi)">
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="9" class="text-center py-4">
+                        <i class="pi pi-inbox mr-2"></i> Aucun suivi reproduction trouvé
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>

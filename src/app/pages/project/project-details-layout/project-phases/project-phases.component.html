@@ -1,0 +1,25 @@
+@if (projectDetails != undefined) {
+  <div >
+    <div class="phases-bar">
+      @for (phase of sortByOrderNumber(projectDetails.phases); track phase.id) {
+        <a
+          routerLinkActive="active"
+          [routerLink]="['/projects/details',projectId,'phases', phase.id]"
+          class="phase-tab"
+          [ngClass]="{
+            'phase-rejete': phase.phaseStatusLabel === 'Rejeté',
+            'phase-valide': phase.phaseStatusLabel === 'Validé',
+            'phase-reserve': phase.phaseStatusLabel === 'Réservé',
+            'phase-encours': phase.phaseStatusLabel === 'En cours',
+            'phase-attente': phase.phaseStatusLabel === 'En attente'
+          }"
+        >
+          {{ phase.name }}
+        </a>
+      }
+    </div>
+    <div>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+}

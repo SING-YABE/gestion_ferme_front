@@ -1,0 +1,78 @@
+.gauge-container {
+  position: relative;
+  width: 50px; /* Largeur de la jauge */
+  background-color: #f1f1f1; /* Couleur de fond */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.gauge-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+.gauge-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ed6c27;
+  transition: height 0.5s ease; /* Animation fluide */
+}
+
+.gauge-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+}
+
+.card-bordered {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px 0 rgba(60,60,60,0.04);
+  padding: 14px 18px 10px 18px;
+  min-width: 150px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.circle-progress-modern {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-fill {
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.progress-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+

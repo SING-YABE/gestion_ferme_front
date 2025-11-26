@@ -1,0 +1,68 @@
+
+
+<button style="background-color: rgba(0,0,0,0.42); margin-bottom: 20px !important; margin-right: 13px" *ngIf="mode == 'create'" (click)="handleShowForm()" icon="pi pi-plus" class="p-button-sm" pButton label="Nouveau PO"></button>
+
+<p-dialog [modal]="true" appendTo="body" header="Nouveau PO" [style]="{width: '650px'}" [(visible)]="showForm">
+
+  <form id="depenseForm" [formGroup]="poForm" (ngSubmit)="handleSavePo()">
+
+   <div class="flex mb-2 gap-3">
+     <div class="field flex-1">
+       <label for="dateEmision">Date d'émission</label>
+       <p-calendar formControlName="dateEmision" appendTo="body" type="text" id="dateEmision"></p-calendar>
+     </div>
+
+     <div class="field flex-1">
+       <label for="numeroPo">Numéro PO</label>
+       <input id="numeroPo" formControlName="numeroPo" type="text" pInputText>
+     </div>
+   </div>
+    <div class="flex mb-2 gap-3">
+      <div class="field flex-1">
+        <label for="fournisseur">Fournisseur</label>
+        <input id="fournisseur" formControlName="fournisseur" type="text" pInputText>
+      </div>
+
+      <div class="field flex-1">
+        <label for="totalAmount">Montant</label>
+        <input id="totalAmount" formControlName="totalAmount" type="number" pInputText>
+      </div>
+    </div>
+    <div class="field flex-1">
+      <label for="po">Code budgetaire</label>
+      <p-dropdown filterBy="item.ligneBudgetDTO.codeBudgetDto.code" [filter]="true" id="po" optionValue="id" formControlName="projectLigneId" [options]="ligneBudgetaires">
+        <ng-template pTemplate="item" let-item>
+          <div class="flex align-items-center gap-2">
+            <div class="flex-1">{{ item.ligneBudgetDTO?.codeBudgetDto?.code }}</div>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="selectedItem" let-selectedOption>
+          <div class="flex align-content-start gap-2">
+            <div class="flex-1">
+              {{ selectedOption.ligneBudgetDTO?.codeBudgetDto?.code }}
+            </div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+
+    <div class="field">
+      <label for="description">Description</label>
+      <input id="description" formControlName="description" type="text" pInputText>
+    </div>
+
+
+    <div class="field">
+      <label for="description">Fichier joint</label>
+      <input formControlName="file" (change)="onUpload($event)" type="file">
+    </div>
+
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button class="mr-2 p-button-outlined p-button-danger" pButton label="Annuler" (click)="showForm = false"></button>
+    <button [loading]="processing" [disabled]="!poForm.valid" type="submit" form="depenseForm" pButton label="Enregister"></button>
+  </ng-template>
+
+</p-dialog>

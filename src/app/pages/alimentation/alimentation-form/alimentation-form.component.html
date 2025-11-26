@@ -1,0 +1,161 @@
+<button
+  *ngIf="mode === 'create'" 
+  pButton 
+  icon="pi pi-plus" 
+  label="Nouvelle alimentation"
+  class="p-button-success"
+  style="background:#2E7D32; border-color:#2E7D32;"
+  (click)="handleShow()">
+</button>
+
+<p-dialog 
+  [(visible)]="showForm" 
+  [modal]="true"
+  appendTo="body"
+  header="Alimentation"
+  [style]="{width: '750px'}"
+  styleClass="farm-dialog"
+>
+  <form [formGroup]="form" id="alimentationForm" (ngSubmit)="handleSubmit()">
+
+    <div class="field">
+      <label>Date</label>
+      <input type="date" pInputText formControlName="date">
+    </div>
+
+    <div class="field">
+      <label>Type d'aliment *</label>
+      <p-dropdown 
+        formControlName="typeAlimentId"
+        [options]="typeAliments"
+        optionLabel="libelle"
+        optionValue="id"
+        placeholder="Sélectionner un type d'aliment"
+        [filter]="true"
+      ></p-dropdown>
+    </div>
+
+    <!-- Mode de sélection -->
+    <div class="field">
+      <label class="block mb-2">Mode d'alimentation</label>
+      <div class="flex gap-3">
+        <button 
+          type="button"
+          pButton 
+          label="Animal individuel"
+          [class]="modeAlimentation === 'individuel' ? 'p-button-success' : 'p-button-outlined'"
+          [style]="modeAlimentation === 'individuel' ? 'background:#2E7D32; border-color:#2E7D32;' : 'color:#2E7D32; border-color:#2E7D32;'"
+          (click)="switchMode('individuel')">
+        </button>
+        <button 
+          type="button"
+          pButton 
+          label="Alimentation par lot"
+          [class]="modeAlimentation === 'lot' ? 'p-button-success' : 'p-button-outlined'"
+          [style]="modeAlimentation === 'lot' ? 'background:#2E7D32; border-color:#2E7D32;' : 'color:#2E7D32; border-color:#2E7D32;'"
+          (click)="switchMode('lot')">
+        </button>
+      </div>
+    </div>
+
+    <!-- Sélection Animal individuel -->
+    <div class="field" *ngIf="modeAlimentation === 'individuel'">
+      <label>Code Animal</label>
+      <p-dropdown 
+        formControlName="animalId"
+        [options]="animaux"
+        optionLabel="codeAnimal"
+        optionValue="id"
+        placeholder="Sélectionner un animal"
+        [filter]="true"
+      ></p-dropdown>
+    </div>
+
+    <!-- Sélection Type Animal (lot) -->
+    <div class="field" *ngIf="modeAlimentation === 'lot'">
+      <label>Type d'animal (Lot)</label>
+      <p-dropdown 
+        formControlName="typeAnimalId"
+        [options]="typeAnimaux"
+        optionLabel="nom"
+        optionValue="id"
+        placeholder="Sélectionner un type d'animal"
+        [filter]="true"
+      ></p-dropdown>
+    </div>
+
+    <div class="grid">
+      <div class="col-6">
+        <div class="field">
+          <label>Quantité (Kg) *</label>
+          <input
+            pInputText
+            type="number"
+            step="0.01"
+            formControlName="quantiteKg"
+          />
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="field">
+          <label>Prix unitaire (FCFA/Kg) *</label>
+          <input
+            pInputText
+            type="number"
+            step="0.01"
+            formControlName="prixUnitaire"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Fournisseur</label>
+      <p-dropdown 
+        formControlName="fournisseurId"
+        [options]="fournisseurs"
+        optionLabel="nom"
+        optionValue="id"
+        placeholder="Sélectionner un fournisseur (optionnel)"
+        [filter]="true"
+        [showClear]="true"
+      ></p-dropdown>
+    </div>
+
+    <!-- Affichage du coût total calculé -->
+    <div class="field" style="background:#E8F5E9; padding:1rem; border-radius:8px; border:1px solid #4CAF50;">
+      <div class="flex justify-content-between align-items-center">
+        <span style="font-weight:600; color:#1B5E20;">Coût total calculé :</span>
+        <span style="font-size:1.25rem; font-weight:700; color:#2E7D32;">
+          {{ coutTotal | number:'1.2-2' }} FCFA
+        </span>
+      </div>
+    </div>
+
+  </form>
+
+  <ng-template pTemplate="footer">
+
+    <button 
+      pButton 
+      class="p-button-outlined mr-2"
+      style="color:#2E7D32; border-color:#2E7D32;" 
+      (click)="showForm = false">
+      Annuler
+    </button>
+
+    <button 
+      pButton 
+      class="p-button-success"
+      form="alimentationForm"
+      type="submit"
+      [loading]="processing"
+      [disabled]="!form.valid"
+      style="background:#1B5E20; border-color:#1B5E20;">
+      Enregistrer
+    </button>
+
+  </ng-template>
+
+</p-dialog>

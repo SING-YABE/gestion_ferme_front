@@ -1,0 +1,339 @@
+<div class="bg-white">
+  @if (loading){
+
+  <div class="py-6 flex justify-content-center">
+    <p-progressSpinner animationDuration=".5s" strokeWidth="5"></p-progressSpinner>
+  </div>
+
+  } @else if(phaseDetails != undefined) {
+  <div>
+    <div class="flex gap-3 p-2 align-items-center">
+            <span *ngIf="phaseDetails.phaseStatusLabel" class="badge-phase-status" [ngClass]="{
+        'bg-red-500 text-white': phaseDetails.phaseStatusLabel === 'Rejeté',
+        'bg-green-200 text-black': phaseDetails.phaseStatusLabel === 'Validé',
+        'bg-green-100 text-black': phaseDetails.phaseStatusLabel === 'Réservé',
+        'bg-orange-200 text-black': phaseDetails.phaseStatusLabel === 'En cours',
+        'bg-yellow-200 text-black': phaseDetails.phaseStatusLabel === 'En attente'
+      }">
+        {{ phaseDetails.phaseStatusLabel }}
+      </span>
+      <div class="flex-column flex gap-1">
+        <div class="text-gray-700">Date de démarrage</div>
+        <div class="font-bold">{{ (phaseDetails.startDate | date:'dd/MM/yyyy')??'-' }}</div>
+      </div>
+      <div class="flex-column flex gap-1">
+        <div class="text-gray-700">Date de passage de jalon prévisionnelle</div>
+        <div class="font-bold">{{ (phaseDetails.plannedEndDate | date:'dd/MM/yyyy')??'-' }}</div>
+      </div>
+      <div class="flex-column flex gap-1">
+        <div class="text-gray-700">Date de passage de jalon négocié</div>
+        <div class="font-bold">{{ (phaseDetails.negociateEndDate | date:'dd/MM/yyyy')??'-' }}</div>
+      </div>
+      <div class="flex-column flex gap-1">
+        <div class="text-gray-700">Date de passage de jalon réel</div>
+        <div class="font-bold">{{ (phaseDetails.actualEndDate | date:'dd/MM/yyyy')??'-' }}</div>
+      </div>
+      <span class="flex-1"></span>
+
+      <!-- phase-details.component.html -->
+<!-- <div *ngIf="phaseDetails.phaseStatusLabel === 'En cours' && livrableOk" class="flex gap-2"> -->
+<!-- <div>
+  <button title="Demander approbation" class="p-button-primary" pButton 
+          (click)="approvalRequestModal = true">
+    Demander approbation
+  </button>
+</div> -->
+<div *ngIf="phaseDetails.phaseStatusLabel === 'En cours' && livrableOk && hasViewApprobation()" class="flex gap-2">
+  <button 
+    title="Demander approbation" 
+    class="p-button-primary" 
+    pButton 
+    [disabled]="desactiverBoutonApprobation()"
+    (click)="approvalRequestModal = true">
+    {{ obtenirTexteBoutonApprobation() }}
+  </button>
+   <div *ngIf="desactiverBoutonApprobation()" class="text-red-600 mt-2 text-base">
+    {{ messageBoutonDesactive() }}
+  </div>
+</div>
+
+<!-- <div>
+<button
+title="{{ getApprovalButtonText() }}"
+class="p-button-primary"
+pButton
+[disabled]="shouldDisableApprovalButton()"
+[class.p-button-secondary]="isAwaitingApproval"
+(click)="approvalRequestModal = true">
+{{ getApprovalButtonText() }}
+</button>
+</div> -->
+
+
+<p-dialog header="Demande d'approbation" [modal]="true" [(visible)]="approvalRequestModal" [style]="{ width: '30rem' }">
+  <form [formGroup]="approvalForm">
+  
+     <div class="field mb-4">
+      <label for="requestComment">Commentaire <span class="text-danger"></span></label>
+      <textarea formControlName="requestComment" pInputTextarea id="requestComment" rows="5" 
+                placeholder="Veuillez expliquer votre demande d'approbation..."></textarea>
+      <small *ngIf="approvalForm.get('requestComment')?.invalid && approvalForm.get('requestComment')?.touched" 
+             class="p-error">
+        Le commentaire est obligatoire
+      </small>
+    </div>
+    
+    <div class="modal-footer mt-4">
+      <p-button label="Annuler" severity="danger" icon="pi pi-times" 
+                (click)="approvalRequestModal = false" />
+      <p-button label="Envoyer la demande" icon="pi pi-send" 
+                (click)="requestApproval()" [disabled]="approvalForm.invalid" />
+    </div>
+
+
+  </form>
+</p-dialog>
+      <div class="flex gap-2">
+        <button *appHasPermission="['edit_phase_planning']" (click)="showJalonEditModal()"
+          title="Editer le planning de la phase" icon="pi pi-pencil"
+          class="p-button-contrast p-button-raised p-button-rounded" pButton></button>
+      </div>
+    </div>
+    <p-divider></p-divider>
+<div class="mt-4">
+  <div class="flex align-items-center">
+      <div class="flex-1">
+        <h3 class="m-0">Phases intermédiaires du jalon (checklists)</h3>
+      </div>
+    </div> &nbsp;
+
+  <div *ngIf="phaseDetails?.checklists?.length > 0; else noChecklists">
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+    <div
+      *ngFor="let checklist of phaseDetails.checklists"
+      class="group relative bg-white p-3 rounded-lg border-2 hover:shadow-lg hover:border-orange-400 transition-all duration-200 cursor-pointer"
+      [class]="checklist.checked ? 'border-green-400 bg-green-50' : 'border-gray-200'"
+      (click)="toggleChecklist(checklist)"
+    >
+      
+      <div class="flex items-start gap-3">
+        <!-- Checkbox-->
+        <div class="flex-shrink-0 mt-0.5">
+          <input
+            type="checkbox"
+            class="w-5 h-5 text-orange-500 border-2 border-gray-400 rounded focus:ring-orange-400 cursor-pointer"
+            [checked]="checklist.checked"
+            (click)="$event.stopPropagation()"
+            (change)="toggleChecklist(checklist)"
+            aria-label="Cocher la checklist"
+          />
+        </div>
+        
+        <!-- Contenu -->
+        <div class="flex-1 min-w-0">
+          <div
+            class="text-sm font-semibold leading-tight mb-1"
+            [class]="checklist.checked ? 'text-green-700 line-through' : 'text-gray-800'"
+            title="{{ checklist.label }}"
+          >
+            {{ checklist.label }}
+          </div>
+          
+          <!-- gain -->
+          <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold"
+               [class]="checklist.checked ? 'bg-green-200 text-green-800' : 'bg-orange-200 text-orange-800'">
+            Gain : {{ checklist.gain }} %
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <ng-template #noChecklists>
+    <div class="text-center py-2 text-gray-500">
+      <p class="mt-1 text-sm text-gray-500">Aucune checklist disponible.</p>
+    </div>
+  </ng-template>
+</div> &nbsp;
+
+    <div class="flex align-items-center">
+      <div class="flex-1">
+        <h3 class="m-0">Livrables du jalon</h3>
+      </div>
+    </div>
+
+    <!-- Structure en deux colonnes égales -->
+    <div class="flex gap-4 mt-3" style="min-height: 350px;">
+      <!-- Colonne gauche : dossiers (50%) -->
+      <div class="w-6 border-right-2 border-gray-300 p-3" style="min-width: 260px;">
+        <div class="flex column flex-column gap-2">
+          @for (item of deliverables; track $index){
+          <div class="flex align-items-center mb-2" style="position:relative;">
+            <div class="dossier-livrable p-2 border-round flex align-items-center gap-3 flex-1"
+                 [ngClass]="{'dossier-selected': selectDeliverable() && selectDeliverable().id === item.id}"
+                 (click)="handleSelect(item); currentLivrable = item; getListFichiers()"
+                 style="cursor:pointer;">
+              <fa-icon [class]="item.mandatory ? 'text-red-400' : 'text-yellow-500'" size="2x" [icon]="faFolder"></fa-icon>
+              <div class="flex flex-column">
+                <div class="text-black font-medium">{{ item.name }}</div>
+                <div class="text-gray-500">
+                  <small class="text-xs">{{item.fileNumber}} fichiers joint</small>
+                </div>
+              </div>
+            </div>
+            <div class="ml-2 flex align-items-center" style="height:100%;">
+              <button pButton
+                      type="button"
+                      (click)="showLivrableFiles(item); $event.stopPropagation()"
+                      icon="pi pi-plus"
+                      class="p-button-rounded p-button-text p-button-sm plus-btn"
+                      style="color: orange; background: transparent; border: none; box-shadow: none;">
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+      <!-- Colonne droite : fichiers du livrable sélectionné (50%) -->
+      <div class="w-6 bg-white p-3 border-round" style="min-width: 320px;">
+        <h4 class="mb-3">Fichiers du livrable</h4>
+        <ng-container *ngIf="files.length > 0; else noFilesBlock">
+          <ul class="list-group">
+            <li *ngFor="let file of files"
+                class="filebox pl-3 pr-3 hover:bg-gray-50 list-group-item d-flex justify-content-between align-items-center mb-2">
+              <div class="flex" style="width: 100%">
+                <div>
+                  <i *ngIf="file.contentType === 'pdf'" class="pi pi-file-pdf mt-3" style="font-size: 2rem; color: red"></i>
+                  <i *ngIf="file.contentType === 'xlsx'" class="pi pi-file-excel mt-3" style="font-size: 2rem; color: darkgreen"></i>
+                  <i *ngIf="file.contentType === 'docx' || file.contentType === 'DOCX'" class="pi pi-file-word mt-3" style="font-size: 2rem; color: darkblue"></i>
+                  <i *ngIf="file.contentType !== 'docx' && file.contentType !== 'DOCX' && file.contentType !== 'pdf' && file.contentType !== 'xlsx'" class="pi pi-image mt-3" style="font-size: 2rem; color: gray"></i>
+                </div>
+                <div class="-mt-2 ml-4" style="width: 80%">
+                  <p class="text-truncate mt-3" style="max-width: 70%;">{{file?.fileName}} </p>
+                  <p class="text-gray-700 -mt-3 text-sm">Ajouté par : {{file?.author}} le {{formatCreatedAt(file?.createdAt)}} </p>
+                  <p class="text-gray-800 font-medium -mt-3 text-sm">{{file.size | formatFileSize}}</p>
+                </div>
+              </div>
+              <i class="pi pi-download text-primary" style="cursor: pointer; font-size: 1.2rem; margin-left: 10px;"
+                (click)="downloadFiles(file.downloadUrl.split('/').pop(), file.fileName)" title="Télécharger">
+              </i>
+            </li>
+          </ul>
+        </ng-container>
+        <ng-template #noFilesBlock>
+          <div class="no-files text-center text-gray-700 mt-6">Aucun fichier disponible</div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Dans la colonne de droite, afficher la zone d'upload si showUpload est true -->
+    <div *ngIf="showUpload" class="mt-3">
+      <div class="field">
+        <label for="file">Fichier joint</label>
+        <input (change)="handleDocuments($event)" type="file" id="file" multiple #upload>
+      </div>
+      <div *ngIf="filesToUpload.length > 0">
+        <div class="flex justify-end gap-2 mt-3">
+          <p-button (click)="handleUploadFiles()" label="Valider l'upload" />
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+    <style>
+      .dossier-livrable {
+        transition: background 0.2s, font-weight 0.2s;
+        cursor: pointer;
+      }
+      .dossier-livrable:hover {
+        background: #ffe5c2 !important;
+        font-weight: bold;
+      }
+      .dossier-selected {
+        background: #ffb366 !important;
+        font-weight: bold;
+        color: #000;
+      }
+      .plus-btn, .plus-btn:hover, .plus-btn:focus {
+        background: transparent !important;
+        box-shadow: none !important;
+        font-weight: normal !important;
+      }
+      .plus-btn:hover {
+        background: transparent !important;
+        color: #ff9800 !important;
+      }
+    </style>
+
+
+  </div>
+  }
+</div>
+
+<p-overlayPanel #deliverablePop>
+  <div>
+
+    <p-chips></p-chips>
+
+    <button pButton class="mt-2" label="Enregistrer"></button>
+
+  </div>
+</p-overlayPanel>
+
+
+<p-dialog appendTo="body" [style]="{width: '50%'}" pAnimate position="center" [modal]="true"
+  [(visible)]="livrableFilesShow">
+  <ng-template pTemplate="header">
+    <div class="w-full">
+      <h3 class="m-0">Fichiers joints du livrable</h3>
+    </div>
+  </ng-template>
+
+  <div class="field">
+    <label for="file">Fichier joint</label>
+    <input (change)="handleDocuments($event)" type="file" id="file" multiple #upload>
+  </div>
+
+  <!-- Affichage des fichiers sélectionnés avant validation -->
+  <div *ngIf="filesToUpload.length > 0">
+    <div class="flex justify-end gap-2 mt-3">
+      <p-button (click)="handleUploadFiles()" label="Valider l'upload" />
+    </div>
+  </div>
+</p-dialog>
+
+
+
+<p-dialog header="Edition" [modal]="true" [(visible)]="phaseModalEditShow" [style]="{ width: '35rem' }" [focusOnShow]="false">
+  <form [formGroup]="phaseEditForm" action="">
+    <div class="field">
+      <label for="startedAt">Date de démarrage</label>
+      <p-calendar formControlName="startDate" appendTo="body" type="text" id="startedAt"></p-calendar>
+    </div>
+    <div class="field">
+      <label for="startedAt">Date de passage de jalon négocié</label>
+      <p-calendar formControlName="negotiatedDate" appendTo="body" type="text" id="negotiatedAt"></p-calendar>
+    </div>
+    <div class="field">
+      <label for="endAt" class="required-field">Date de passage de jalon prévisionnelle</label>
+      <p-calendar formControlName="endDate" appendTo="body" type="text" id="endAt"></p-calendar>
+    </div>
+    
+
+    <div class="field">
+  <label for="actualEndAt" class="required-field">Date de passage de jalon réel</label>
+  <p-calendar formControlName="actualEndDate" appendTo="body" type="text" id="actualEndAt"></p-calendar>
+</div>
+
+
+    <div class="flex justify-end gap-2">
+      <p-button label="Annuler" severity="danger" />
+      <p-button [disabled]="phaseEditForm.invalid" (click)="handleEditPhase()" label="Enregistrer" />
+    </div>
+  </form>
+</p-dialog>

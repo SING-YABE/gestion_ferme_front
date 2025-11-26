@@ -1,0 +1,31 @@
+<!-- Bouton pour créer une nouvelle catégorie de risque -->
+<button (click)="handleShow()" pButton *ngIf="mode == 'create'" label="Type de risque" icon="pi pi-plus"></button>
+
+<!-- Bouton pour éditer une catégorie de risque -->
+<button (click)="handleShow()" pButton *ngIf="mode == 'edit'" icon="pi pi-pencil" class="p-button-rounded"></button>
+
+<p-dialog header="Nouveau type de risque" appendTo="body" [modal]="true" [style]="{width: '800px'}" [(visible)]="showForm">
+
+    <div>
+      <form id="categorieRisquesForm" [formGroup]="categorieRisquesForm" (ngSubmit)="handleSubmit()">
+
+
+        <div class="field">
+          <label for="name">Type</label>
+          <input placeholder="ex : Risque moyene" formControlName="name" pInputText id="name" />
+        </div>
+
+        <div class="field">
+          <label for="description">Description</label>
+          <input placeholder="Description détaillée du type de risque" formControlName="description" pInputText id="description" />
+        </div>
+
+      </form>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button (click)="showForm = false" pButton class="p-button-danger mr-2 p-button-outlined">Annuler</button>
+      <button type="submit" [disabled]="categorieRisquesForm.invalid" form="categorieRisquesForm" [loading]="processing" pButton>Enregistrer</button>
+    </ng-template>
+
+  </p-dialog>

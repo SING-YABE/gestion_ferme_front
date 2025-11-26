@@ -1,0 +1,49 @@
+@if (mode == 'button'){
+  <button (click)="fileInput.click()" pButton [label]="label"></button>
+}
+
+@if (mode == 'surface'){
+  <div (click)="fileInput.click()" class="py-4 cursor-pointer hover:bg-orange-200 flex align-items-center justify-content-center surface-200 border-round border-1 border-dashed">
+    <div class="flex align-items-center gap-2">
+      <i class="pi pi-file-import"></i> <span>Ajouter des fichiers</span>
+    </div>
+  </div>
+}
+
+@if (mode == 'custom') {
+  <div (click)="fileInput.click()">
+    <ng-content></ng-content>
+  </div>
+}
+
+<input #fileInput multiple type="file" hidden="hidden" (change)="handleFiles($event)" />
+
+
+<p-dialog [dismissableMask]="!processing" styleClass="w-5" appendTo="body" [(visible)]="showFilesToUpload" position="right" [modal]="true">
+
+  <ng-template pTemplate="header">
+    <h3 class="m-0 w-full">Fichier à charger</h3>
+  </ng-template>
+
+  <div>
+
+    @for (file of files; track $index){
+      <div class="p-3 surface-100 border-round mb-1 text-black">
+        <div>
+          {{ file.name }}
+        </div>
+      </div>
+    }
+
+    <div class="mt-3">
+      Taille total : {{ totalSize / 1000000 | number:'':'fr-FR' }} MB
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button [loading]="processing" icon="pi pi-times" class="p-button-danger mr-2 p-button-outlined" (click)="showFilesToUpload = false" pButton label="Annuler"></button>
+    <button [disabled]="uploadUrl == undefined || uploadUrl.length == 0" [loading]="processing" (click)="handleUploadFiles()" icon="pi pi-upload" class="p-button-success" pButton label="Envoyer"></button>
+  </ng-template>
+
+</p-dialog>

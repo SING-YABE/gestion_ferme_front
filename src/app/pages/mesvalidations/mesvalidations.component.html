@@ -1,0 +1,532 @@
+<div class="containers flex">
+  <div
+    class="sidebar border-right transition-all duration-300"
+    [ngClass]="{ 'collapsed-sidebar': isSidebarCollapsed }"
+  >
+    <div class="p-2">
+      <h4 *ngIf="!isSidebarCollapsed">Mes demandes d'approbation</h4>
+      <div *ngIf="!isSidebarCollapsed" style="position:absolute; top:40px; left:294px">
+        <button
+          pButton
+          class="p-button p-button-sm"
+          (click)="isSidebarCollapsed = !isSidebarCollapsed"
+          [icon]="isSidebarCollapsed ? 'pi pi-chevron-right' : 'pi pi-chevron-left'">
+        </button>
+      </div>
+      <div *ngIf="isSidebarCollapsed" style="position:absolute; top:40px; left:40px">
+        <button
+          pButton
+          class="p-button p-button-sm"
+          (click)="isSidebarCollapsed = !isSidebarCollapsed"
+          [icon]="isSidebarCollapsed ? 'pi pi-chevron-right' : 'pi pi-chevron-left'">
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="!isSidebarCollapsed">
+      <div class="sidebar-header">
+        <input
+          placeholder="Rechercher"
+          pInputText
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()">
+
+        <!-- Status filtre-->
+        <div class="status-filters mt-3">
+          <div class="inline-block mr-2">
+            <button
+              pButton
+              pRipple
+              [class]="'p-button-sm ' + (selectedStatus === 'PENDING' ? 'p-button-warning' : 'p-button-outlined')"
+              label="En cours"
+              icon="pi pi-clock"
+              (click)="filterByStatus('PENDING')"
+              pBadge
+              [value]="getStatusCount('PENDING')"
+              badgeClass="p-badge-warning">
+            </button>
+          </div>
+          <div class="inline-block mr-2">
+            <button
+              pButton
+              pRipple
+              [class]="'p-button-sm ' + (selectedStatus === 'APPROVED' ? 'p-button-success' : 'p-button-outlined')"
+              label="Validé"
+              icon="pi pi-check"
+              (click)="filterByStatus('APPROVED')"
+              pBadge
+              [value]="getStatusCount('APPROVED')"
+              badgeClass="p-badge-success">
+            </button>
+          </div>
+          <div class="inline-block">
+            <button
+              pButton
+              pRipple
+              [class]="'p-button-sm ' + (selectedStatus === 'REJECTED' ? 'p-button-danger' : 'p-button-outlined')"
+              label="Rejeté"
+              icon="pi pi-times"
+              (click)="filterByStatus('REJECTED')"
+              pBadge
+              [value]="getStatusCount('REJECTED')"
+              badgeClass="p-badge-danger">
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto mail-wrapper">
+        <!-- Loading -->
+        <div *ngIf="loading" class="card flex justify-content-center p-4">
+          <p-progressSpinner
+            styleClass="w-4rem h-4rem"
+            strokeWidth="8"
+            fill="var(--surface-ground)"
+            animationDuration=".5s" />
+        </div>
+
+        <div *ngIf="!loading && filteredRequests.length === 0 && !searchTerm" class="text-center p-4">
+          <img ngSrc="assets/images/empty.png" alt="" height="65" width="60">
+          <h1 class="font-normal mt-2 mb-0">Aucune demande !</h1>
+        </div>
+
+        <div *ngIf="!loading && filteredRequests.length === 0 && searchTerm" class="text-center p-4">
+          <h1 class="font-normal mt-2 mb-0">Aucun résultat trouvé</h1>
+          <p class="text-sm text-500">Essayez avec d'autres mots-clés</p>
+        </div>
+
+        <div
+          *ngFor="let request of paginatedRequests"
+          class="task-item mail-item"
+          [ngClass]="{'task-active': selectedRequest?.id === request.id}"
+          (click)="selectRequest(request)"
+        >
+          <!-- Header -->
+          <div class="flex justify-content-between align-items-center mb-2">
+            <span class="task-date mail-date">
+              <!-- {{ request?.requestDate | date:'dd/MM HH:mm' }} -->
+              {{ request.requestDate | date:'dd/MM/yyyy'}}
+
+            </span>
+            
+            <span
+              class="status-badge px-2 py-1 border-radius text-xs"
+              [ngClass]="{
+                'bg-orange-100 text-orange-700': request.status === 'PENDING',
+                'bg-green-100 text-green-700': request.status === 'APPROVED',
+                'bg-red-100 text-red-700': request.status === 'REJECTED'
+              }">
+              {{ getStatusLabel(request.status) }}
+            </span>
+          </div>
+
+          <!-- Content -->
+          <div class="task-content mail-summary">
+            <div class="flex align-items-center mb-2 gap-2">
+              <i
+                class="pi"
+                [ngClass]="{
+                  'pi-clock text-orange-500': request.status === 'PENDING',
+                  'pi-check text-green-500': request.status === 'APPROVED',
+                  'pi-times text-red-500': request.status === 'REJECTED'
+                }">
+              </i>
+
+              <span class="task-type text-orange-600">
+                {{ request?.phaseName }}
+              </span>
+            </div>
+            <div class="task-summary mb-2 text-summary">
+              <span class="font-medium text-900">{{ request?.projectName }}</span>
+            </div>
+
+            <div class="task-details">
+              <div class="detail-row">
+                <strong>Demandeur :</strong> {{ request?.requestedBy || 'Non spécifié' }}
+              </div>
+   
+               <div class="detail-row">
+                <strong>Date demande :</strong> {{ request.requestDate | date:'dd/MM/yyyy'}}
+              </div>
+              <div class="detail-row flex justify-content-between align-items-center">
+                <span>
+
+                </span>
+                <i class="pi pi-chevron-right text-orange-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="!loading && totalRecords > rows" class="p-2 border-top-1 surface-border">
+        <p-paginator
+          [first]="first"
+          [rows]="rows"
+          [totalRecords]="totalRecords"
+          (onPageChange)="onPageChange($event)"
+          styleClass="custom-paginator"
+          [dropdownAppendTo]="'body'">
+        </p-paginator>
+      </div>
+    </div>
+
+    <div *ngIf="isSidebarCollapsed" class="mt-7">
+      <div class="status-filters-collapsed mb-3">
+        <div class="mb-2">
+          <button
+            pButton
+            pRipple
+            [class]="'p-button-sm ' + (selectedStatus === 'PENDING' ? 'p-button-warning' : 'p-button-outlined')"
+            icon="pi pi-clock"
+            (click)="filterByStatus('PENDING')"
+            pBadge
+            [value]="getStatusCount('PENDING')"
+            badgeClass="p-badge-warning"
+            pTooltip="En cours"
+            tooltipPosition="right">
+          </button>
+        </div>
+        <div class="mb-2">
+          <button
+            pButton
+            pRipple
+            [class]="'p-button-sm ' + (selectedStatus === 'APPROVED' ? 'p-button-success' : 'p-button-outlined')"
+            icon="pi pi-check"
+            (click)="filterByStatus('APPROVED')"
+            pBadge
+            [value]="getStatusCount('APPROVED')"
+            badgeClass="p-badge-success"
+            pTooltip="Validé"
+            tooltipPosition="right">
+          </button>
+        </div>
+        <div>
+          <button
+            pButton
+            pRipple
+            [class]="'p-button-sm ' + (selectedStatus === 'REJECTED' ? 'p-button-danger' : 'p-button-outlined')"
+            icon="pi pi-times"
+            (click)="filterByStatus('REJECTED')"
+            pBadge
+            [value]="getStatusCount('REJECTED')"
+            badgeClass="p-badge-danger"
+            pTooltip="Rejeté"
+            tooltipPosition="right">
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto mail-wrapper">
+        <!-- Loading -->
+        <div *ngIf="loading" class="card flex justify-content-center p-4">
+          <p-progressSpinner
+            styleClass="w-4rem h-4rem"
+            strokeWidth="8"
+            fill="var(--surface-ground)"
+            animationDuration=".5s" />
+        </div>
+
+        <div
+          *ngFor="let request of paginatedRequests"
+          class="task-item mail-item"
+          [ngClass]="{'task-active': selectedRequest?.id === request.id}"
+          (click)="selectRequest(request)"
+        >
+          <div class="task-content mail-summary">
+            <div class="flex align-items-center gap-2">
+              <i
+                class="pi"
+                [ngClass]="{
+                  'pi-clock text-orange-500': request.status === 'PENDING',
+                  'pi-check text-green-500': request.status === 'APPROVED',
+                  'pi-times text-red-500': request.status === 'REJECTED'
+                }">
+              </i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<div class="main p-2 overflow-y-auto flex-1">
+  <div *ngIf="!selectedRequest" class="flex align-items-center justify-content-center h-full">
+    <div class="text-center">
+      <i class="pi pi-inbox text-6xl text-300 mb-3"></i>
+      <h3 class="text-500">Sélectionnez une demande</h3>
+      <p class="text-400">Choisissez une demande dans la liste pour voir les détails</p>
+    </div>
+  </div>
+<div *ngIf="selectedRequest" [attr.data-request-id]="selectedRequest.id" class="card mb-6">
+  <div class="card-header mb-4">
+    <div class="flex justify-content-between align-items-center">
+      <h3 class="m-0">Détails de la demande</h3>
+      <span
+        class="status-badge px-3 py-2 border-radius text-sm font-medium"
+        [ngClass]="{
+          'bg-orange-100 text-orange-700': selectedRequest.status === 'PENDING',
+          'bg-green-100 text-green-700': selectedRequest.status === 'APPROVED',
+          'bg-red-100 text-red-700': selectedRequest.status === 'REJECTED'
+        }">
+        {{ getStatusLabel(selectedRequest.status) }}
+      </span>
+    </div>
+  </div>
+  
+  <!-- INFOQ GENERALE -->
+  <div class="card-body">
+    <div class="section-header mb-3">
+      <h4 class="text-primary mb-0">
+        <i class="pi pi-info-circle mr-2"></i>
+        Informations générales
+      </h4>
+    </div>
+    
+    <div class="grid mb-4">
+      <div class="col-12 lg:col-6">
+        <div class="info-card p-3 border-round mb-3" style="background-color: #f8f9fa; border-left: 4px solid #007bff;">
+          <div class="flex align-items-center mb-2">
+            <i class="pi pi-briefcase text-primary mr-2"></i>
+            <label class="font-semibold text-900">Projet</label>
+          </div>
+          <p class="text-700 mb-0">{{ selectedRequest.projectName || 'Non spécifié' }}</p>
+        </div>
+      </div>
+
+      <div class="col-12 lg:col-6">
+        <div class="info-card p-3 border-round mb-3" style="background-color: #f8f9fa; border-left: 4px solid #28a745;">
+          <div class="flex align-items-center mb-2">
+            <i class="pi pi-flag text-green-600 mr-2"></i>
+            <label class="font-semibold text-900">Phase</label>
+          </div>
+          <p class="text-700 mb-0">{{ selectedRequest.phaseName || 'Non spécifié' }}</p>
+        </div>
+      </div>
+
+      <div class="col-12 lg:col-6">
+        <div class="info-card p-3 border-round mb-3" style="background-color: #f8f9fa; border-left: 4px solid #ffc107;">
+          <div class="flex align-items-center mb-2">
+            <i class="pi pi-user text-yellow-600 mr-2"></i>
+            <label class="font-semibold text-900">Demandeur</label>
+          </div>
+          <p class="text-700 mb-0">{{ selectedRequest.requestedBy || 'Non spécifié' }}</p>
+        </div>
+      </div>
+
+      <div class="col-12 lg:col-6">
+        <div class="info-card p-3 border-round mb-3" style="background-color: #f8f9fa; border-left: 4px solid #6f42c1;">
+          <div class="flex align-items-center mb-2">
+            <i class="pi pi-calendar text-purple-600 mr-2"></i>
+            <label class="font-semibold text-900">Date de demande</label>
+          </div>
+          <p class="text-700 mb-0">{{ selectedRequest.requestDate | date:'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+
+      <div class="col-12 lg:col-6" *ngIf="selectedRequest.approvalDate">
+        <div class="info-card p-3 border-round mb-3" style="background-color: #f8f9fa; border-left: 4px solid #17a2b8;">
+          <div class="flex align-items-center mb-2">
+            <i class="pi pi-check-circle text-cyan-600 mr-2"></i>
+            <label class="font-semibold text-900">Date de traitement</label>
+          </div>
+          <p class="text-700 mb-0">{{ selectedRequest.approvalDate | date:'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+
+      <div class="col-12 lg:col-6">
+        <div class="info-card p-3 border-round mb-3" style="background-color: #f8f9fa; border-left: 4px solid #dc3545;">
+          <div class="flex align-items-center mb-2">
+            <i class="pi pi-lightbulb text-red-600 mr-2"></i>
+            <label class="font-semibold text-900">Décision proposée</label>
+          </div>
+          <p class="text-700 mb-0">{{ selectedRequest.proposedDecision || 'Non spécifiée' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- descriptions -->
+    <div class="section-header mb-3">
+      <h4 class="text-primary mb-0">
+        <i class="pi pi-file-edit mr-2"></i>
+        Descriptions et commentaires
+      </h4>
+    </div>
+
+    <div class="grid mb-4">
+      <div class="col-12">
+        <div class="description-card p-4 border-round mb-3" style="background-color: #fff; border: 1px solid #e9ecef; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="flex align-items-center mb-3">
+            <i class="pi pi-bookmark text-blue-600 mr-2" style="font-size: 1.2rem;"></i>
+            <label class="font-semibold text-900 text-lg">Description du projet</label>
+          </div>
+          <div class="description-content p-3 border-round" style="background-color: #f8f9fa; border-left: 4px solid #007bff;">
+            <p class="text-700 mb-0 line-height-3">
+              {{ selectedRequest.projectdescription && selectedRequest.projectdescription.trim() !== '' ? selectedRequest.projectdescription : 'Aucune description pour ce projet.' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 lg:col-6" *ngIf="selectedRequest.requestComment && selectedRequest.requestComment.trim() !== ''">
+        <div class="comment-card p-4 border-round mb-3" style="background-color: #fff; border: 1px solid #e9ecef; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="flex align-items-center mb-3">
+            <i class="pi pi-comment text-orange-600 mr-2" style="font-size: 1.2rem;"></i>
+            <label class="font-semibold text-900">Commentaire de la demande</label>
+          </div>
+          <div class="comment-content p-3 border-round" style="background-color: #fff3cd; border-left: 4px solid #ffc107;">
+            <p class="text-700 mb-0 line-height-3">{{ selectedRequest.requestComment }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 lg:col-6" *ngIf="selectedRequest.approvalComment && selectedRequest.approvalComment.trim() !== '' && selectedRequest.status !== 'PENDING'">
+        <div class="comment-card p-4 border-round mb-3" style="background-color: #fff; border: 1px solid #e9ecef; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="flex align-items-center mb-3">
+            <i class="pi pi-verified" 
+               [ngClass]="{
+                 'text-green-600': selectedRequest.status === 'APPROVED',
+                 'text-red-600': selectedRequest.status === 'REJECTED'
+               }" 
+               style="font-size: 1.2rem;" 
+               mr-2></i>
+            <label class="font-semibold text-900">
+              {{ selectedRequest.status === 'APPROVED' ? 'Commentaire d\'approbation' : 'Commentaire de rejet' }}
+            </label>
+          </div>
+          <div class="comment-content p-3 border-round" 
+               [ngClass]="{
+                 'bg-green-50': selectedRequest.status === 'APPROVED',
+                 'bg-red-50': selectedRequest.status === 'REJECTED'
+               }"
+               [style.border-left]="selectedRequest.status === 'APPROVED' ? '4px solid #28a745' : '4px solid #dc3545'">
+            <p class="text-700 mb-0 line-height-3">{{ selectedRequest.approvalComment }}</p>
+          </div>
+        </div>
+      </div>
+
+     
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <div class="flex align-items-center mb-3">
+      <h4 class="m-0">Livrables de la phase</h4>
+    </div>
+
+    <div *ngIf="loadingDeliverables" class="text-center p-4">
+      <p-progressSpinner styleClass="w-3rem h-3rem" strokeWidth="8"></p-progressSpinner>
+    </div>
+
+    <div *ngIf="!loadingDeliverables && deliverables.length === 0" class="text-center p-4 text-gray-500">
+      <i class="pi pi-folder-open text-4xl mb-2"></i>
+      <p>Aucun livrable disponible pour cette phase</p>
+    </div>
+
+    <!-- Structure en deux colonnes pour les livrables -->
+    <div *ngIf="!loadingDeliverables && deliverables.length > 0" class="flex gap-4 mt-3" style="min-height: 350px;">
+      <!-- Colonne gauche : livrables -->
+      <div class="w-6 border-right-2 border-gray-300 p-3" style="min-width: 260px;">
+        <div class="flex flex-column gap-2">
+          <div *ngFor="let deliverable of deliverables" class="flex align-items-center mb-2">
+            <div class="dossier-livrable p-2 border-round flex align-items-center gap-3 flex-1"
+                 [ngClass]="{'dossier-selected': selectedDeliverable && selectedDeliverable.id === deliverable.id}"
+                 (click)="selectDeliverable(deliverable)"
+                 style="cursor:pointer; border: 1px solid #e0e0e0;">
+              <i class="pi pi-folder text-yellow-500" style="font-size: 2rem;"></i>
+              <div class="flex flex-column">
+                <div class="text-black font-medium">{{ deliverable.name }}</div>
+                <div class="text-gray-500">
+                  <small class="text-xs">{{ deliverable.fileNumber || 0 }} fichiers joints</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Colonne droite : fichiers du livrable -->
+      <div class="w-6 bg-white p-3 border-round" style="min-width: 320px;">
+        <h5 class="mb-3">Fichiers du livrable</h5>
+        <div *ngIf="files.length > 0; else noFilesBlock">
+          <div *ngFor="let file of files"
+               class="filebox p-3 hover:bg-gray-50 border-round mb-2 flex align-items-center justify-content-between"
+               style="border: 1px solid #e0e0e0;">
+            <div class="flex align-items-center gap-3">
+              <div>
+                <i *ngIf="file.contentType === 'application/pdf'" class="pi pi-file-pdf text-red-500" style="font-size: 2rem;"></i>
+                <i *ngIf="file.contentType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'" class="pi pi-file-excel text-green-600" style="font-size: 2rem;"></i>
+                <i *ngIf="file.contentType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'" class="pi pi-file-word text-blue-600" style="font-size: 2rem;"></i>
+                <i *ngIf="!['application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.contentType)" class="pi pi-file text-gray-500" style="font-size: 2rem;"></i>
+              </div>
+              <div class="flex flex-column">
+                <p class="font-medium text-900 mb-1">{{ file.fileName }}</p>
+                <p class="text-gray-600 text-sm mb-1">Ajouté par : {{ file.author }} le {{ formatCreatedAt(file.createdAt) }}</p>
+                <p class="text-gray-800 text-sm font-medium">{{ file.size | number }} octets</p>
+              </div>
+            </div>
+
+            <button
+              pButton
+              pRipple
+              icon="pi pi-download"
+              class="p-button-rounded p-button-text p-button-sm"
+              (click)="downloadFiles(file.downloadUrl?.split('/').pop(), file.fileName)"
+              pTooltip="Télécharger"
+              title="Télécharger"
+              style="color: #f97316;">
+            </button>
+          </div>
+        </div>
+        <ng-template #noFilesBlock>
+          <div class="text-center text-gray-500 mt-6">
+            <i class="pi pi-file text-4xl mb-2"></i>
+            <p>Aucun fichier disponible</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boutons d'action -->
+  <div *ngIf="selectedRequest && selectedRequest.status === 'PENDING'" class="flex justify-content-end gap-2 mt-4">
+    <button
+      pButton
+      pRipple
+      label="Traiter la demande"
+      icon="pi pi-cog"
+      class="p-button-primary"
+      (click)="openProcessModal()">
+    </button>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- Process Modal -->
+<p-dialog header="Traiter la demande" [(visible)]="processModal" [modal]="true" [style]="{ width: '30rem' }">
+  <div class="mb-4">
+    <p><strong>Phase:</strong> {{ selectedRequest?.phaseName }}</p>
+    <p><strong>Projet:</strong> {{ selectedRequest?.projectName }}</p>
+    <p><strong>Décision proposée:</strong> {{ selectedRequest?.proposedDecision }}</p>
+    <p><strong>Commentaire demande:</strong> {{ selectedRequest?.requestComment || 'Aucun' }}</p>
+  </div>
+
+  <div class="field mb-4">
+    <label for="approvalComment">Votre commentaire</label>
+    <textarea id="approvalComment" [(ngModel)]="approvalComment" pInputTextarea rows="3"></textarea>
+  </div>
+
+  <div class="flex justify-content-end gap-2">
+    <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text"
+            (click)="processModal = false"></button>
+    <button pButton pRipple label="Rejeter" icon="pi pi-times" class="p-button-danger"
+            (click)="processRequest(false)"></button>
+    <button pButton pRipple label="Approuver" icon="pi pi-check" class="p-button-success"
+            (click)="processRequest(true)"></button>
+  </div>
+</p-dialog>

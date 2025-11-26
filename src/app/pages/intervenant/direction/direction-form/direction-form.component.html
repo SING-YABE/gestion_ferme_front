@@ -1,0 +1,64 @@
+<button (click)="showForm = true" pButton *ngIf="mode == 'create'" label="Nouvelle direction" icon="pi pi-plus"></button>
+<button (click)="showForm = true" pButton *ngIf="mode == 'edit'" icon="pi pi-pencil" class="p-button-rounded"></button>
+
+
+<!-- <p-dialog header="Nouvelle direction" appendTo="body" [modal]="true" [style]="{width: '800px'}" [(visible)]="showForm"> -->
+  <p-dialog [header]="mode === 'create' ? 'Nouvelle direction' : 'Modifier la direction'" appendTo="body" [modal]="true" [style]="{width: '800px'}" [(visible)]="showForm">
+  <div>
+    <form id="directionForm" [formGroup]="directionForm" (ngSubmit)="handleSubmit()">
+
+      <div class="field">
+        <label for="description">Nom</label>
+        <input placeholder="Ressource Humaine" formControlName="description" pInputText id="description" />
+      </div>
+
+      <div class="field">
+        <label for="name">Arbregé</label>
+        <input placeholder="RH" pInputText id="name" formControlName="name"/>
+      </div>
+
+      <div class="field">
+        <label for="director">Directeur</label>
+        <p-dropdown formControlName="directorCuid" optionValue="cuid" [showClear]="true" emptyMessage="Aucune proposition trouvé !" emptyFilterMessage="Aucune proposition trouvé !" appendTo="body" [filter]="true" [options]="users" id="director" placeholder="Directeur">
+
+          <ng-template pTemplate="filter" let-options="options">
+            <div class="flex gap-1">
+              <div class="p-inputgroup" (click)="$event.stopPropagation()">
+                <span class="p-inputgroup-addon bg-white"><i class="pi pi-search"></i></span>
+                <input
+                  type="text"
+                  pInputText
+                  placeholder="Rechercher ..."
+                  formControlName="filterValue"
+                  (input)="handleFilter($event)" />
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="selectedItem" let-selectedOption>
+            <div class="flex align-content-start gap-3">
+              <div class="flex-1">{{ selectedOption.displayname??selectedOption.displayName }}</div>
+              <div><p-badge [value]="selectedOption.cuid"></p-badge></div>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="item" let-item>
+            <div class="flex align-items-center gap-2">
+              <fa-icon [icon]="faUser"></fa-icon>
+              <div class="flex-1">{{ item.displayname??item.displayName }}</div>
+              <div class="mr-2"><p-badge [value]="item.cuid"></p-badge></div>
+            </div>
+          </ng-template>
+
+        </p-dropdown>
+      </div>
+
+    </form>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button (click)="showForm = false" pButton class="p-button-danger mr-2 p-button-outlined">Annuler</button>
+    <button type="submit" form="directionForm" [loading]="processing" pButton>Enregistrer</button>
+  </ng-template>
+
+</p-dialog>

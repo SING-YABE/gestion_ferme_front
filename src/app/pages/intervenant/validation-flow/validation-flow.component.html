@@ -1,0 +1,240 @@
+<div>
+  <div class="bg-white mb-3 p-3 odyssey-shadow-low border-round">
+    <div class="flex gap-3 align-items-center">
+      <div class="flex-1">
+        <h5 class="m-0">Gestion des validateurs</h5>
+      </div>
+      <div fxFlex="300px">
+        <div class="p-inputgroup">
+          <input type="search" pInputText class="w-full" placeholder="Rechercher une direction" 
+                [(ngModel)]="searchQuery" 
+                (input)="onSearch($event)" />
+          <button type="button" pButton icon="pi pi-search" (click)="searchDirections()"></button>
+        </div>
+      </div>
+      <div>
+        <button pButton pRipple icon="pi pi-plus" label="Assigner un validateur" 
+                class="p-button-success" (click)="openNewValidatorDialog()"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white odyssey-shadow-low mb-7">
+    <p-table [loading]="loading"
+            [lazy]="true" 
+            [rows]="pageSize"
+            [totalRecords]="directions.totalElements"
+            (onLazyLoad)="handleNext($event)" 
+            [rowsPerPageOptions]="[10,30,40]" 
+            [value]="directions.content" 
+            [paginator]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="description">Direction <p-sortIcon field="description"></p-sortIcon></th>
+          <th pSortableColumn="name">Abrégé <p-sortIcon field="name"></p-sortIcon></th>
+          <th>Validateur</th>
+          <th>Email</th>
+          <th style="text-align: center;">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-direction>
+        <tr>
+          <td>
+            <span class="p-column-title">Direction</span>
+            <strong> 
+              <fa-icon class="mr-2 text-primary" [icon]="faBuilding"></fa-icon> 
+              {{ direction.description }} 
+            </strong>
+          </td>
+          <td>
+            <span class="p-column-title">Abrégé</span>
+            <span> {{ direction.name }} </span>
+          </td>
+       <td>
+  <span class="p-column-title">Validateur</span>
+  @if (direction.validator?.user) {
+    <div class="flex align-items-center">
+      <i class="pi pi-user text-primary mr-2"></i>
+      <span class="p-tag p-tag-rounded p-tag-success">
+        {{ direction.validator.user.displayName || direction.validator.user.username || direction.validator.user.email }}
+      </span>
+    </div>
+  } @else {
+    <div class="flex align-items-center">
+      <i class="pi pi-user-edit text-orange-500 mr-2"></i>
+      <span class="p-tag p-tag-rounded p-tag-warning">Aucun validateur</span>
+    </div>
+  }
+</td>
+          <td>
+            <span class="p-column-title">Email</span>
+            @if (direction.validator?.user?.email) {
+              <div class="flex align-items-center">
+                <i class="pi pi-envelope text-blue-500 mr-2"></i>
+                <span>{{ direction.validator.user.email }}</span>
+              </div>
+            } @else {
+              <span class="text-gray-400">-</span>
+            }
+          </td>
+          
+          <td>
+            <div class="flex gap-2 justify-content-center">
+              @if (direction.validator) {
+                <button pButton class="p-button-warning p-button-rounded" 
+                        icon="pi pi-user-edit" 
+                        pTooltip="Modifier le validateur"
+                        (click)="editValidator(direction)"></button>
+                <button pButton class="p-button-danger p-button-rounded" 
+                        icon="pi pi-user-minus" 
+                        pTooltip="Supprimer le validateur"
+                        (click)="confirmRemoveValidator(direction)"></button>
+              } @else {
+                <button pButton class="p-button-success p-button-rounded" 
+                        icon="pi pi-user-plus" 
+                        pTooltip="Assigner un validateur"
+                        (click)="assignValidator(direction)"></button>
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="text-center p-4">
+            <h1 class="font-normal m-0">Aucune direction trouvée !</h1>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-confirmDialog appendTo="body" [style]="{width: '450px'}"></p-confirmDialog>
+<p-dialog 
+  [header]="selectedDirection ? 'Modifier le validateur' : 'Assigner un validateur'"
+  [(visible)]="showValidatorDialog"
+  [modal]="true"
+  [closable]="true"
+  [style]="{width: '800px', height: '600px'}"
+  [contentStyle]="{'max-height':'450px','overflow':'auto'}"
+>
+
+<!-- assigner/modifier un validateur -->
+<!-- <p-dialog [header]="selectedDirection ? 'Modifier le validateur' : 'Assigner un validateur'" 
+          [(visible)]="showValidatorDialog" 
+          [modal]="true" [style]="{width: '800px', minHeight: '500px'}" [closable]="true"> -->
+
+  <form [formGroup]="validatorForm" (ngSubmit)="saveValidator()">
+    <div class="field" *ngIf="!selectedDirection">
+      <label for="direction" class="block text-900 font-medium mb-2">Direction *</label>
+      <p-dropdown 
+        formControlName="directionId" 
+        [options]="directions.content" 
+        optionLabel="description" 
+        optionValue="id" 
+        placeholder="Sélectionner une direction"
+        styleClass="w-full"
+        [showClear]="true"
+        [filter]="true"
+        filterBy="description,name">
+        <ng-template pTemplate="selectedItem" let-direction>
+          <div class="flex align-items-center gap-2" *ngIf="direction">
+            <i class="pi pi-building"></i>
+            <span>{{ direction.description }}</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="item" let-direction>
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-building"></i>
+            <div>
+              <div>{{ direction.description }}</div>
+              <small class="text-gray-500">{{ direction.name }}</small>
+            </div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    
+    <div class="field" *ngIf="selectedDirection">
+      <label for="direction" class="block text-900 font-medium mb-2">Direction</label>
+      <input type="text" pInputText class="w-full" 
+             [value]="selectedDirection?.description" 
+             readonly disabled />
+    </div>
+    
+  <!-- <div class="field">
+  <label for="validator" class="block text-900 font-medium mb-2">Validateur *</label>
+  <p-dropdown 
+    formControlName="validatorId" 
+    [options]="validators" 
+    optionLabel="displayName" 
+    optionValue="id" 
+    placeholder="Sélectionner un validateur"
+    styleClass="w-full"
+    [showClear]="true"
+    [filter]="true"
+    filterBy="displayName,email,username">
+    <ng-template pTemplate="selectedItem" let-validator>
+      <div class="flex align-items-center gap-2" *ngIf="validator">
+        <i class="pi pi-user"></i>
+        <span>{{ validator.displayName || validator.username || validator.email }}</span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="item" let-validator>
+      <div class="flex align-items-center gap-2">
+        <i class="pi pi-user"></i>
+        <div>
+          <div>{{ validator.displayName || validator.username || 'Utilisateur' }}</div>
+          <small class="text-gray-500">{{ validator.email }}</small>
+        </div>
+      </div>
+    </ng-template>
+  </p-dropdown>
+</div> -->
+
+<div class="field">
+  <label for="validator" class="block text-900 font-medium mb-2">Validateur *</label>
+  <p-dropdown 
+    formControlName="validatorId" 
+    [options]="validators" 
+    optionLabel="displayName" 
+    optionValue="id" 
+    placeholder="Sélectionner un validateur"
+    styleClass="w-full"
+    [showClear]="true"
+    [filter]="true"
+    filterBy="displayName,email,username">
+
+  
+
+    <ng-template pTemplate="selectedItem" let-validator>
+      <div class="flex align-items-center gap-2" *ngIf="validator">
+        <i class="pi pi-user"></i>
+        <span>{{ validator.displayName || validator.username || validator.email }}</span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="item" let-validator>
+      <div class="flex align-items-center gap-2">
+        <i class="pi pi-user"></i>
+        <div>
+          <div>{{ validator.displayName || validator.username || 'Utilisateur' }}</div>
+          <small class="text-gray-500">{{ validator.email }}</small>
+        </div>
+      </div>
+    </ng-template>
+  </p-dropdown>
+</div>
+    
+    <div class="flex justify-content-end gap-2 mt-4">
+      <button pButton type="button" label="Annuler" 
+              class="p-button-secondary" 
+              (click)="closeValidatorDialog()"></button>
+      <button pButton type="submit" 
+              label="Enregistrer" 
+              [disabled]="validatorForm.invalid || loading" 
+              [loading]="loading"></button>
+    </div>
+  </form>
+</p-dialog>
+

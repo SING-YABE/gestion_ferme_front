@@ -1,0 +1,87 @@
+<div class="login-container">
+
+  <!-- SECTION FORMULAIRE -->
+  <div class="login-left">
+    <div class="login-card">
+
+      <h1 class="title">Gestion de la ferme</h1>
+      <div class="title-underline"></div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
+
+        <!-- EMAIL -->
+        <div class="field">
+          <label for="username">Votre email</label>
+          <input
+            id="username"
+            type="email"
+            pInputText
+            formControlName="username"
+            placeholder="user@email.com"
+          />
+
+          @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
+            <small class="error">Veuillez entrer un email valide</small>
+          }
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="field">
+          <label for="password">Mot de passe</label>
+          <p-password
+            id="password"
+            formControlName="password"
+            placeholder="Votre mot de passe"
+            [toggleMask]="true"
+            [feedback]="false"
+            styleClass="w-full"
+          ></p-password>
+
+          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+            <small class="error">Le mot de passe est requis</small>
+          }
+        </div>
+
+        <!-- REMEMBER ME -->
+        <div class="remember-row">
+          <p-checkbox
+            [(ngModel)]="checked"
+            binary
+            id="rememberme"
+            class="mr-2"
+            [ngModelOptions]="{ standalone: true }"
+          ></p-checkbox>
+          <label for="rememberme">Se rappeler de moi</label>
+        </div>
+
+        <!-- BUTTON -->
+        <button
+          type="submit"
+          pButton
+          class="btn-login"
+          label="Connexion"
+          [loading]="processing"
+          [disabled]="loginForm.invalid"
+        ></button>
+
+        @if (errorMsg) {
+          <div class="error-box">{{ errorMsg }}</div>
+        }
+      </form>
+
+      <!-- FOOTER -->
+      <div class="footer">
+        <small>© 2025 GESTION DE LA FERME</small>
+        <small>FARM PRO</small>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="login-right">
+    <img src="assets/image/farm.png" class="farm-image" />
+
+    <h2 class="slogan">Le référentiel de gestion de ferme</h2>
+  </div>
+
+</div>

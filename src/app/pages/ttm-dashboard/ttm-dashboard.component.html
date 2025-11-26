@@ -1,0 +1,615 @@
+<div class="ttm-dashboard">
+  <!-- <div class="grid">
+    <div class="col-12">
+      <div class="card bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+          <div *ngIf="!loading && !error" class="grid">
+        <div class="col-12 lg:col-3 md:col-6">
+          <div class="card bg-blue-50 border-blue-200">
+            <div class="flex justify-content-between align-items-start">
+              <div>
+                <span class="block text-500 font-medium mb-3">Total Projets TTM</span>
+                <div class="text-900 font-medium text-xl">{{ kpiData?.totalTtmProjects || 0 }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-folder text-blue-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 lg:col-3 md:col-6">
+          <div class="card bg-red-50 border-red-200">
+            <div class="flex justify-content-between align-items-start">
+              <div>
+                <span class="block text-500 font-medium mb-3">Projets en Retard</span>
+                <div class="text-900 font-medium text-xl">{{ kpiData?.totalLateTtmProjects || 0 }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-red-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-clock text-red-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 lg:col-3 md:col-6">
+          <div class="card bg-orange-50 border-orange-200">
+            <div class="flex justify-content-between align-items-start">
+              <div>
+                <span class="block text-500 font-medium mb-3">Projets Suspendus</span>
+                <div class="text-900 font-medium text-xl">{{ kpiData?.totalSuspendedTtmProjects || 0 }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-pause text-orange-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 lg:col-3 md:col-6">
+          <div class="card bg-gray-50 border-gray-200">
+            <div class="flex justify-content-between align-items-start">
+              <div>
+                <span class="block text-500 font-medium mb-3">Projets Annulés</span>
+                <div class="text-900 font-medium text-xl">{{ kpiData?.totalCancelledTtmProjects || 0 }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-gray-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-times text-gray-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+        <div class="flex justify-content-between align-items-center">
+          <div>
+            <h1 class="text-3xl font-bold m-0">Dashboard TTM</h1>
+          </div>
+          
+          <div class="flex align-items-center gap-3">
+            <i class="pi pi-chart-line text-4xl opacity-50"></i>
+            <button 
+              pButton 
+              type="button" 
+              icon="pi pi-refresh" 
+              class="p-button-rounded p-button-outlined p-button-secondary"
+              (click)="refreshData()"
+              [loading]="loading">
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <h2 class="text-2xl font-bold mb-4">Projets en TTM</h2>
+
+<div class="grid">
+  <div class="col-12">
+    <div class="card bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+      <div *ngIf="!loading && !error" class="grid">
+        <!-- Total Projets TTM -->
+        <div class="col-12 lg:col-3 md:col-6">
+          <div class="card bg-blue-50 border-blue-200">
+            <div class="flex justify-content-between align-items-start">
+              <div>
+                <span class="block text-500 font-medium mb-3">Total Projets TTM</span>
+                <div class="text-900 font-medium text-xl">{{ kpiData?.totalTtmProjects || 0 }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-folder text-blue-500 text-xl"></i>
+              </div>
+            </div>
+            <!-- Bouton œil pour Total TTM -->
+            <div class="flex justify-content-end mt-2">
+              <button 
+                pButton 
+                type="button" 
+                icon="pi pi-eye" 
+                class="p-button-rounded p-button-text p-button-sm"
+                (click)="showTtmProjectDetails('all', kpiData?.totalTtmProjects || 0)"
+                [disabled]="(kpiData?.totalTtmProjects || 0) === 0"
+                pTooltip="Voir les détails">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- en Retard TTM -->
+        <div class="col-12 lg:col-3 md:col-6">
+          <div class="card bg-red-50 border-red-200">
+            <div class="flex justify-content-between align-items-start">
+              <div>
+                <span class="block text-500 font-medium mb-3">Projets en Retard</span>
+                <div class="text-900 font-medium text-xl">{{ kpiData?.totalLateTtmProjects || 0 }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-red-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-clock text-red-500 text-xl"></i>
+              </div>
+            </div>
+            <!-- Bouton œil pour Retard TTM -->
+            <div class="flex justify-content-end mt-2">
+              <button 
+                pButton 
+                type="button" 
+                icon="pi pi-eye" 
+                class="p-button-rounded p-button-text p-button-sm"
+                (click)="showTtmProjectDetails('late', kpiData?.totalLateTtmProjects || 0)"
+                [disabled]="(kpiData?.totalLateTtmProjects || 0) === 0"
+                pTooltip="Voir les détails">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suspendus TTM -->
+        <div class="col-12 lg:col-3 md:col-6">
+          <div class="card bg-orange-50 border-orange-200">
+            <div class="flex justify-content-between align-items-start">
+              <div>
+                <span class="block text-500 font-medium mb-3">Projets Suspendus</span>
+                <div class="text-900 font-medium text-xl">{{ kpiData?.totalSuspendedTtmProjects || 0 }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-pause text-orange-500 text-xl"></i>
+              </div>
+            </div>
+            <!-- Bouton œil pour Suspendus TTM -->
+            <div class="flex justify-content-end mt-2">
+              <button 
+                pButton 
+                type="button" 
+                icon="pi pi-eye" 
+                class="p-button-rounded p-button-text p-button-sm"
+                (click)="showTtmProjectDetails('suspended', kpiData?.totalSuspendedTtmProjects || 0)"
+                [disabled]="(kpiData?.totalSuspendedTtmProjects || 0) === 0"
+                pTooltip="Voir les détails">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Annul TTM -->
+        <div class="col-12 lg:col-3 md:col-6">
+          <div class="card bg-gray-50 border-gray-200">
+            <div class="flex justify-content-between align-items-start">
+              <div>
+                <span class="block text-500 font-medium mb-3">Projets Annulés</span>
+                <div class="text-900 font-medium text-xl">{{ kpiData?.totalCancelledTtmProjects || 0 }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-gray-100 border-round" style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-times text-gray-500 text-xl"></i>
+              </div>
+            </div>
+            <!-- Bouton œil pour Annulés TTM -->
+            <div class="flex justify-content-end mt-2">
+              <button 
+                pButton 
+                type="button" 
+                icon="pi pi-eye" 
+                class="p-button-rounded p-button-text p-button-sm"
+                (click)="showTtmProjectDetails('cancelled', kpiData?.totalCancelledTtmProjects || 0)"
+                [disabled]="(kpiData?.totalCancelledTtmProjects || 0) === 0"
+                pTooltip="Voir les détails">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-content-between align-items-center">
+        <div>
+          <h1 class="text-3xl font-bold m-0">Dashboard TTM</h1>
+        </div>
+        
+        <div class="flex align-items-center gap-3">
+          <i class="pi pi-chart-line text-4xl opacity-50"></i>
+          <button 
+            pButton 
+            type="button" 
+            icon="pi pi-refresh" 
+            class="p-button-rounded p-button-outlined p-button-secondary"
+            (click)="refreshData()"
+            [loading]="loading">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Histogrammes -->
+  <div *ngIf="!loading && !error" class="grid">
+    <!-- Statuts -->
+    <div class="col-12 lg:col-4">
+      <div class="card">
+        <div class="flex align-items-center gap-2 mb-4">
+          <i class="pi pi-chart-bar text-orange-500"></i>
+          <h3 class="text-lg font-semibold m-0">Statuts</h3>
+        </div>
+        <p-chart type="bar" [data]="statusChartData" [options]="chartOptions" height="300px"></p-chart>
+      </div>
+    </div>
+
+    <!-- Priorté -->
+    <div class="col-12 lg:col-4">
+      <div class="card">
+        <div class="flex align-items-center gap-2 mb-4">
+          <i class="pi pi-flag text-blue-500"></i>
+          <h3 class="text-lg font-semibold m-0">Priorités</h3>
+        </div>
+        <p-chart type="bar" [data]="priorityChartData" [options]="chartOptions" height="300px"></p-chart>
+      </div>
+    </div>
+
+    <!-- Budget -->
+    <div class="col-12 lg:col-4">
+      <div class="card">
+        <div class="flex align-items-center gap-2 mb-4">
+          <i class="pi pi-wallet text-green-500"></i>
+          <h3 class="text-lg font-semibold m-0">Budgets</h3>
+        </div>
+        <p-chart type="bar" [data]="budgetChartData" [options]="budgetChartOptions" height="300px"></p-chart>
+      </div>
+    </div>
+  </div>
+
+
+  <!--charg-->
+  <div *ngIf="loading" class="grid">
+    <div class="col-12 lg:col-3 md:col-6" *ngFor="let i of [1,2,3,4]">
+      <div class="card">
+        <p-skeleton height="4rem"></p-skeleton>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="grid">
+    <div class="col-12">
+      <p-message severity="error" text="Erreur lors du chargement des données"></p-message>
+    </div>
+  </div>
+
+
+  <!-- Hors TTM -->
+<div class="mt-8">
+  <h2 class="text-2xl font-bold mb-4">Projets Hors TTM</h2>
+
+  <!-- <div class="grid mb-4">
+    <div class="col-12 lg:col-3 md:col-6" *ngIf="!loadingNonTtm && !errorNonTtm">
+      <div class="card bg-blue-50 border-blue-200">
+        <div class="flex justify-content-between align-items-start">
+          <div>
+            <span class="block text-500 font-medium mb-3">Total Projets Hors TTM</span>
+            <div class="text-900 font-medium text-xl">{{ kpiNonTtmData?.totalTtmProjects || 0 }}</div>
+          </div>
+          <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.5rem;height:2.5rem">
+            <i class="pi pi-folder text-blue-500 text-xl"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 lg:col-3 md:col-6" *ngIf="!loadingNonTtm && !errorNonTtm">
+      <div class="card bg-red-50 border-red-200">
+        <div class="flex justify-content-between align-items-start">
+          <div>
+            <span class="block text-500 font-medium mb-3">Projets en Retard</span>
+            <div class="text-900 font-medium text-xl">{{ kpiNonTtmData?.totalLateTtmProjects || 0 }}</div>
+          </div>
+          <div class="flex align-items-center justify-content-center bg-red-100 border-round" style="width:2.5rem;height:2.5rem">
+            <i class="pi pi-clock text-red-500 text-xl"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 lg:col-3 md:col-6" *ngIf="!loadingNonTtm && !errorNonTtm">
+      <div class="card bg-orange-50 border-orange-200">
+        <div class="flex justify-content-between align-items-start">
+          <div>
+            <span class="block text-500 font-medium mb-3">Projets Suspendus</span>
+            <div class="text-900 font-medium text-xl">{{ kpiNonTtmData?.totalSuspendedTtmProjects || 0 }}</div>
+          </div>
+          <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.5rem;height:2.5rem">
+            <i class="pi pi-pause text-orange-500 text-xl"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 lg:col-3 md:col-6" *ngIf="!loadingNonTtm && !errorNonTtm">
+      <div class="card bg-gray-50 border-gray-200">
+        <div class="flex justify-content-between align-items-start">
+          <div>
+            <span class="block text-500 font-medium mb-3">Projets Annulés</span>
+            <div class="text-900 font-medium text-xl">{{ kpiNonTtmData?.totalCancelledTtmProjects || 0 }}</div>
+          </div>
+          <div class="flex align-items-center justify-content-center bg-gray-100 border-round" style="width:2.5rem;height:2.5rem">
+            <i class="pi pi-times text-gray-500 text-xl"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+
+<div class="grid mb-4">
+  <!-- Projets Hors TTM -->
+  <div class="col-12 lg:col-3 md:col-6" *ngIf="!loadingNonTtm && !errorNonTtm">
+    <div class="card bg-blue-50 border-blue-200">
+      <div class="flex justify-content-between align-items-start">
+        <div>
+          <span class="block text-500 font-medium mb-3">Total Projets Hors TTM</span>
+          <div class="text-900 font-medium text-xl">{{ kpiNonTtmData?.totalTtmProjects || 0 }}</div>
+        </div>
+        <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.5rem;height:2.5rem">
+          <i class="pi pi-folder text-blue-500 text-xl"></i>
+        </div>
+      </div>
+      <!-- Bouton œil pour Total Hors TTM -->
+      <div class="flex justify-content-end mt-2">
+        <button 
+          pButton 
+          type="button" 
+          icon="pi pi-eye" 
+          class="p-button-rounded p-button-text p-button-sm"
+          (click)="showNonTtmProjectDetails('all', kpiNonTtmData?.totalTtmProjects || 0)"
+          [disabled]="(kpiNonTtmData?.totalTtmProjects || 0) === 0"
+          pTooltip="Voir les détails">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- en Retard Hors TTM -->
+  <div class="col-12 lg:col-3 md:col-6" *ngIf="!loadingNonTtm && !errorNonTtm">
+    <div class="card bg-red-50 border-red-200">
+      <div class="flex justify-content-between align-items-start">
+        <div>
+          <span class="block text-500 font-medium mb-3">Projets en Retard</span>
+          <div class="text-900 font-medium text-xl">{{ kpiNonTtmData?.totalLateTtmProjects || 0 }}</div>
+        </div>
+        <div class="flex align-items-center justify-content-center bg-red-100 border-round" style="width:2.5rem;height:2.5rem">
+          <i class="pi pi-clock text-red-500 text-xl"></i>
+        </div>
+      </div>
+      <!-- Bouton œil pour Retard Hors TTM -->
+      <div class="flex justify-content-end mt-2">
+        <button 
+          pButton 
+          type="button" 
+          icon="pi pi-eye" 
+          class="p-button-rounded p-button-text p-button-sm"
+          (click)="showNonTtmProjectDetails('late', kpiNonTtmData?.totalLateTtmProjects || 0)"
+          [disabled]="(kpiNonTtmData?.totalLateTtmProjects || 0) === 0"
+          pTooltip="Voir les détails">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Suspendus Hors TTM -->
+  <div class="col-12 lg:col-3 md:col-6" *ngIf="!loadingNonTtm && !errorNonTtm">
+    <div class="card bg-orange-50 border-orange-200">
+      <div class="flex justify-content-between align-items-start">
+        <div>
+          <span class="block text-500 font-medium mb-3">Projets Suspendus</span>
+          <div class="text-900 font-medium text-xl">{{ kpiNonTtmData?.totalSuspendedTtmProjects || 0 }}</div>
+        </div>
+        <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.5rem;height:2.5rem">
+          <i class="pi pi-pause text-orange-500 text-xl"></i>
+        </div>
+      </div>
+      <!-- Bouton œil pour Suspendus Hors TTM -->
+      <div class="flex justify-content-end mt-2">
+        <button 
+          pButton 
+          type="button" 
+          icon="pi pi-eye" 
+          class="p-button-rounded p-button-text p-button-sm"
+          (click)="showNonTtmProjectDetails('suspended', kpiNonTtmData?.totalSuspendedTtmProjects || 0)"
+          [disabled]="(kpiNonTtmData?.totalSuspendedTtmProjects || 0) === 0"
+          pTooltip="Voir les détails">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Annulés Hors TTM -->
+  <div class="col-12 lg:col-3 md:col-6" *ngIf="!loadingNonTtm && !errorNonTtm">
+    <div class="card bg-gray-50 border-gray-200">
+      <div class="flex justify-content-between align-items-start">
+        <div>
+          <span class="block text-500 font-medium mb-3">Projets Annulés</span>
+          <div class="text-900 font-medium text-xl">{{ kpiNonTtmData?.totalCancelledTtmProjects || 0 }}</div>
+        </div>
+        <div class="flex align-items-center justify-content-center bg-gray-100 border-round" style="width:2.5rem;height:2.5rem">
+          <i class="pi pi-times text-gray-500 text-xl"></i>
+        </div>
+      </div>
+      <!-- Bouton œil pour Annulés Hors TTM -->
+      <div class="flex justify-content-end mt-2">
+        <button 
+          pButton 
+          type="button" 
+          icon="pi pi-eye" 
+          class="p-button-rounded p-button-text p-button-sm"
+          (click)="showNonTtmProjectDetails('cancelled', kpiNonTtmData?.totalCancelledTtmProjects || 0)"
+          [disabled]="(kpiNonTtmData?.totalCancelledTtmProjects || 0) === 0"
+          pTooltip="Voir les détails">
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Graphiques Hors TTM -->
+  <div *ngIf="!loadingNonTtm && !errorNonTtm" class="grid mb-6">
+    <div class="col-12 lg:col-4">
+      <div class="card">
+        <div class="flex align-items-center gap-2 mb-4">
+          <i class="pi pi-chart-bar text-orange-500"></i>
+          <h3 class="text-lg font-semibold m-0">Statuts</h3>
+        </div>
+        <p-chart type="bar" [data]="statusChartDataNonTtm" [options]="chartOptions" height="300px"></p-chart>
+      </div>
+    </div>
+    <div class="col-12 lg:col-4">
+      <div class="card">
+        <div class="flex align-items-center gap-2 mb-4">
+          <i class="pi pi-flag text-blue-500"></i>
+          <h3 class="text-lg font-semibold m-0">Priorités</h3>
+        </div>
+        <p-chart type="bar" [data]="priorityChartDataNonTtm" [options]="chartOptions" height="300px"></p-chart>
+      </div>
+    </div>
+    <div class="col-12 lg:col-4">
+      <div class="card">
+        <div class="flex align-items-center gap-2 mb-4">
+          <i class="pi pi-wallet text-green-500"></i>
+          <h3 class="text-lg font-semibold m-0">Budgets</h3>
+        </div>
+        <p-chart type="bar" [data]="budgetChartDataNonTtm" [options]="budgetChartOptions" height="300px"></p-chart>
+      </div>
+    </div>
+  </div>
+
+  
+</div>
+
+</div>
+
+<p-dialog
+  [(visible)]="displayDetailDialog"
+  [header]="detailDialogTitle"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="true"
+  [style]="{width: '100vw', maxWidth: '1250px'}"
+  (onHide)="closeDetailDialog()">
+  <div class="dialog-content">
+    <!-- Loading state -->
+    <div *ngIf="loadingDetails" class="flex justify-content-center align-items-center p-4">
+      <p-progressSpinner></p-progressSpinner>
+      <span class="ml-3">Chargement des détails...</span>
+    </div>
+    
+    <!-- Table des projets -->
+    <div *ngIf="!loadingDetails && projectDetails.length > 0">
+      <!-- Barre de recherche -->
+      <div class="mb-3">
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-search"></i>
+          <input 
+            pInputText 
+            type="text" 
+            #searchDialogInput
+            (input)="dtDialog.filterGlobal(searchDialogInput.value, 'contains')" 
+            placeholder="Rechercher dans les projets..." 
+            class="p-inputtext-sm w-full" />
+        </span>
+      </div>
+
+      <p-table
+        #dtDialog
+        [value]="projectDetails"
+        [paginator]="true"
+        [rows]="10"
+        [responsive]="true"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [loading]="loadingDetails"
+        [globalFilterFields]="['name','projectId','status','chefProjet','beneficiary']"
+        [scrollable]="true"
+        scrollHeight="400px">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nom du Projet</th>
+            <!-- Statut seulement pour 'all' -->
+            <th *ngIf="isShowingAllProjects()">Statut</th>
+            <th>Chef projet</th>
+            <!-- Budget et Avancement seulement pour 'all' -->
+            <th *ngIf="isShowingAllProjects()">Budget</th>
+            <th *ngIf="isShowingAllProjects()">Avancement</th>
+            <th>Date de Début</th>
+            <th>Date de Fin</th>
+            <th>Bénéficiaire</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-project>
+          <tr>
+            <td>
+              <div>
+                <div class="font-medium">{{ project.name }}</div>
+                <small class="text-500">{{ project.projectId }}</small>
+              </div>
+            </td>
+            <!-- Statut seulement pour 'all' -->
+            <td *ngIf="isShowingAllProjects()">
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-success': project.status === 'COMPLETED',
+                  'bg-warning': project.status === 'IN_PROGRESS',
+                  'bg-danger': project.status === 'CANCELLED',
+                  'bg-secondary': project.status === 'SUSPENDED'
+                }">
+                {{ project.status }}
+              </span>
+            </td>
+            <td>{{ project.chefProjet || '-' }}</td>
+            <!-- Budget seulement pour 'all' -->
+            <td *ngIf="isShowingAllProjects()">
+              <span *ngIf="project.budgetGlobal !== null && project.budgetGlobal !== undefined" class="font-medium">
+                {{ project.budgetGlobal | number:'1.0-0' }} F CFA
+              </span>
+              <span *ngIf="project.budgetGlobal === null || project.budgetGlobal === undefined" class="text-400">
+                Budget non renseigné
+              </span>
+            </td>
+            <!-- Avancement seulement pour 'all' -->
+            <td *ngIf="isShowingAllProjects()">
+              <div class="flex align-items-center gap-2">
+                <p-progressBar 
+                  [value]="project.projectPercentage" 
+                  [showValue]="false" 
+                  class="w-full" 
+                  [style]="{'height': '8px'}">
+                </p-progressBar>
+                <span class="text-sm font-medium">{{ project.projectPercentage }}%</span>
+              </div>
+            </td>
+            <td>{{ formatDate(project.startDate) }}</td>
+            <td>{{ formatDate(project.plannedEndDate) }}</td>
+            <td>
+              <span [pTooltip]="project.beneficiary">
+                {{ project.beneficiary?.length > 25 ? (project.beneficiary | slice:0:25) + '...' : project.beneficiary }}
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="isShowingAllProjects() ? 8 : 5" class="text-center p-4">
+              Aucun projet trouvé
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    
+    <!-- Message si aucun projet -->
+    <div *ngIf="!loadingDetails && projectDetails.length === 0" class="text-center p-4">
+      <i class="pi pi-info-circle text-4xl text-muted mb-3"></i>
+      <p class="text-muted">Aucun projet à afficher pour cette catégorie.</p>
+    </div>
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Fermer"
+      icon="pi pi-times"
+      (click)="closeDetailDialog()"
+      styleClass="p-button-secondary">
+    </p-button>
+  </ng-template>
+</p-dialog>

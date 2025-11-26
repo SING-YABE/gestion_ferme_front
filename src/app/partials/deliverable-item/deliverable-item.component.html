@@ -1,0 +1,13 @@
+<div [class.bg-orange-100]="selected" [class.bg-light]="!selected"  (click)="handleSelect()" class="w-full select-none cursor-pointer align-items-center mb-2 p-2 border-round flex gap-3">
+  <div>
+    <fa-icon class="text-yellow-500" size="3x" [icon]="faFolder"></fa-icon>
+  </div>
+  <div class="flex flex-column">
+    <div class="text-black">
+      {{ deliverable.name }}
+    </div>
+    <div class="text-gray-500">
+      <small class="text-xs">{{ deliverable.description }}</small>
+    </div>
+  </div>
+</div>

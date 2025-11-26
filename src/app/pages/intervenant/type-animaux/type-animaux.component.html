@@ -1,0 +1,70 @@
+<div 
+  class="odyssey-shadow-low border-round" 
+  style="background:#F5F0E6; border:1px solid #D9D2C2;"
+>
+  <div class="px-4 py-2 flex gap-3 align-items-center" 
+       style="background:#16A34A; color:white; border-radius:8px 8px 0 0;">
+    
+    <div class="flex-1">
+      <h5 class="m-0">Gestion des types d'animaux</h5>
+    </div>
+
+    <div>
+      <app-type-animaux-form (onUpdate)="loadData()"></app-type-animaux-form>
+    </div>
+  </div>
+  
+  <div>
+    <p-table
+      [loading]="loading"
+      [rows]="pageSize"
+      [rowsPerPageOptions]="[5, 10, 30, 40]"
+      [value]="typeAnimaux"
+      [paginator]="typeAnimaux.length > pageSize"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr style="background:#DCFCE7;">
+          <th pSortableColumn="nom">Nom <p-sortIcon field="nom"></p-sortIcon></th>
+          <th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
+          <th style="width: 150px; text-align: center;">Actions</th>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="body" let-typeAnimal>
+        <tr>
+          <td><strong>{{ typeAnimal.nom }}</strong></td>
+          <td>{{ typeAnimal.description || 'Non renseignée' }}</td>
+          <td>
+            <div class="flex gap-2 justify-content-center">
+              <app-type-animaux-form
+                [target]="typeAnimal"
+                mode="edit"
+                (onUpdate)="loadData()"
+              ></app-type-animaux-form>
+              
+              <button
+                pButton
+                class="p-button-rounded"
+                icon="pi pi-trash"
+                style="background:#B91C1C; border-color:#B91C1C;"
+                (click)="confirmDelete(typeAnimal)"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="3" class="text-center py-4">
+            <i class="pi pi-inbox mr-2"></i>
+            Aucun type d'animal trouvé
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

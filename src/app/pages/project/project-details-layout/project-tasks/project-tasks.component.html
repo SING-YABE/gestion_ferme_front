@@ -1,0 +1,437 @@
+<div class="card">
+  <div
+    style="margin-top: -10px; margin-left: -30px; margin-right: -30px"
+    class="flex mb-3 gap-3 pl-3 pr-3 pb-2 align-items-center h-8rem bg-primary"
+  >
+    <div style="margin-top: -15px" class="flex-1 pl-3">
+      <h4 class="text-white">
+        {{ projectId }} >
+        <span class="text-white">
+          <a
+            [routerLink]="['/projects/details', projectId, 'risques']"
+            class="text-white"
+            >risques</a
+          >
+        </span>
+        >
+        <span class="text-white">
+          <a
+            [routerLink]="[
+              '/projects/details',
+              projectId,
+              'risques',
+              'risque-action-plans',
+              risqueId
+            ]"
+            class="text-white"
+            >plan d'actions</a
+          >
+        </span>
+        > tâches
+      </h4>
+    </div>
+    <button
+      style="
+        background-color: rgba(0, 0, 0, 0.47);
+        margin-bottom: 20px !important;
+        margin-right: 13px;
+        margin-top: -20px;
+      "
+      pButton
+      icon="pi pi-chart-line"
+      label="Voir progression"
+      (click)="viewActionPlanDashboard()"
+      class="p-button-primary"
+    ></button>
+    <div>
+      <button
+        style="
+          background-color: rgba(0, 0, 0, 0.47);
+          margin-bottom: 20px !important;
+          margin-right: 13px;
+          margin-top: -20px;
+        "
+        pButton
+        icon="pi pi-plus"
+        label="Ajouter une tâche"
+        (click)="openCreateDialog()"
+        class="p-button-primary"
+      ></button>
+    </div>
+  </div>
+
+  <div style="margin-top: -75px" class="odyssey-shadow-low border-round">
+    <p-table [value]="tasks" [paginator]="true" [rows]="10">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Titre</th>
+          <th>Description</th>
+          <th>Date de fin prévue</th>
+          <th>Statut</th>
+          <th>Exécuteurs</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-task>
+        <tr >
+          <td>{{ task.title }}</td>
+          <td>{{ task.description }}</td>
+          <td>{{ task.plannedEndDate | date : "dd/MM/yyyy" }}</td>
+          <td>
+            <span
+              [ngClass]="{
+                'text-green-600': task.status === 'COMPLETED',
+                'text-blue-600': task.status === 'IN_PROGRESS',
+                'text-orange-600': task.status === 'PLANNED',
+                'text-red-600': task.status === 'BLOCKED'
+              }"
+            >
+              {{
+                task.status === "PLANNED"
+                  ? "Planifié"
+                  : task.status === "IN_PROGRESS"
+                  ? "En cours"
+                  : task.status === "COMPLETED"
+                  ? "Complété"
+                  : task.status === "BLOCKED"
+                  ? "Bloqué"
+                  : task.status
+              }}
+            </span>
+          </td>
+          <td>
+            <div *ngIf="task.executors && task.executors.length > 1">
+              <p-avatarGroup styleClass="mb-3">
+                <p-avatar
+                  *ngFor="let executor of task.executors"
+                  [label]="executor.user.displayName[0]"
+                  size="normal"
+                  [style]="{ 'background-color': '#f66409', color: '#ffffff' }"
+                  shape="circle"
+                />
+              </p-avatarGroup>
+            </div>
+            <div *ngIf="!task.executors || task.executors.length === 1">
+              {{ task?.executors[0]?.user?.displayName }}
+            </div>
+          </td>
+          <td>
+            <button
+              pButton
+              icon="pi pi-pencil"
+              class="p-button-warning mr-2"
+              (click)="openEditDialog(task)"
+            ></button>
+            <button
+              pButton
+              icon="pi pi-trash"
+              class="p-button-danger"
+              (click)="confirmDeleteTask(task)"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Popup de confirmation de suppression -->
+  <p-dialog
+    header="Confirmation de suppression"
+    [(visible)]="confirmationVisible"
+    [modal]="true"
+    [closable]="false"
+  >
+    <p>
+      Êtes-vous sûr de vouloir supprimer la tâche "{{ taskToDelete?.title }}" ?
+    </p>
+    <p-footer>
+      <button
+        pButton
+        label="Non"
+        icon="pi pi-times"
+        (click)="confirmationVisible = false"
+        class="p-button-text"
+      ></button>
+      <button
+        pButton
+        label="Oui je confirme"
+        icon="pi pi-check"
+        (click)="deleteTask()"
+        class="p-button-danger"
+      ></button>
+    </p-footer>
+  </p-dialog>
+
+  <!-- Dialog d'ajout/modification de tâche -->
+  <p-dialog
+    [(visible)]="showDialog"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+  >
+    <ng-template pTemplate="header">
+      {{ dialogMode === "create" ? "Créer une tâche" : "Modifier la tâche" }}
+    </ng-template>
+
+    <form [formGroup]="taskForm" (ngSubmit)="submitTask()">
+      <div class="field">
+        <label for="title">Titre</label>
+        <input
+          id="title"
+          pInputText
+          formControlName="title"
+          type="text"
+          class="w-full"
+        />
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          pInputTextarea
+          formControlName="description"
+          class="w-full"
+        >
+        </textarea>
+      </div>
+
+      <div class="field">
+        <label for="plannedEndDate">Date de fin prévue</label>
+        <p-calendar
+          id="plannedEndDate"
+          appendTo="body"
+          formControlName="plannedEndDate"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          class="w-full"
+        >
+        </p-calendar>
+      </div>
+
+      <div class="field">
+        <label for="status">Statut</label>
+        <p-dropdown
+          id="status"
+          [options]="taskStatuses"
+          formControlName="status"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        >
+        </p-dropdown>
+      </div>
+
+      <div class="field">
+        <label for="executors">Exécuteurs</label>
+        <div class="mt-2">
+          <div *ngIf="isLoadingUsers" class="flex align-items-center">
+            <p-progressSpinner
+              [style]="{ width: '30px', height: '30px' }"
+              styleClass="mr-2"
+            ></p-progressSpinner>
+            <span>Chargement des utilisateurs...</span>
+          </div>
+
+          <div *ngIf="!isLoadingUsers && shamsyUsersOptions.length > 0">
+            <p-multiSelect
+              id="executors"
+              appendTo="body"
+              [options]="shamsyUsersOptions"
+              [(ngModel)]="selectedExecutors"
+              [ngModelOptions]="{ standalone: true }"
+              optionLabel="name"
+              optionValue="id"
+              defaultLabel="Sélectionner des exécuteurs"
+              display="chip"
+              [filter]="true"
+              filterBy="name"
+              placeholder="Sélectionner les exécuteurs"
+              [showToggleAll]="true"
+              class="w-full"
+            >
+              <ng-template pTemplate="header">
+                <div class="p-2">
+                  <div class="font-bold text-lg">Exécuteurs</div>
+                  <div class="text-sm text-gray-500">Recherche</div>
+                </div>
+              </ng-template>
+              <ng-template let-user pTemplate="item">
+                <div class="p-multiselect-user-item">
+                  <div>{{ user.name }}</div>
+                  <div class="text-sm text-gray-600">{{ user.cuid }}</div>
+                </div>
+              </ng-template>
+            </p-multiSelect>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-content-end mt-4">
+        <button
+          pButton
+          type="button"
+          label="Annuler"
+          class="p-button-secondary mr-2"
+          (click)="showDialog = false"
+        ></button>
+        <button
+          pButton
+          type="submit"
+          label="Enregistrer"
+          [disabled]="!taskForm.valid"
+        ></button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="showProgressModal"
+    [modal]="true"
+    [style]="{
+      'z-index': '999999999',
+      width: fullScreenMode ? '95vw' : '80vw',
+      height: fullScreenMode ? '95vh' : 'auto'
+    }"
+    appendTo="body"
+    [maximizable]="true"
+    appendTo="body"
+  >
+    <div *ngIf="progressData">
+      <div class="mb-4">
+        <h2 class="text-2xl font-bold">{{ progressData.actionPlanTitle }}</h2>
+      </div>
+
+      <!-- ensemble des tâches -->
+      <div class="grid mt-5">
+        <div class="col-12 md:col-6 lg:col-2">
+          <div class="border-1 border-round p-4 shadow-1 bg-gray-50 h-full">
+            <div class="text-lg font-bold">Tâches totales</div>
+            <div class="text-4xl mt-2 text-center">
+              {{ progressData.totalTasks }}
+            </div>
+          </div>
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+          <div class="border-1 border-round p-4 shadow-1 bg-green-50 h-full">
+            <div class="text-lg font-bold text-green-700">Terminées</div>
+            <div class="text-4xl mt-2 text-green-700 text-center">
+              {{ progressData.completedTasks }}
+            </div>
+          </div>
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+          <div class="border-1 border-round p-4 shadow-1 bg-blue-50 h-full">
+            <div class="text-lg font-bold text-blue-700">En cours</div>
+            <div class="text-4xl mt-2 text-blue-700 text-center">
+              {{ progressData.inProgressTasks }}
+            </div>
+          </div>
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+          <div class="border-1 border-round p-4 shadow-1 bg-orange-50 h-full">
+            <div class="text-lg font-bold text-orange-700">Planifiées</div>
+            <div class="text-4xl mt-2 text-orange-700 text-center">
+              {{ progressData.plannedTasks }}
+            </div>
+          </div>
+        </div>
+        <div class="col-12 md:col-6 lg:col-2">
+          <div class="border-1 border-round p-4 shadow-1 bg-red-50 h-full">
+            <div class="text-lg font-bold text-red-700">Bloquées</div>
+            <div class="text-4xl mt-2 text-red-700 text-center">
+              {{ progressData.blockedTasks }}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6 lg:col-2">
+          <div class="border-1 border-round p-4 shadow-1 bg-purple-50 h-full">
+            <div class="text-lg font-bold text-purple-700">Avancement</div>
+            <div class="text-4xl mt-2 text-purple-700 text-center">
+              {{ progressData.progressPercentage }}%
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <h3 class="text-xl font-bold mb-3">Indicateurs de performance</h3>
+        <div class="grid">
+          <div class="col-12 md:col-6 lg:col-4">
+            <div class="border-1 border-round p-3 shadow-1">
+              <div class="text-lg">Taux de tâches bloquées</div>
+              <div class="flex align-items-center mt-2">
+                <div class="w-8 font-bold">
+                  {{
+                    (
+                      (progressData.blockedTasks / progressData.totalTasks) *
+                      100
+                    ).toFixed(1)
+                  }}%
+                </div>
+                <p-progressBar
+                  [value]="
+                    (progressData.blockedTasks / progressData.totalTasks) * 100
+                  "
+                  [showValue]="false"
+                  [style]="{ height: '10px' }"
+                  class="flex-1"
+                  [styleClass]="'p-progressbar-danger'"
+                >
+                </p-progressBar>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 md:col-6 lg:col-4">
+            <div class="border-1 border-round p-3 shadow-1">
+              <div class="text-lg">Taux de tâches en cours</div>
+              <div class="flex align-items-center mt-2">
+                <div class="w-8 font-bold">
+                  {{
+                    (
+                      (progressData.inProgressTasks / progressData.totalTasks) *
+                      100
+                    ).toFixed(1)
+                  }}%
+                </div>
+                <p-progressBar
+                  [value]="
+                    (progressData.inProgressTasks / progressData.totalTasks) *
+                    100
+                  "
+                  [showValue]="false"
+                  [style]="{ height: '10px' }"
+                  class="flex-1"
+                  [styleClass]="'p-progressbar-info'"
+                >
+                </p-progressBar>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 flex justify-content-end gap-2">
+        <button
+          pButton
+          label="Fermer"
+          icon="pi pi-times"
+          class="p-button-outlined"
+          (click)="showProgressModal = false"
+        ></button>
+      </div>
+    </div>
+
+    <div
+      *ngIf="!progressData"
+      class="flex align-items-center justify-content-center p-5"
+    >
+      <p-progressSpinner
+        [style]="{ width: '50px', height: '50px' }"
+        styleClass="mr-2"
+      ></p-progressSpinner>
+      <span>Chargement des données de progression...</span>
+    </div>
+  </p-dialog>
+</div>

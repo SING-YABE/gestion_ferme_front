@@ -1,0 +1,80 @@
+<!-- <div class="odyssey-shadow-low bg-green-50 border-round p-4">
+  <div class="flex justify-content-between align-items-center mb-3">
+    <h5>Gestion des états de santé</h5>
+    <app-etat-sante-form (onUpdate)="loadData()" mode="create"></app-etat-sante-form>
+  </div>
+
+  <p-table [value]="etatsSante" [rows]="pageSize" [paginator]="etatsSante.length > pageSize" [loading]="loading">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Description</th>
+        <th style="text-align: center;">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-etat>
+      <tr>
+        <td>{{ etat.description }}</td>
+        <td class="text-center">
+          <app-etat-sante-form [target]="etat" mode="edit" (onUpdate)="loadData()"></app-etat-sante-form>
+          <button pButton class="p-button-danger p-button-rounded ml-2" icon="pi pi-trash" (click)="confirmDelete(etat)"></button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="2" class="text-center py-4">
+          <i class="pi pi-inbox mr-2"></i>
+          Aucun état de santé trouvé
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog> -->
+
+<!-- ÉTATS DE SANTÉ -->
+<div class="odyssey-shadow-low border-round" style="background:#F5F0E6; border:1px solid #D9D2C2;">
+  <div class="px-4 py-2 flex gap-3 align-items-center" style="background:#16A34A; color:white; border-radius:8px 8px 0 0;">
+    <div class="flex-1">
+      <h5 class="m-0">Gestion des états de santé</h5>
+    </div>
+    <div>
+      <app-etat-sante-form (onUpdate)="loadData()" mode="create"></app-etat-sante-form>
+    </div>
+  </div>
+
+  <p-table [value]="etatsSante" [rows]="pageSize" [paginator]="etatsSante.length > pageSize" [loading]="loading" [rowsPerPageOptions]="[5, 10, 30, 40]" styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr style="background:#DCFCE7;">
+        <th>Description</th>
+        <th style="width:150px; text-align:center;">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-etat>
+      <tr>
+        <td><strong>{{ etat.description }}</strong></td>
+        <td>
+          <div class="flex gap-2 justify-content-center">
+            <app-etat-sante-form [target]="etat" mode="edit" (onUpdate)="loadData()"></app-etat-sante-form>
+            <button pButton class="p-button-rounded" icon="pi pi-trash" style="background:#B91C1C; border-color:#B91C1C;" (click)="confirmDelete(etat)"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="2" class="text-center py-4">
+          <i class="pi pi-inbox mr-2"></i>
+          Aucun état de santé trouvé
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>

@@ -1,0 +1,18 @@
+//Champ ob
+.required-field::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+  }
+  
+  /*  message d'erreur */
+  .field-error {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+    display: block;
+  }
+  
+  
+  
+  

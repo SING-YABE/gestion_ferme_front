@@ -1,0 +1,507 @@
+<button
+        *appHasPermission="['create_project']"
+        (click)="showForm = true"
+        icon="pi pi-plus"
+        style="float: right"
+        pButton
+        label="Ajouter">
+</button>
+
+<p-sidebar appendTo="body" position="right" styleClass="w-full project-form" [(visible)]="showForm">
+
+  <div class="w-full bg-white h-full ">
+
+    <div class="flex align-items-center h-full">
+
+      <div fxFlex="50" class="h-full w-full">
+        <img class="w-full h-full" src="assets/image/new_project.jpg" alt="">
+      </div>
+
+      <div fxFlex="50" class="px-5 flex pt-4 h-full bg-white flex-column gap-4">
+
+        <div class="flex align-items-center gap-3">
+          <div>
+            <div (click)="handleBack()" class="custom_icon-button">
+              <i class="pi pi-backward  text-xl"></i>
+            </div>
+          </div>
+          <div>
+            <h1 class="text-1xl font-normal m-0 text-gray-900">Nouveau projet</h1>
+          </div>
+          <div  (click)="showForm = false" class="custom_icon-button">
+            <i class="pi pi-times  text-xl"></i>
+          </div>
+        </div>
+
+        @if (step == 'project-init') {
+
+          <form>
+
+            <div class="flex flex-column gap-4">
+              
+              <div>
+                <label for="projectName" class="required-field">Nom du projet</label>
+                <input id="projectName" name="projectName" [(ngModel)]="projectName" (input)="handleProjectName($event)" 
+                       placeholder="Nom du projet" class="large-input text-2xl uppercase w-full" type="text"
+                       [ngClass]="{'ng-invalid ng-touched': projectNameError}">
+                @if (projectNameError) {
+                  <span class="field-error">{{ projectNameError }}</span>
+                }
+                @if (checkResult?.available == false) {
+                  <span class="mt-1 text-sm font-semibold text-red-500">Un autre projet porte déja le même nom</span>
+                }
+              </div>
+              
+
+              <div *ngIf="checkResult?.available">
+                <p-chip [label]="checkResult.uniqFinalCode"></p-chip>
+              </div>
+
+              <div>
+                <h3 class="mb-2 font-medium">Priorité</h3>
+                <ul class="priority-form">
+                  <li (click)="priority = 'LOW'" [class.active]="priority == 'LOW'">Faible</li>
+                  <li (click)="priority = 'MEDIUM'" [class.active]="priority == 'MEDIUM'">Moyenne</li>
+                  <li (click)="priority = 'HIGH'" [class.active]="priority == 'HIGH'">Haute</li>
+                </ul>
+              </div>
+            </div>
+
+          </form>
+
+          <div>
+            <form [formGroup]="projectDetailsForm">
+
+              <!-- Type de projet -->
+<div class="field w-12">
+  <label for="projectRoadmaap">Type de roadmap</label>
+  <p-dropdown
+    id="projectRoadmaap"
+    formControlName="projectRoadmapId"
+    [options]="projectRoadmaps"
+    optionValue="id"
+    optionLabel="name"
+    [showClear]="true"
+    [filter]="true"
+    emptyMessage="Aucun type de projet trouvé"
+    placeholder="Selectionner le type de projet"
+    (onChange)="handleProjectRoadmapChange($event)"
+    class="w-full">
+    <ng-template pTemplate="item" let-item>
+      <div class="flex align-items-center gap-2">
+        <i class="pi pi-tag mr-2"></i>
+        <div class="flex-1">{{ item.name }}</div>
+        <div class="mr-2 text-sm text-gray-500">{{ item.description }}</div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="selectedItem" let-selectedOption>
+      <div class="flex align-content-start gap-3">
+        <i class="pi pi-tag mr-2"></i>
+        <div class="flex-1">{{ selectedOption.name }}</div>
+        <div><p-badge *ngIf="selectedOption.description" [value]="selectedOption.description"></p-badge></div>
+      </div>
+    </ng-template>
+  </p-dropdown>
+</div>
+              <!-- Année budgétaire et Date de début -->
+              <div class="flex gap-3">
+                <div class="field" style="width: 50%;">
+                  <label for="year" class="required-field">Année budgétaire</label>
+                  <input formControlName="year" pInputText type="number" id="year" class="w-full">
+                </div>
+                
+                <div class="field" style="width: 50%;">
+                  <label for="startedAt" class="required-field">Date de début</label>
+                  <p-calendar formControlName="startDate" appendTo="body" type="text" id="startedAt" class="w-full"></p-calendar>
+                </div>
+              </div>
+
+              <!-- Directio et Critere strategiques -->
+              <div class="flex gap-3">
+                <!-- <div class="field" style="width: 50%;">
+                  <label for="beneficiaryDirection" class="required-field">Direction bénéficiaire</label>
+                  <p-dropdown
+                    formControlName="beneficiaryDirectionId"
+                    optionValue="id"
+                    optionLabel="name"
+                    [options]="directions"
+                    [filter]="true"
+                    filterBy="name,description"
+                    placeholder="La direction bénéficiaire"
+                    id="beneficiaryDirection"
+                    class="w-full">
+                    <ng-template pTemplate="item" let-item>
+                      <div class="flex gap-2">
+                        <span class="flex gap-2"><fa-icon [icon]="faBuilding"></fa-icon> {{ item?.description }}</span>
+                        <span>/</span>
+                        <span>{{ item.name }}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="selectedItem" let-selected>
+                      <div class="flex gap-2">
+                        <span class="flex gap-2"><fa-icon class="text-primary" [icon]="faBuilding"></fa-icon> {{ selected?.description }}</span>
+                        <span>/</span>
+                        <span>{{ selected.name }}</span>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
+                </div> -->
+
+                <div class="field" style="width: 50%;">
+                  <label for="beneficiaryDirections" class="required-field">Directions bénéficiaires</label>
+                  <p-multiSelect
+                    formControlName="beneficiaryDirectionIds"
+                    [options]="directions"
+                    optionValue="id"
+                    optionLabel="name"
+                    [filter]="true"
+                    filterBy="name,description"
+                    defaultLabel="Sélectionnez les directions bénéficiaires"
+                    id="beneficiaryDirections"
+                    class="w-full"
+                    >
+                    <ng-template pTemplate="item" let-item>
+                      <div class="flex gap-2">
+                        <span class="flex gap-2"><fa-icon [icon]="faBuilding"></fa-icon> {{ item?.description }}</span>
+                        <span>/</span>
+                        <span>{{ item.name }}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="selectedItems" let-value>
+                      <div class="flex gap-1 flex-wrap" *ngIf="value && value.length > 0">
+                        <div class="py-1 px-2 bg-primary-100 rounded-md flex gap-1 items-center" *ngFor="let directionId of value.slice(0, 3)">
+                          <fa-icon class="text-primary" [icon]="faBuilding"></fa-icon>
+                          <span class="text-primary-800">{{ getDirectionName(directionId) }}</span>
+                        </div>
+                        <div *ngIf="value.length > 3" class="py-1 px-2 bg-primary-100 rounded-md">
+                          <span class="text-primary-800">+{{ value.length - 3 }} autres</span>
+                        </div>
+                      </div>
+                      <span *ngIf="!value || value.length === 0">Sélectionnez les directions bénéficiaires</span>
+                    </ng-template>
+                  </p-multiSelect>
+                  
+                </div>
+
+
+                <div class="field" style="width: 50%;">
+                  <label for="strategicCriterion">Critère stratégique</label>
+                  <p-dropdown
+                id="strategicCriterion"
+                formControlName="strategicCriterionId"
+                [options]="strategicCriterions"
+                optionValue="id"
+                optionLabel="name"
+                [showClear]="true"
+                [filter]="true"
+                emptyMessage="Aucun Critère stratégique trouvé"
+                placeholder="Critère stratégique"
+                (onChange)="handleStrategicCriterionChange($event)"
+                class="w-full">
+              </p-dropdown>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <div class="field">
+                  <label for="endStudy" class="required-field">Date de fin de l'étude</label>
+                  <p-calendar formControlName="surveyPlannedEndDate" appendTo="body" type="text" id="endStudy"></p-calendar>
+                </div>
+                <div class="field">
+                  <label for="endAt" class="required-field">Date prévisionnelle de clôture</label>
+                  <p-calendar formControlName="plannedEndDate" appendTo="body" type="text" id="endAt"></p-calendar>
+                </div>
+              </div>
+
+            </form>
+          </div>
+
+        }
+
+         <!-- Étape 2: Informations additionnelles -->
+         @if (step == 'additional-infos') {
+          <div>
+            <form [formGroup]="projectAdditionalInfoForm">
+              <div class="flex gap-3">
+                <!-- Modèle de phasage  -->
+                <div class="field w-6">
+                  <label for="template" class="required-field">Modèle de phasage</label>
+                  <p-dropdown (onChange)="handleTemplateChange($event)" [filter]="true" filterBy="name" formControlName="phasingTemplateId" id="template" optionValue="id" optionLabel="name" [options]="templates" class="w-full"></p-dropdown>
+              
+                  @if (selectedTemplate != undefined && selectedTemplate.phases != undefined) {
+                    <div class="flex mt-2 gap-3 align-items-center flex-wrap">
+                      <span class="text-sm text-gray-600">Etapes :</span>
+                      @for (phase of selectedTemplate.phases; track $index){
+                        <div class="px-2 py-1 font-bold border-round bg-light text-sm">
+                          {{ phase.name }}
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              
+                <!-- Type de projet -->
+                <div class="field w-6">
+                  <label for="projectType">Type de projet</label>
+                  <p-dropdown
+                    id="projectType"
+                    formControlName="projectTypeId"
+                    [options]="projectTypes"
+                    optionValue="id"
+                    optionLabel="name"
+                    [showClear]="true"
+                    [filter]="true"
+                    emptyMessage="Aucun type de projet trouvé"
+                    placeholder="Un type de projet"
+                    (onChange)="handleProjectTypeChange($event)"
+                    class="w-full">
+                    <ng-template pTemplate="item" let-item>
+                      <div class="flex align-items-center gap-2">
+                        <i class="pi pi-tag mr-2"></i>
+                        <div class="flex-1">{{ item.name }}</div>
+                        <div class="mr-2 text-sm text-gray-500">{{ item.description }}</div>
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="selectedItem" let-selectedOption>
+                      <div class="flex align-content-start gap-3">
+                        <i class="pi pi-tag mr-2"></i>
+                        <div class="flex-1">{{ selectedOption.name }}</div>
+                        <div><p-badge *ngIf="selectedOption.description" [value]="selectedOption.description"></p-badge></div>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
+                </div>
+              </div>
+                    
+              <!-- Chef de projet + ResponsableEtude -->
+              <div class="flex gap-3">
+                <div class="field w-6">
+                  <label for="chefProjet">Chef de projet</label>
+                  <p-dropdown 
+                  formControlName="cuidChefProjet" 
+                  optionValue="cuid" 
+                  [showClear]="true" 
+                  emptyMessage="Aucune proposition trouvée !" 
+                  emptyFilterMessage="Aucune proposition trouvée !" 
+                  appendTo="body" 
+                  [filter]="true"
+                  filterBy="displayName,cuid,firstname,lastname,email"
+                  [options]="filteredUsers" 
+                  id="chefProjet" 
+                  placeholder="Chef de projet"
+                  class="w-full">
+
+                    <ng-template pTemplate="filter" let-options="options">
+                      <div class="flex gap-1">
+                        <div class="p-inputgroup" (click)="$event.stopPropagation()">
+                          <span class="p-inputgroup-addon bg-white"><i class="pi pi-search"></i></span>
+                          <input
+                            type="text"
+                            pInputText
+                            placeholder="Rechercher ..."
+                            (input)="handleFilter($event)" />
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="selectedItem" let-selectedOption>
+                      <div class="flex align-content-start gap-3">
+                        <div class="flex-1">{{ selectedOption.displayName }}</div>
+                        <div><p-badge [value]="selectedOption.cuid"></p-badge></div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="item" let-item>
+                      <div class="flex align-items-center gap-2">
+                        <fa-icon [icon]="faUser"></fa-icon>
+                        <div class="flex-1">{{ item.displayName }}</div>
+                        <div class="mr-2"><p-badge [value]="item.cuid"></p-badge></div>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
+                </div>
+
+                <div class="field w-6">
+                  <label for="responsableEtude" class="required-field">Responsable de l'étude</label>
+                  <p-dropdown
+                  formControlName="cuidResponsableEtude"
+                  [options]="filteredUsers"
+                  optionValue="cuid"
+                  [showClear]="true"
+                  emptyMessage="Aucun utilisateur trouvé"
+                  emptyFilterMessage="Aucune proposition trouvée !"
+                  appendTo="body"
+                  [filter]="true"
+                  filterBy="displayName,cuid,firstname,lastname,email"
+                  placeholder="Un responsable d'etude"
+                  class="w-full">
+                    <ng-template pTemplate="filter" let-options="options">
+                      <div class="flex gap-1">
+                        <div class="p-inputgroup" (click)="$event.stopPropagation()">
+                          <span class="p-inputgroup-addon bg-white"><i class="pi pi-search"></i></span>
+                          <input
+                            type="text"
+                            pInputText
+                            placeholder="Rechercher ..."
+                            (input)="handleFilter($event)" />
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="item" let-item>
+                      <div class="flex align-items-center gap-2">
+                        <fa-icon [icon]="faUser"></fa-icon>
+                        <div class="flex-1">{{ item.displayName }}</div>
+                        <div class="mr-2"><p-badge [value]="item.cuid"></p-badge></div>
+                      </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="selectedItem" let-selectedOption>
+                      <div class="flex align-content-start gap-3">
+                        <div class="flex-1">{{ selectedOption.displayName }}</div>
+                        <div><p-badge [value]="selectedOption.cuid"></p-badge></div>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
+                </div>
+              </div>
+
+          
+              
+              <!-- Direction + Département -->
+              <div class="flex gap-3">
+                <div class="field w-6">
+                  <label for="direction" class="required-field">Direction porteur</label>
+                  <p-dropdown formControlName="directionId" optionValue="id" filterBy="name,direction.name,direction.description" [filter]="true" optionLabel="name" [options]="directions" id="direction" class="w-full">
+                    <ng-template pTemplate="item" let-item>
+                      <div class="flex gap-2">
+                        <span class="flex gap-2"><fa-icon [icon]="faBuilding"></fa-icon> {{ item?.description }}</span>
+                        <span>/</span>
+                        <span>{{ item.name }}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="selectedItem" let-selected>
+                      <div class="flex gap-2">
+                        <span class="flex gap-2"><fa-icon class="text-primary" [icon]="faBuilding"></fa-icon> {{ selected?.description }}</span>
+                        <span>/</span>
+                        <span>{{ selected.name }}</span>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
+                </div>
+                
+                <div class="field w-6">
+                  <label for="department" class="required-field">Département porteur</label>
+                  <p-dropdown formControlName="departmentId" optionValue="id" filterBy="name,description" [filter]="true" optionLabel="description" [options]="departments" id="department" class="w-full">
+                    <ng-template pTemplate="item" let-item>
+                      <div class="flex gap-2">
+                        <span class="flex gap-2"><fa-icon [icon]="faBuilding"></fa-icon> {{ item?.description }}</span>
+                        <span>/</span>
+                        <span>{{ item.name }}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="selectedItem" let-selected>
+                      <div class="flex gap-2">
+                        <span class="flex gap-2"><fa-icon class="text-primary" [icon]="faBuilding"></fa-icon> {{ selected.direction?.description }}</span>
+                        <span>/</span>
+                        <span>{{ selected.name }}</span>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
+                </div>
+              </div>
+              
+              <!-- Budget -->
+              <!-- <div class="field">
+                <label for="budget">Budget validé</label>
+                <input
+                  type="number"
+                  id="budget"
+                  name="budget"
+                  formControlName="budgetGlobal"
+                  pInputText
+                  placeholder="Saisissez le budget validé"
+                  min="0"
+                  step="1"
+                  class="w-full" />
+              </div> -->
+
+              <!-- Budget -->
+         <!-- Budget -->
+          <div class="field">
+            <label for="budget" > Budget validé</label>
+            <div class="flex flex-column gap-3">
+              <!-- PREDEFINI -->
+              <div class="budget-presets grid">
+                @for (amount of predefinedBudgets; track $index) {
+                  <div class="col-4 md:col-3">
+                    <div 
+                      (click)="selectPredefinedBudget(amount)" 
+                      class="budget-chip p-2 text-center border-round cursor-pointer transition-colors transition-duration-150"
+                      [ngClass]="{'budget-chip-selected': projectAdditionalInfoForm.get('budgetGlobal')?.value === amount}">
+                      <span class="block font-medium">{{ formatBudget(amount) }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+              <!-- saisie -->
+              <div class="p-inputgroup">
+                <span class="p-inputgroup-addon"></span>
+                <input
+                  type="number"
+                  id="budget"
+                  name="budget"
+                  formControlName="budgetGlobal"
+                  pInputText
+                  placeholder="Saisissez le budget validé"
+                  min="0"
+                  step="100000"
+                  class="w-full" />
+              </div>
+            </div>
+          </div>
+              <!-- Description -->
+              <div class="field">
+                <label for="description">Description</label>
+                <textarea pInputTextarea type="text" id="description" name="description" formControlName="description" class="w-full" rows="3"></textarea>
+              </div>
+            </form>
+          </div>
+        }
+
+
+        <div>
+          <button *ngIf="progress === steps.length - 1" 
+        [disabled]="!checkResult?.available || projectAdditionalInfoForm.invalid" 
+        (click)="handleNext()" 
+        pButton 
+        label="Créer le projet" 
+        class="large-button"></button>
+          <!-- <button *ngIf="progress === steps.length - 1" [disabled]="!checkResult?.available || projectAdditionalInfoForm.invalid" (click)="handleNext()" pButton label="Créer le projet" class="large-button"></button> -->
+          <!-- <button *ngIf="progress !== steps.length - 1" [disabled]="step === 'project-init' ? (!checkResult?.available || projectDetailsForm.invalid) : false" (click)="handleNext()" pButton label="Continuer" class="large-button"></button> -->
+          <button *ngIf="progress !== steps.length - 1" [disabled]="!checkResult?.available || projectDetailsForm.invalid" (click)="handleNext()" pButton label="Continuer" class="large-button"></button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</p-sidebar>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

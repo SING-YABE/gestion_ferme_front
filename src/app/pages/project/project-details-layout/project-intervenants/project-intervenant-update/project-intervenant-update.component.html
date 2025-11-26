@@ -1,0 +1,42 @@
+<button *ngIf="mode == 'edit'" class="p-button-rounded p-button-sm" pButton (click)="handleShowForm()" icon="pi pi-pencil"></button>
+
+<p-dialog header="Mise à jour" appendTo="body" [modal]="true" [style]="{width: '800px'}" [(visible)]="showImporterUpdate">
+
+    <div *ngIf="toImport != undefined">
+      <div class="flex gap-3">
+  
+        <div class="field">
+          <label for="lastname">Nom</label>
+          <input disabled [ngModel]="toImport.lastname" pInputText id="lastname" />
+        </div>
+  
+        <div class="field">
+          <label for="firstname">Prénom(s)</label>
+          <input disabled [ngModel]="toImport.firstname" pInputText id="firstname" />
+        </div>
+      </div>
+  
+      <div class="field">
+        <label for="role">Role</label>
+        <p-dropdown formControlName="role" placeholder="Sélectionner un rôle" appendTo="body" [emptyMessage]="emptyMessage" id="role" optionLabel="name" optionValue="id" [options]="roles"></p-dropdown>
+      </div>
+  
+      <div class="field">
+        <label for="permissions">Phases</label>
+        <p-multiSelect formControlName="phases" placeholder="Sélectionner une ou plusieurs permission(s)" appendTo="body" id="permissions" optionLabel="name" optionValue="id" [options]="projectDetails?.phases"></p-multiSelect>
+      </div>
+
+      <div class="field">
+        <label for="validator">Validateur</label>
+        <p-selectButton formControlName="validator" id="validator" [options]="validatorOptions"></p-selectButton>
+      </div>
+  
+    </div>
+  
+    <ng-template pTemplate="footer">
+      <button (click)="showImporterUpdate = false" pButton class="p-button-danger mr-2 p-button-outlined">Annuler</button>
+      <button [loading]="processing" (click)="submitForm()" pButton>Enregistrer</button>
+    </ng-template>
+  
+  </p-dialog>
+  

@@ -1,0 +1,71 @@
+<div>
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+
+        <div class="flex gap-3">
+            <div class="field">
+                <label for="lastname">Nom</label>
+                <input readonly id="lastname" type="text" formControlName="lastname" pInputText>
+            </div>
+            <div class="field">
+                <label for="firstname">Prénom</label>
+                <input readonly id="firstname" type="text" formControlName="firstname" pInputText>
+            </div>
+        </div>
+        <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" formControlName="email" pInputText>
+        </div>
+        <div class="row">
+            <div class="field">
+                <label for="msisdn">Numéro</label>
+                <input id="msisdn" type="text" formControlName="msisdn" pInputText>
+            </div>
+
+            <div class="field">
+                <label for="role">Rôle</label>
+                <p-dropdown formControlName="role" [options]="roles" optionLabel="name" optionValue="id"
+                    placeholder="Sélectionner un rôle" id="role" class="w-full"></p-dropdown>
+            </div>
+
+
+            <div class="field">
+                <label for="direction">Direction</label>
+                <p-dropdown
+                    appendTo="body"
+                    formControlName="directions"
+                    [options]="directions"
+                    optionLabel="description"
+                    placeholder="Sélectionner une direction"
+                    id="direction"
+                    class="w-full"
+                    (onChange)="onDirectionChange($event.value)">
+                </p-dropdown>
+            </div>
+
+            <div class="field">
+                <label for="departements">Département</label>
+                <p-dropdown
+                    appendTo="body"
+                    formControlName="departmentId"
+                    [options]="departments"
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="Sélectionner un département"
+                    id="departements"
+                    class="w-full"
+                    [showClear]="true"
+                    [filter]="true">
+                </p-dropdown>
+            </div>
+
+
+            <div class="field col-md-6">
+                <button (click)="cancel()" pButton class="p-button-danger mr-2 p-button-outlined">Annuler</button>
+                <button [disabled]="userForm.invalid" type="submit" pButton class="p-button-primary">Enregistrer</button>
+            </div>
+
+        </div>
+    </form>
+
+</div>

@@ -1,0 +1,23 @@
+/* Style général du formulaire */
+#risqueForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Espacement entre les groupes */
+  }
+  
+  /* Utilisation de Flexbox pour aligner les champs en ligne */
+  .field-group {
+    display: flex;
+    gap: 1rem; /* Espacement entre les éléments */
+  }
+  
+  /* Chaque champ doit prendre la moitié de l'espace disponible */
+  .field-group .field {
+    flex: 1;
+  }
+  
+  /* Pour s'assurer que les champs en colonne prennent toute la largeur */
+  .field-full {
+    width: 100%;
+  }
+  

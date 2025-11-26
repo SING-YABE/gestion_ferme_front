@@ -1,0 +1,152 @@
+<div class="card">
+  <div class="flex mb-3 gap-3 pl-3 pr-3 pt-2 pb-2 align-items-center bg-white">
+    <div class="flex-1">
+      <h2>Plans d'Action du projet</h2>
+    </div>
+    <div>
+      <button *appHasPermission="['add_action_plan']" pButton (click)="openCreateDialog()" icon="pi pi-plus" label="Ajouter plan d'action"></button>
+    </div>
+  </div>
+
+  <p-table [value]="actionPlans" [loading]="loading" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Titre</th>
+        <th>Description</th>
+        <th>Dead line</th>
+        <th>Créée par</th>
+
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-actionPlan>
+      <tr>
+        <td>
+          <a [routerLink]="['action-plans-task', actionPlan.id]">{{ actionPlan.title }}</a>
+        </td>
+        <td>{{ actionPlan.description }}</td>
+        <td>{{ actionPlan.deadLine | date:'dd/MM/yyyy' }}</td>
+        <td>{{ actionPlan.author.user.displayName }}</td>
+
+        <!--        <td><a [routerLink]="['action-plans-task', actionPlan.id]">{{ countNotDeleted(actionPlan.tasks) }} tâches</a></td>-->
+        <td>
+<!--          <button  pButton  icon="pi pi-eye" class="p-button-primary mr-2" title="Ajouter les tâches" [routerLink]="['action-plans-task', actionPlan.id]" routerLinkActive="router-link-active"  (click)="openTaskDialog(actionPlan)"></button>-->
+          <button *appHasPermission="['update_action_plan']" pButton icon="pi pi-pencil" class="p-button-warning mr-2" (click)="openEditDialog(actionPlan)"></button>
+          <button *appHasPermission="['delete_action_plan']" pButton icon="pi pi-trash" class="p-button-danger" (click)="confirmDeleteActionPlan(actionPlan)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="text-center px-2 py-3" colspan="5">
+          <div>
+            <h3 class="font-normal">Aucune ligne trouvé</h3>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog header="Confirmation de suppression" [(visible)]="confirmationVisible" [modal]="true" [closable]="false">
+    <p>Êtes-vous sûr de vouloir supprimer le plan d'action "{{ actionPlanToDelete?.title }}" ?</p>
+    <p-footer>
+      <button pButton label="Non" icon="pi pi-times" (click)="confirmationVisible = false" class="p-button-text"></button>
+      <button pButton label="Oui je confirme" icon="pi pi-check" (click)="deleteActionPlan()" class="p-button-danger"></button>
+    </p-footer>
+  </p-dialog>
+
+  <p-dialog [(visible)]="showDialog" [modal]="true" [style]="{width: '900px'}"appendTo="body"  >
+    <ng-template pTemplate="header">
+      <h2>{{ dialogMode === 'create' ? 'Créer un plan d\'action' : 'Modifier le plan d\'action' }}</h2>
+    </ng-template>
+
+    <form [formGroup]="actionPlanForm" (ngSubmit)="submitActionPlan()">
+
+      <div class="flex mb-4 gap-4">
+        <div class="field flex-1">
+          <label for="title">Titre</label>
+          <input id="title" pInputText formControlName="title" type="text" class="w-full" />
+        </div>
+
+        <div class="field flex-1">
+          <label for="deadLine">Dead line</label>
+          <p-calendar formControlName="deadLine" appendTo="body" type="text" id="deadLine"></p-calendar>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" pInputTextarea rows="3" formControlName="description" class="w-full"></textarea>
+      </div>
+
+      <!-- Risque associé -->
+      <div class="field">
+        <label for="risk">Risque associé</label>
+        <p-dropdown id="risk" [options]="projectRisks" formControlName="risk" optionLabel="name" optionValue="id" [filter]="true" filterBy="name" placeholder="Sélectionner un risque" appendTo="body" class="w-full"></p-dropdown>
+      </div>
+
+      <!-- afficher/masquerdépense -->
+<div class="field">
+  <button pButton type="button"
+          label="{{showExpenseFields ? 'Masquer les dépenses' : 'Ajouter une dépense'}}"
+          icon="pi pi-money-bill"
+          class="p-button-text p-button-secondary"
+          (click)="toggleExpenseFields()">
+  </button>
+</div>
+
+<div *ngIf="showExpenseFields" class="expense-fields p-3 border-round mt-2 mb-2" style="background-color: #f8f9fa;">
+  <h3 class="mb-3">Informations de dépense</h3>
+
+  <div formGroupName="depense">
+    <div class="flex mb-4 gap-4">
+      <div class="field flex-1">
+        <label for="amount">Montant</label>
+        <p-inputNumber id="amount" formControlName="amount" [showButtons]="false" [minFractionDigits]="0"
+               [maxFractionDigits]="2" mode="decimal" styleClass="w-full"></p-inputNumber>
+      </div>
+
+      <div class="field flex-1">
+        <label for="dateDepense">Date</label>
+        <p-calendar id="dateDepense" formControlName="dateDepense" appendTo="body"></p-calendar>
+      </div>
+    </div>
+
+    <div class="flex mb-4 gap-4">
+      <div class="field flex-1">
+        <label for="label">Libellé</label>
+        <input id="label" pInputText formControlName="label" type="text" class="w-full" />
+      </div>
+
+      <div class="field flex-1">
+        <label for="annualBudgetId">Ligne budgétaire</label>
+        <p-dropdown id="annualBudgetId" [options]="budgetLines" formControlName="annualBudgetId"
+        optionLabel="label" optionValue="id" [filter]="true"
+        placeholder="Sélectionner une ligne budgétaire" appendTo="body" class="w-full">
+
+ <ng-template pTemplate="item" let-item>
+     {{ item.year || '' }} - {{ item.label || '' }} - {{ item.direction.name || '' }} - {{ item.label }}
+ </ng-template>
+ <ng-template pTemplate="selectedItem" let-selectedOption>
+     {{ selectedOption.year || '' }} - {{ selectedOption.label || '' }} - {{ selectedOption.direction.name || '' }}
+ </ng-template>
+</p-dropdown>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="description">Description</label>
+      <textarea id="description" pInputTextarea rows="2" formControlName="description" class="w-full"></textarea>
+    </div>
+  </div>
+</div>
+
+      <!-- Boutons -->
+      <div class="flex justify-content-end">
+        <button pButton type="button" label="Annuler" class="p-button-secondary mr-2" (click)="showDialog = false"></button>
+        <button pButton type="submit" [loading]="saving" label="Enregistrer" [disabled]="!actionPlanForm.valid"></button>
+      </div>
+    </form>
+  </p-dialog>
+</div>

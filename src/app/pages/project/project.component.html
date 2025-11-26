@@ -1,0 +1,329 @@
+<div>
+ <div class="bg-white mb-3 p-3 odyssey-shadow-low border-round">
+  <div class="flex gap-3 align-items-center">
+    <!-- Recherche projet -->
+    <div style="flex: 2; min-width: 250px;">
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon bg-white"><i class="pi pi-search"></i></span>
+        <input
+          type="search"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchInput($event)"
+          placeholder="Rechercher un projet"
+          pInputText
+          class="w-full" />
+      </div>
+    </div>
+    <!-- chef de projet -->
+    <div style="flex: 1.5; min-width: 200px;">
+      <div class="p-inputgroup">
+        <span class="p-inputgroup-addon bg-white"><i class="pi pi-user"></i></span>
+        <input
+          type="search"
+          [(ngModel)]="chefProjetSearchTerm"
+          (input)="onChefProjetSearchInput($event)"
+          placeholder="Chef de projet"
+          pInputText
+          class="w-full" />
+      </div>
+    </div>
+    <!-- recherche statut -->
+    <div style="min-width: 180px;">
+      <p-dropdown
+        [options]="statusOptions"
+        [(ngModel)]="selectedStatus"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Statut"
+        [showClear]="true"
+        styleClass="w-full"
+        (onChange)="onStatusChange($event)">
+        <ng-template let-option pTemplate="item">
+          <div class="flex align-items-center">
+            <i [class]="option.icon"></i>
+            <span class="ml-2">{{option.label}}</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    <!-- clear -->
+    <div style="flex: 0 0 auto;">
+      <button
+        type="button"
+        pButton
+        icon="pi pi-times"
+        class="p-button-outlined p-button-sm"
+        (click)="clearFilters()"
+        pTooltip="Effacer les filtres">
+      </button>
+    </div>
+    <!-- Nouveau projet -->
+    <div style="flex: 0 0 auto;">
+      <app-project-form (onDone)="reload()"></app-project-form>
+    </div>
+  </div>
+</div>
+  <div class="bg-white odyssey-shadow-low mb-7">
+    <p-table *appHasPermission="['view_all_project']" [loading]="loading" [lazy]="true" [totalRecords]="projectsPage.totalElements" (onLazyLoad)="handleNext($event)" [rows]="10" [rowsPerPageOptions]="[10,30,40]" [value]="projectsPage.content" [paginator]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="name">Projet <p-sortIcon field="name"></p-sortIcon></th>
+          <th>Chef de projet</th>
+          <th>Direction bénéficiaire</th>
+          <th pSortableColumn="plannedEndDate">Date de fin prévue <p-sortIcon field="plannedEndDate"></p-sortIcon></th>
+          <th>Département porteur</th>
+          <th pSortableColumn="status">Statut <p-sortIcon field="status"></p-sortIcon></th>
+          <th style="text-align: center;">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-projet>
+        <tr>
+          <td>
+            <span class="p-column-title">Nom</span>
+            <strong> <a [routerLink]="['/projects/details/', projet.projectId, 'events']">{{ projet.name }}</a> </strong>
+          </td>
+        
+          <td>
+            <span class="p-column-title">Chef de projet</span>
+            <span>{{ getChefProjetDisplayName(projet.cuidChefProjet || projet.chefProjet) }}</span>
+          </td>
+          <td>
+            <span class="p-column-title">Direction bénéficiaire</span>
+            <span>{{ projet.beneficiary || 'Non défini' }}</span>
+          </td>
+          
+          <td>
+            <span class="p-column-title">Date de fin prévue</span>
+            <span>{{ projet.plannedEndDate | date:'dd/MM/yyyy' }}</span>
+          </td>
+          <td>
+            <span class="p-column-title">Département porteur</span>
+            <span>{{ projet.departmentName || 'Non défini' }}</span>
+          </td>
+          <!-- <td>
+    <span class="p-column-title">Statut</span>
+    <span 
+        class="status-clickable cursor-pointer"
+        [ngClass]="{
+            'status-planned': projet.status === 'ETUDE',
+            'status-in-progress': projet.status === 'EXECUTION', 
+            'status-completed': projet.status === 'PRODUCTION',
+            'status-suspended': projet.status === 'SUSPENDU',
+            'status-canceled': projet.status === 'ANNULE'
+        }"
+        (click)="openStatusModal(projet)"
+    >
+        {{ projet.status || 'Non défini' }}
+    </span>
+</td> -->
+
+<td class="align-top">
+  <span class="p-column-title text-sm text-gray-500 mb-1">Statut</span>
+
+  <div class="flex flex-col gap-2">
+
+    <!-- Statut automatique -->
+    <div class="flex items-center gap-2">
+      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold"
+            [ngClass]="getStatusClass(projet.status)">
+        <i class="pi pi-cog text-xs mr-1"></i>
+        Auto: {{ projet.statusDisplayName || 'Non défini' }}
+      </span>
+    </div>
+
+    <!-- Statut manuel -->
+    <div class="flex items-center gap-2">
+      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold cursor-pointer hover:shadow-sm transition"
+            [ngClass]="getStatusClass(projet.manualStatus)"
+            (click)="openStatusModal(projet)">
+        <i class="pi pi-user-edit text-xs mr-1"></i>
+        Manuel: {{ projet.manualStatus || 'Non défini' }}
+      </span>
+    </div>
+
+  </div>
+</td>
+
+          <td>
+            <div class="flex gap-2 justify-content-center">
+              <button (click)="showUserDetails(projet.projectId)" class="p-button-rounded" pButton icon="pi pi-eye"></button>
+              <!-- <button 
+                (click)="openSuspensionDialog(projet.projectId, projet.isSuspended)" 
+                class="p-button-rounded" 
+                [ngClass]="{'p-button-warning': !projet.isSuspended, 'p-button-success': projet.isSuspended}"
+                pButton 
+                [icon]="projet.isSuspended ? 'pi pi-play' : 'pi pi-pause'"
+                pTooltip="{{projet.isSuspended ? 'Réactiver le projet' : 'Suspendre le projet'}}"
+              ></button> -->
+               <!-- <button 
+              (click)="handleDelete(projet)" 
+              class="p-button-rounded p-button-danger p-button-sm" 
+              pButton 
+              icon="pi pi-trash"
+              pTooltip="Supprimer le projet">
+            </button> -->
+            
+            <!-- <button 
+              *ngIf="!projet.isStarted"
+              (click)="startProject(projet.projectId)" 
+              class="p-button-rounded p-button-success p-button-sm" 
+              pButton 
+              icon="pi pi-play"
+              pTooltip="Démarrer le projet">
+          </button> -->
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center p-4">
+            <h1 class="font-normal m-0">Aucun projet trouvé !</h1>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-table *appHasPermission="['view_self_project']" [loading]="loading" [lazy]="false" [rows]="10" [rowsPerPageOptions]="[10,30,40]" [value]="userProjects.data" [paginator]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="name">Projet <p-sortIcon field="name"></p-sortIcon></th>
+          <th>Chef de projet</th>
+          <th>Direction bénéficiaire</th>
+          <th pSortableColumn="plannedEndDate">Date de fin prévue <p-sortIcon field="plannedEndDate"></p-sortIcon></th>
+          <th>Département porteur</th>
+          <th pSortableColumn="status">Statut <p-sortIcon field="status"></p-sortIcon></th>
+          <th style="text-align: center;">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-projet>
+        <tr>
+          <td>
+            <span class="p-column-title">Nom</span>
+            <strong> <a [routerLink]="['/projects/details/', projet.projectId]">{{ projet.name }}</a> </strong>
+          </td>
+          <td>
+            <span class="p-column-title">Chef de projet</span>
+            <span>{{ projet.chefProjet || projet.chefProjetName || projet.projectManagerName || 'Non défini' }}</span>
+          </td>
+          
+          <td>
+            <span class="p-column-title">Direction bénéficiaire</span>
+            <span>{{ projet.beneficiary || 'Non défini' }}</span>
+          </td>
+          
+          <td>
+            <span class="p-column-title">Date de fin prévue</span>
+            <span>{{ projet.plannedEndDate | date:'dd/MM/yyyy' }}</span>
+          </td>
+          <td>
+            <span class="p-column-title">Département porteur</span>
+            <span>{{ projet.departmentName || 'Non défini' }}</span>
+          </td>
+          <td>
+    <span class="p-column-title">Statut</span>
+    <span 
+        class="status-clickable cursor-pointer"
+        [ngClass]="{
+            'status-planned': projet.status === 'ETUDE',
+            'status-in-progress': projet.status === 'EXECUTION', 
+            'status-completed': projet.status === 'PRODUCTION',
+            'status-suspended': projet.status === 'SUSPENDU',
+            'status-canceled': projet.status === 'ANNULE'
+        }"
+        (click)="openStatusModal(projet)"
+    >
+        {{ projet.status || 'Non défini' }}
+    </span>
+</td>
+          
+          <td>
+            <div class="flex gap-2 justify-content-center">
+              <button (click)="showUserDetails(projet.projectId)" class="p-button-rounded" pButton icon="pi pi-eye"></button>
+              <!-- <button 
+                (click)="openSuspensionDialog(projet.projectId, projet.isSuspended)" 
+                class="p-button-rounded" 
+                [ngClass]="{'p-button-warning': !projet.isSuspended, 'p-button-success': projet.isSuspended}"
+                pButton 
+                [icon]="projet.isSuspended ? 'pi pi-play' : 'pi pi-pause'"
+                pTooltip="{{projet.isSuspended ? 'Réactiver le projet' : 'Suspendre le projet'}}"
+              ></button> -->
+               <!-- <button 
+              (click)="handleDelete(projet)" 
+              class="p-button-rounded p-button-danger p-button-sm" 
+              pButton 
+              icon="pi pi-trash"
+              pTooltip="Supprimer le projet">
+            </button> -->
+            <!-- <button 
+                *ngIf="!projet.isStarted"
+                (click)="startProject(projet.projectId)" 
+                class="p-button-rounded p-button-success p-button-sm" 
+                pButton 
+                icon="pi pi-play"
+                pTooltip="Démarrer le projet">
+            </button> -->
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center p-4">
+            <h1 class="font-normal m-0">Aucun projet trouvé !</h1>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-confirmDialog appendTo="body" [style]="{width: '450px'}"></p-confirmDialog>
+
+<p-dialog 
+    header="Modifier le statut du projet" 
+    [(visible)]="statusModalVisible" 
+    [modal]="true" 
+    [style]="{width: '400px'}"
+    [closable]="true"
+>
+    <div class="p-fluid">
+        <div class="field">
+            <label for="projectStatus">Nouveau statut</label>
+            <input 
+                id="projectStatus"
+                type="text" 
+                pInputText 
+                [(ngModel)]="newProjectStatus"
+                placeholder="Saisir le statut du projet"
+                class="w-full"
+            />
+        </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+        <button 
+            type="button" 
+            pButton 
+            label="Annuler" 
+            class="p-button-text"
+            (click)="closeStatusModal()"
+        ></button>
+        <button 
+            type="button" 
+            pButton 
+            label="Valider" 
+            class="p-button-primary"
+            (click)="updateProjectStatus()"
+            [disabled]="!newProjectStatus.trim()"
+        ></button>
+    </ng-template>
+</p-dialog>
+
+
+
+
+
+
+
+
+

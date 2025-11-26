@@ -1,0 +1,96 @@
+<div class="user-profile" *ngIf="userConnected">
+  <div class="profile-card">
+    <div class="profile-header">
+      <h2>Utilisateur Connecté</h2>
+      <p class="user-role">
+        <i class="pi pi-user"></i> {{ user?.roles }}
+      </p>
+    </div>
+
+    <div class="profile-body">
+      <div class="profile-info">
+        <!-- <div class="info-item">
+          <i class="pi pi-id-card"></i>
+          <div>
+            <strong>ID:</strong> {{ user?.id }}
+          </div>
+        </div> -->
+
+        <div class="info-item">
+          <i class="pi pi-id-card"></i>
+          <div>
+            <strong>CUID:</strong> {{ userConnected?.cuid }}
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="pi pi-user"></i>
+          <div>
+            <strong>Nom:</strong> {{ userConnected?.lastname }}
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="pi pi-user"></i>
+          <div>
+            <strong>Prénom:</strong> {{ userConnected?.firstname }}
+          </div>
+        </div>
+
+        <!-- <div class="info-item">
+          <i [ngClass]="getRoleIcon(user?.roles)"></i>
+          <div>
+            <strong>Rôle:</strong> {{ user?.roles }}
+          </div>
+        </div> -->
+        <div class="info-item">
+          <i class="pi pi-star"></i>
+          <div>
+            <strong>Rôle:</strong> {{ user?.roles }}
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <i class="pi pi-envelope"></i>
+          <div>
+            <strong>Email:</strong> {{ userConnected?.email ? userConnected?.email : 'Non renseigné' }}
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="pi pi-phone"></i>
+          <div>
+            <strong>Téléphone:</strong> {{ userConnected?.msisdn ? userConnected?.msisdn : 'Non renseigné' }}
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="pi pi-calendar"></i>
+          <div>
+            <strong>Expiration:</strong> {{ user?.exp | date:'short' }}
+          </div>
+        </div>
+
+        <!-- <div class="info-item">
+          <strong>Permissions:</strong>
+          <ul class="permissions-list">
+            <li *ngFor="let permission of user?.permissions">
+              <i class="pi pi-check"></i> {{ permission }}
+            </li>
+          </ul>
+        </div> -->
+      </div>
+    </div>
+
+    <div class="profile-footer">
+      <button class="p-button p-button-rounded p-button-success" (click)="redirectToDashboard()">
+        Valider
+      </button>        
+    </div>
+  </div>
+</div>
+
+<!-- Message en attendant les données -->
+<div *ngIf="!userConnected">
+  <p>Chargement des informations...</p>
+</div>

@@ -1,0 +1,122 @@
+:host ::ng-deep {
+   
+    
+   
+    
+    // Espaentre les boutons
+    .flex.gap-2 {
+      gap: 0.5rem !important;
+    }
+  }
+
+  .p-inputgroup input[type="search"] {
+    width: 100%;
+    min-width: 200px;
+  }
+
+  /*  les statuts des projets */
+.status-planned {
+  color: #3F51B5;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #E8EAF6;
+}
+
+.status-in-progress {
+  color: #FF9800;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #FFF3E0;
+}
+
+.status-completed {
+  color: #4CAF50;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #E8F5E9;
+}
+
+.status-suspended {
+  color: #F44336;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #FFEBEE;
+}
+
+.status-canceled {
+  color: #F44336;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #FFEBEE;
+}
+
+.status-item {
+  display: inline-block;
+  padding: 2px 0;
+}
+
+  .status-item {
+    display: flex;
+    align-items: center;
+  }
+  .status-item i {
+    margin-right: 8px;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+  
+  .status-item i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+  }
+  
+  .status-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+  
+  .status-item i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+  }
+  
+  /*agrandir le dropdown */
+  :host ::ng-deep .status-dropdown-larger {
+    min-width: 180px;
+  }
+  
+  :host ::ng-deep .status-dropdown-larger .p-dropdown-label {
+    padding: 0.75rem 1rem;
+  }
+  
+  :host ::ng-deep .status-dropdown-larger .p-dropdown-item {
+    padding: 0.75rem 1rem;
+  }
+  
+  :host ::ng-deep .status-dropdown-larger .p-dropdown-panel {
+    min-width: 200px;
+  }
+
+  .status-clickable {
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.status-clickable:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}

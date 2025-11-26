@@ -1,0 +1,30 @@
+<!-- Bouton Ajouter / Éditer -->
+<button *ngIf="mode === 'create'" pButton label="Ajouter type d’aliment" icon="pi pi-plus"
+        class="p-button-success p-button-rounded" (click)="handleShow()">
+</button>
+
+<button *ngIf="mode === 'edit'" pButton icon="pi pi-pencil"
+        class="p-button-rounded p-button-warning" (click)="handleShow()"    style="background:#16A34A ; border-color: #16A34A ;color:white;"
+        (click)="handleShow()">
+</button>
+<p-dialog header="{{ mode === 'create' ? 'Nouveau type d’aliment' : 'Modifier type d’aliment' }}"
+          [(visible)]="showForm" [modal]="true" [style]="{width:'500px'}">
+
+  <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+    <div class="field mb-3">
+      <label for="libelle">Libellé</label>
+      <input id="libelle" type="text" formControlName="libelle" pInputText placeholder="Ex: Maïs" />
+    </div>
+  </form>
+
+  <!-- Footer direct sous p-dialog -->
+  <ng-template pTemplate="footer">
+    <button type="button" pButton class="p-button-outlined p-button-danger mr-2" (click)="showForm=false">
+      Annuler
+    </button>
+    <button type="submit" pButton [disabled]="form.invalid" [loading]="processing" class="p-button-success" (click)="handleSubmit()">
+      Enregistrer
+    </button>
+  </ng-template>
+  
+</p-dialog>

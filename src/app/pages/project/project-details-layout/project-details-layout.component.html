@@ -1,0 +1,259 @@
+@if (!loading && projectDetails != undefined) {
+<div class="flex-column w-full h-full overflow-hidden flex">
+
+  <div>
+    <div class="bg-white px-2 w-full border-round-top">
+      <div class="px-3 py-2">
+        <div class="flex items-center justify-between mb-2">
+  <!-- Section Titre -->
+  <div class="flex items-center gap-3 flex-1 min-w-0">
+    <h1 class="text-primary text-2xl m-0 font-bold truncate">
+      {{ projectDetails.name }}
+    </h1>
+    <app-project-update 
+      *appHasPermission="['update_project']" 
+      (onDone)="loadData()"
+      class="flex-shrink-0">
+    </app-project-update>
+  </div>
+  
+  <!-- Actions -->
+  <div class="flex items-center gap-3 flex-shrink-0">
+    <span class="text-gray-400 text-sm"><strong>Actions</strong></span>
+    <div class="flex items-center gap-2">
+      <button 
+        (click)="openSuspensionDialog(projectDetails.projectId, projectDetails.isSuspended)" 
+        class="p-button-rounded p-button-sm p-button-text" 
+        [disabled]="!projectDetails.isStarted"
+        [ngClass]="{'p-button-warning': !projectDetails.isSuspended, 'p-button-success': projectDetails.isSuspended}"
+        pButton 
+        [icon]="projectDetails.isSuspended ? 'pi pi-play' : 'pi pi-pause'"
+        pTooltip="{{projectDetails.isSuspended ? 'Réactiver' : 'Suspendre'}}"
+        style="width: 2rem; height: 2rem;">
+      </button>
+
+
+     
+      <button 
+        *ngIf="!projectDetails.isStarted"
+        (click)="startProject(projectDetails.projectId)" 
+        class="p-button-rounded p-button-success p-button-sm" 
+        pButton 
+        icon="pi pi-play"
+        pTooltip="Démarrer le projet"
+        style="width: 2rem; height: 2rem;">
+      </button>
+      <button 
+        (click)="handleDelete(projectDetails)" 
+        class="p-button-rounded p-button-danger p-button-sm" 
+        pButton 
+        icon="pi pi-trash"
+        pTooltip="Supprimer le projet"
+        style="width: 2rem; height: 2rem;">
+      </button>
+    </div>
+  </div>
+</div>
+
+        
+  
+
+        <div class="flex mb-2">
+          <div class="flex-1">
+            <div class="flex text-sm gap-3 w-full" style="margin-top: -20px">
+              <div class="flex flex-column gap-2 mt-4 card-bordered">
+                <div class="text-gray-400">Démarrage</div>
+                <div class="font-medium">{{ projectDetails.startDate | date : 'dd/MM/YYYY' }}</div>
+              </div>
+              <div class="flex flex-column gap-2 mt-4 card-bordered">
+                <div class="text-gray-400 ">Clôture prévue</div>
+                <div class="font-medium">{{ projectDetails.plannedEndDate | date : 'dd/MM/YYYY' }}</div>
+              </div>
+              <!--                <div class="flex flex-column gap-2 mt-4">-->
+              <!--                  <div class="text-gray-400 ">Priorité</div>-->
+              <!--                  <p-badge [severity]="projectDetails.priorityColor??'contrast'" [value]="projectDetails.priorityLabel??'Non defini'"></p-badge>-->
+              <!--                </div>-->
+              <div class="flex flex-column gap-2 mt-4 card-bordered">
+                <div class="text-gray-400">Budget validé</div>
+                <div class="font-medium">{{ projectDetails?.budgetGlobal | number }} F</div>
+              </div>
+
+              <div class="flex flex-column gap-2 mt-4 card-bordered">
+                <div class="text-gray-400">Chef de projet</div>
+                <div class="font-medium">
+                  <ng-container *ngIf="chefProjet; else showCuid">
+                    {{ chefProjet.displayName || (chefProjet.firstname + ' ' + chefProjet.lastname) }}
+                  </ng-container>
+                  <ng-template #showCuid>
+                    {{ projectDetails?.cuidChefProjet || 'Non défini' }}
+                  </ng-template>
+                </div>
+              </div>
+              <div class="flex flex-column gap-2 mt-4 card-bordered">
+                <div class="text-gray-400">Responsable étude</div>
+                <div class="font-medium">
+                  <ng-container *ngIf="responsableEtude; else showResponsableCuid">
+                    {{ responsableEtude.displayName || (responsableEtude.firstname + ' ' + responsableEtude.lastname) }}
+                  </ng-container>
+                  <ng-template #showResponsableCuid>
+                    {{ projectDetails?.cuidResponsableEtude || 'Non défini' }}
+                  </ng-template>
+                </div>
+              </div>
+              <!-- <div *ngIf="projectDetails?.codesBudget.length !== 0" class="flex flex-column gap-2 mt-4">
+                  <div class="text-gray-400">Code budgetaire</div>
+                  <div class="font-medium">
+                    <a class="font-bold" >{{ projectDetails?.codesBudget }}</a>
+                  </div>
+                </div> -->
+              <div *ngIf="projectDetails?.codesBudget?.length > 0; else noCodes">
+                <div class="flex flex-column gap-2 mt-4 card-bordered">
+                  <div class="text-gray-400">Codes budgétaires</div>
+                  <div class="font-medium" *ngFor="let code of projectDetails.codesBudget">
+                    <a>{{ code }}</a>
+                  </div>
+                </div>
+              </div>
+
+              <ng-template #noCodes>
+                <div (click)="requestCodeBudget()" class="flex flex-column gap-2 mt-4 card-bordered">
+                  <div class="text-gray-400">Code budgétaire</div>
+                  <div class="font-medium">
+                    <a>-</a>
+                  </div>
+                </div>
+              </ng-template>
+
+
+              <div class="circle-progress-modern mt-2">
+                <svg class="progress-ring" width="120" height="120">
+                  <circle class="progress-ring-background" cx="60" cy="60" r="50" fill="transparent" stroke="#e5e7eb"
+                    stroke-width="4" />
+                  <circle class="progress-ring-fill" cx="60" cy="60" r="50" fill="transparent"
+                    stroke="url(#progressGradient)" stroke-width="4" stroke-linecap="round"
+                    [style.stroke-dasharray]="314.16"
+                    [style.stroke-dashoffset]="314.16 - (314.16 * (projectDetails?.projectPercentage || progress) / 100)"
+                    transform="rotate(-90 60 60)" />
+                  <defs>
+                    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color:#ff8800" />
+                      <stop offset="100%" style="stop-color:#ee8b1b" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div class="progress-text">
+                  <span class="progress-value" *ngIf="projectDetails?.projectPercentage !== null">
+                    {{projectDetails?.projectPercentage | number:'1.0-0'}}%
+                  </span>
+                  <span class="progress-value" *ngIf="projectDetails?.projectPercentage === null">
+                    {{ progress | number:'1.0-0'}}%
+                  </span>
+                </div>
+              </div>
+              <!--                <div class="flex  flex-grow-1 flex-column gap-2 border-1 border-gray-300 w-5.3 p-2">-->
+              <!--                  <div class="text-gray-400 ">Description</div>-->
+              <!--                  <p>-->
+              <!--                    {{projectDetails?.description}}-->
+              <!--                  </p>-->
+              <!--                </div>-->
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="px-4 border-gray-200 border-top-1 border-gray-200 bg-white">
+      <div class="inline-menu">
+        <ul>
+          <li *ngIf="memberPermissions.includes('VIEW_DASHBOARD')">
+            <a routerLinkActive="activated" [routerLinkActiveOptions]="{exact: true}"
+              class="flex align-items-center gap-2" [routerLink]="['/projects/details', projectId]">
+              <i class="pi pi-chart-bar"></i> Bord projet
+            </a>
+          </li>
+
+          <li>
+            <a routerLinkActive="activated" class="flex align-items-center gap-2"
+              [routerLink]="['/projects/details', projectId, 'events']"><i class="pi pi-list-check"></i> Evênements </a>
+          </li>
+          <li *ngIf="memberPermissions.includes('VIEW_PHASE')">
+            <a routerLinkActive="activated" class="flex align-items-center gap-2"
+              [routerLink]="['/projects/details', projectId, 'phases']"><i class="pi pi-list-check"></i>Phases</a>
+          </li>
+          <!-- <li *ngIf="memberPermissions.includes('VIEW_DEPENSES')">
+              <a routerLinkActive="activated" class="flex align-items-center gap-2" [routerLink]="['/projects/details', projectId, 'budget']"><i class="pi pi-money-bill"></i> Dépenses</a>
+            </li> -->
+          <li *ngIf="memberPermissions.includes('VIEW_PRODUCTORDERS')">
+            <a routerLinkActive="activated" class="flex align-items-center gap-2"
+              [routerLink]="['/projects/details', projectId, 'product-orders']"><i class="pi pi-shopping-cart"></i>
+              PO</a>
+          </li>
+          <li *ngIf="memberPermissions.includes('VIEW_PV')">
+            <a routerLinkActive="activated" class="flex align-items-center gap-2"
+              [routerLink]="['/projects/details', projectId, 'pv']"><i class="pi pi-shopping-cart"></i> PV</a>
+          </li>
+          <li *appHasPermission="['view_project_membership']">
+            <a routerLinkActive="activated" class="flex align-items-center gap-2"
+              [routerLink]="['/projects/details', projectId, 'intervenants']"><i
+                class="pi pi-users"></i>Intervenants</a>
+          </li>
+          <li *appHasPermission="['view_risk']">
+            <a routerLinkActive="activated" class="flex align-items-center gap-2"
+              [routerLink]="['/projects/details', projectId, 'risques']"><i
+                class="pi pi-exclamation-triangle"></i>Risques</a>
+          </li>
+          <!-- <li *appHasPermission="['view_action_plan']">
+              <a routerLinkActive="activated" class="flex align-items-center gap-2" [routerLink]="['/projects/details', projectId, 'action-plans']">
+                <i class="pi pi-chart-bar"></i> Plans d'action
+              </a>
+            </li> -->
+          <li *ngIf="memberPermissions.includes('VIEW_TASKS')">
+            <a routerLinkActive="activated" class="flex align-items-center gap-2"
+              [routerLink]="['/projects/details', projectId, 'taches']">
+              <i class="pi pi-check-square"></i> Activités
+            </a>
+          </li>
+
+          <!--            <li>-->
+          <!--              <a routerLinkActive="activated" class="flex align-items-center gap-2" [routerLink]="['/projects/details', projectId, 'tasks']"><i class="pi pi-inbox"></i>Taches</a>-->
+          <!--            </li>-->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="px-4 flex-1 overflow-auto pt-3 clas">
+
+    <router-outlet></router-outlet>
+
+  </div>
+
+
+</div>
+}
+
+@if (loading) {
+<div class="flex gap-3 pt-7 justify-content-center align-items-center flex-column">
+  <div>
+    <p-progressSpinner animationDuration="400ms" strokeWidth="6"></p-progressSpinner>
+  </div>
+  <div>
+    <h3 class="m-0 font-normal">Chargement en cours ...</h3>
+  </div>
+</div>
+}
+
+@if (!loading && projectDetails == undefined) {
+<div class="pt-7 text-center">
+  <div>
+    <i class="pi pi-exclamation-triangle"></i>
+  </div>
+  <h1>Oups une erreur est survenu !</h1>
+</div>
+}
+<p-confirmDialog appendTo="body"></p-confirmDialog>

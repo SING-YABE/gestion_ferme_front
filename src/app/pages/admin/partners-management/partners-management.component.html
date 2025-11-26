@@ -1,0 +1,52 @@
+<div>
+
+  <div class="odyssey-shadow-low bg-white border-round">
+    <div class="p-2 flex gap-3 align-items-center">
+      <div class="flex-1">
+        <h5 class="m-0">Gestion des partenaires</h5>
+      </div>
+      <div fxFlex="300px">
+        <input type="search" pInputText class="w-full" placeholder="Rechercher" />
+      </div>
+      <div>
+        <app-partner-form></app-partner-form>
+      </div>
+    </div>
+
+    <div>
+      <p-table [rows]="10" [rowsPerPageOptions]="[10,30,40]" [value]="partners" [paginator]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="processorType">Code <p-sortIcon field="processorType"></p-sortIcon></th>
+            <th style="text-align: center;">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-partner>
+          <tr>
+            <td>
+              <span class="p-column-title">Nom</span>
+              <strong> {{ partner.owner }} </strong>
+            </td>
+            <td>
+              <span class="p-column-title">Code</span>
+              <strong></strong>
+            </td>
+            <td>
+              <div class="flex gap-3 justify-content-center">
+                <button [routerLink]="['/admin/partners', partner.uuid]" pButton icon="pi pi-eye" class="p-button-rounded p-button-info p-button-raised"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="8">Aucun partenaire trouvé</td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+    </div>
+  </div>
+
+</div>

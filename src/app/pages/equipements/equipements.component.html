@@ -1,0 +1,236 @@
+<!-- src/app/pages/equipements/equipements.component.html -->
+<div class="card">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- En-tête avec bouton d'ajout et recherche -->
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h2>Gestion des Équipements</h2>
+    <p-button 
+      icon="pi pi-plus" 
+      label="Nouvel Équipement" 
+      (click)="openAddModal()">
+    </p-button>
+  </div>
+
+  <!-- Barre de recherche -->
+  <div class="mb-4 p-fluid">
+    <div class="field grid">
+      <div class="col-12 md:col-4">
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-search"></i>
+          <input 
+            type="text" 
+            pInputText 
+            [(ngModel)]="termeRecherche" 
+            (input)="filtrerEquipements()"
+            placeholder="Rechercher par ID, nom, catégorie, emplacement, fournisseur ou statut..."
+            class="w-full">
+        </span>
+      </div>
+      <div class="col-12 md:col-2">
+        <p-button 
+          label="Effacer" 
+          icon="pi pi-times" 
+          severity="secondary" 
+          (click)="reinitialiserRecherche()"
+          class="w-full">
+        </p-button>
+      </div>
+      <div class="col-12 md:col-6 flex align-items-center justify-content-end">
+        <small class="text-color-secondary">
+          {{ equipementsFiltres.length }} équipement(s) trouvé(s)
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau des équipements -->
+  <p-table 
+    [value]="equipementsFiltres" 
+    [paginator]="true" 
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} équipements"
+    [rowsPerPageOptions]="[10,25,50]"
+    [loading]="equipements.length === 0">
+    
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="idEquipement" style="width: 80px">
+          ID <p-sortIcon field="idEquipement"></p-sortIcon>
+        </th>
+        <th pSortableColumn="nom">
+          Nom <p-sortIcon field="nom"></p-sortIcon>
+        </th>
+        <th pSortableColumn="categorieNom">
+          Catégorie <p-sortIcon field="categorieNom"></p-sortIcon>
+        </th>
+        <th pSortableColumn="emplacementNom">
+          Emplacement <p-sortIcon field="emplacementNom"></p-sortIcon>
+        </th>
+        <th pSortableColumn="fournisseurNom">
+          Fournisseur <p-sortIcon field="fournisseurNom"></p-sortIcon>
+        </th>
+        <th pSortableColumn="statut">
+          Statut <p-sortIcon field="statut"></p-sortIcon>
+        </th>
+        <th style="width: 120px">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-equipement>
+      <tr>
+        <td>{{ equipement.idEquipement }}</td>
+        <td>{{ equipement.nom }}</td>
+        <td>{{ equipement.categorieNom || '-' }}</td>
+        <td>{{ equipement.emplacementNom || '-' }}</td>
+        <td>{{ equipement.fournisseurNom || '-' }}</td>
+        <td>
+          <p-tag 
+            [value]="getStatutLabel(equipement.statut)" 
+            [severity]="getStatutBadge(equipement.statut)">
+          </p-tag>
+        </td>
+        <td>
+          <div class="flex gap-2">
+            <p-button 
+              icon="pi pi-pencil" 
+              severity="warning" 
+              (click)="openEditModal(equipement)">
+            </p-button>
+            <p-button 
+              icon="pi pi-trash" 
+              severity="danger" 
+              (click)="confirmDelete(equipement)">
+            </p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7" class="text-center">
+          <div *ngIf="termeRecherche; else noData" class="text-color-secondary">
+            <i class="pi pi-search" style="font-size: 2rem"></i>
+            <p class="mt-2">Aucun équipement trouvé pour "{{ termeRecherche }}"</p>
+            <p-button 
+              label="Réinitialiser la recherche" 
+              icon="pi pi-refresh" 
+              (click)="reinitialiserRecherche()"
+              class="mt-2">
+            </p-button>
+          </div>
+          <ng-template #noData>
+            <i class="pi pi-inbox" style="font-size: 2rem"></i>
+            <p class="mt-2">Aucun équipement trouvé</p>
+          </ng-template>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td colspan="7" class="text-center">
+          <i class="pi pi-spinner pi-spin" style="font-size: 2rem"></i>
+          <p class="mt-2">Chargement des équipements...</p>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Modal Ajout/Modification -->
+  <p-dialog 
+    [(visible)]="displayModal" 
+    [style]="{ width: '600px' }"
+    [header]="getModalTitle()"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <div class="grid p-fluid">
+      <div class="field col-12">
+        <label for="nom" class="block font-medium mb-2">Nom de l'équipement *</label>
+        <input 
+          id="nom"
+          type="text" 
+          pInputText 
+          [(ngModel)]="equipementForm.nom"
+          class="w-full"
+          placeholder="Entrez le nom de l'équipement"
+          required>
+      </div>
+
+      <div class="field col-6">
+        <label for="categorie" class="block font-medium mb-2">Catégorie *</label>
+        <p-dropdown
+          id="categorie"
+          [(ngModel)]="equipementForm.categorieId"
+          [options]="categories"
+          optionLabel="nom"
+          optionValue="idCategorieEquipement"
+          placeholder="Sélectionnez une catégorie"
+          [showClear]="true"
+          class="w-full">
+        </p-dropdown>
+      </div>
+
+      <div class="field col-6">
+        <label for="emplacement" class="block font-medium mb-2">Emplacement *</label>
+        <p-dropdown
+          id="emplacement"
+          [(ngModel)]="equipementForm.emplacementId"
+          [options]="emplacements"
+          optionLabel="nom"
+          optionValue="idEmplacement"
+          placeholder="Sélectionnez un emplacement"
+          [showClear]="true"
+          class="w-full">
+        </p-dropdown>
+      </div>
+
+      <div class="field col-6">
+        <label for="fournisseur" class="block font-medium mb-2">Fournisseur *</label>
+        <p-dropdown
+          id="fournisseur"
+          [(ngModel)]="equipementForm.fournisseurId"
+          [options]="fournisseurs"
+          optionLabel="nom"
+          optionValue="idFournisseur"
+          placeholder="Sélectionnez un fournisseur"
+          [showClear]="true"
+          class="w-full">
+        </p-dropdown>
+      </div>
+
+      <div class="field col-6">
+        <label for="statut" class="block font-medium mb-2">Statut *</label>
+        <p-dropdown
+          id="statut"
+          [(ngModel)]="equipementForm.statut"
+          [options]="statutOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Sélectionnez un statut"
+          class="w-full">
+        </p-dropdown>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Annuler" 
+        icon="pi pi-times" 
+        (click)="displayModal = false" 
+        severity="secondary">
+      </p-button>
+      <p-button 
+        [label]="isEditMode ? 'Modifier' : 'Ajouter'" 
+        icon="pi pi-check" 
+        (click)="submitForm()" 
+        [disabled]="!equipementForm.nom || !equipementForm.categorieId || !equipementForm.emplacementId || !equipementForm.fournisseurId">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+</div>

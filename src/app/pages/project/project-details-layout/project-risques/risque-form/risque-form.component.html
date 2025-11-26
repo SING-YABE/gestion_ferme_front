@@ -1,0 +1,63 @@
+<button style="background-color: rgba(0,0,0,0.47); margin-bottom: 20px !important; margin-right: 13px" *ngIf="mode == 'create'" class="p-button-sm" pButton (click)="handleShowForm()" icon="pi pi-plus" label="Ajouter un risque"></button>
+<button *ngIf="mode == 'edit'" (click)="handleShowForm()" icon="pi pi-pencil" class="p-button-rounded" pButton></button>
+
+<p-dialog [modal]="true" appendTo="body" header="{{ mode === 'edit' ? 'Modifier Risque' : 'Créer Risque' }}" [style]="{width: '700px'}" [(visible)]="showForm">
+
+  <form id="risqueForm" [formGroup]="risqueForm" (ngSubmit)="handleSaveRisque()">
+
+    <div class="row">
+      <div class="field col-6">
+        <label for="name">Nom du risque</label>
+        <input id="name" formControlName="name" type="text" pInputText>
+        <small *ngIf="risqueForm.get('name')?.invalid && (risqueForm.get('name')?.touched || risqueForm.get('name')?.dirty)" class="p-error">
+          Le nom du risque est requis.
+        </small>
+      </div>
+
+      <div class="field col-6">
+        <label for="riskTypeId">Type de risque</label>
+        <p-dropdown id="riskTypeId" formControlName="riskTypeId" [options]="riskCategories" placeholder="Sélectionnez un type de risque"></p-dropdown>
+        <small *ngIf="risqueForm.get('riskTypeId')?.invalid && (risqueForm.get('riskTypeId')?.touched || risqueForm.get('riskTypeId')?.dirty)" class="p-error">
+          Le type de risque est requis.
+        </small>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description" rows="3" pInputTextarea></textarea>
+      <small *ngIf="risqueForm.get('description')?.invalid && (risqueForm.get('description')?.touched || risqueForm.get('description')?.dirty)" class="p-error">
+        La description est requise.
+      </small>
+    </div>
+
+    <div class="row">
+      <div class="field col-6">
+        <label for="impact">Impact</label>
+        <p-dropdown id="impact" formControlName="impact" [options]="impact" placeholder="Sélectionnez l'impact"></p-dropdown>
+        <small *ngIf="risqueForm.get('impact')?.invalid && (risqueForm.get('impact')?.touched || risqueForm.get('impact')?.dirty)" class="p-error">
+          L'impact est requis.
+        </small>
+      </div>
+
+      <div class="field col-6">
+        <label for="status">Statut</label>
+        <p-dropdown id="status" formControlName="status" [options]="status" placeholder="Sélectionnez le statut"></p-dropdown>
+        <small *ngIf="risqueForm.get('status')?.invalid && (risqueForm.get('status')?.touched || risqueForm.get('status')?.dirty)" class="p-error">
+          Le statut est requis.
+        </small>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="mitigationPlan">Plan de mitigation</label>
+      <textarea id="mitigationPlan" formControlName="mitigationPlan" rows="3" pInputTextarea></textarea>
+    </div>
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button class="mr-2 p-button-outlined p-button-danger" pButton label="Annuler" (click)="showForm = false"></button>
+    <button [loading]="processing" [disabled]="!risqueForm.valid" type="submit" form="risqueForm" pButton label="Enregistrer"></button>
+  </ng-template>
+</p-dialog>

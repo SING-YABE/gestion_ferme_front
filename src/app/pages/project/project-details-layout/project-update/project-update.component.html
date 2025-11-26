@@ -1,0 +1,433 @@
+<button *ngIf="mode == 'create'" (click)="handleShowForm()" icon="pi pi-pencil" class="bg-white border-0 text-black p-button-sm ml-1" pButton label=""></button>
+
+<p-dialog [modal]="true" appendTo="body" header="Modification du projet {{projectDetails?.name}}" [style]="{width: '70%'}" [(visible)]="showForm">
+
+  <form id="budgetForm" [formGroup]="projectForm" (ngSubmit)="handleSaveBudget()">
+    <div class="grid">
+
+       <div class="col-6">
+  <div class="field">
+    <label for="name" class="required-field">Nom du projet</label>
+    <input id="name" formControlName="name" type="text" pInputText placeholder="Saisissez le nom du projet">
+  </div>
+</div>
+      <!-- 1 ligne -->
+      <div class="col-6">
+        <div class="field">
+          <label for="priority">Priorité</label>
+          <p-dropdown id="priority" formControlName="priority" [options]="priorityOptions" placeholder="{{getPriorityLabel(projectDetails?.priority)}}"></p-dropdown>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="field">
+          <label for="description">Description</label>
+          <input id="description" formControlName="description" type="text" pInputText>
+        </div>
+      </div>
+
+      <!-- 2 ligne -->
+      <!-- <div class="col-6">
+        <div class="field">
+          <label for="beneficiary">Bénéficiare</label>
+          <input id="beneficiary" formControlName="beneficiary" type="text" pInputText>
+        </div>
+      </div> -->
+
+      <div class="col-6">
+<div class="field">
+  <label for="beneficiaryDirections" class="required-field">Directions bénéficiaires</label>
+  <p-multiSelect
+    formControlName="beneficiaryDirectionIds"
+    [options]="directions"
+    optionValue="id"
+    optionLabel="name"
+    [filter]="true"
+    filterBy="name,description"
+    defaultLabel="Sélectionnez les directions bénéficiaires"
+    id="beneficiaryDirections"
+    class="w-full"
+    >
+    <ng-template pTemplate="item" let-item>
+      <div class="flex gap-2">
+        <span class="flex gap-2"><fa-icon [icon]="faBuilding"></fa-icon> {{ item?.description }}</span>
+        <span>/</span>
+        <span>{{ item.name }}</span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="selectedItems" let-value>
+      <div class="flex gap-1 flex-wrap" *ngIf="value && value.length > 0">
+        <div class="py-1 px-2 bg-primary-100 rounded-md flex gap-1 items-center" *ngFor="let directionId of value.slice(0, 3)">
+          <fa-icon class="text-primary" [icon]="faBuilding"></fa-icon>
+          <span class="text-primary-800">{{ getDirectionName(directionId) }}</span>
+        </div>
+        <div *ngIf="value.length > 3" class="py-1 px-2 bg-primary-100 rounded-md">
+          <span class="text-primary-800">+{{ value.length - 3 }} autres</span>
+        </div>
+      </div>
+      <span *ngIf="!value || value.length === 0">Sélectionnez les directions bénéficiaires</span>
+    </ng-template>
+  </p-multiSelect>
+</div>
+      </div>
+      <div class="col-6">
+        <div class="field">
+          <label for="year"  class="required-field">Année budgétaire</label>
+          <input id="year" formControlName="year" type="number" pInputText>
+        </div>
+      </div>
+
+      <!-- 3 ligne -->
+      <div class="col-6">
+        <div class="field">
+          <label for="startDate"  class="required-field">Démarrage</label>
+          <p-calendar formControlName="startDate" appendTo="body" type="text" id="startDate" placeholder="{{projectDetails?.startDate| date : 'dd/MM/YYYY'}}"></p-calendar>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="field">
+          <label for="surveyPlannedEndDate"  class="required-field">Date de fin de l'étude</label>
+          <p-calendar formControlName="surveyPlannedEndDate" appendTo="body" type="text" id="surveyPlannedEndDate" placeholder="{{projectDetails?.surveyPlannedEndDate| date : 'dd/MM/YYYY'}}"></p-calendar>
+        </div>
+      </div>
+
+      <!-- 4 ligne -->
+      <div class="col-6">
+        <div class="field">
+          <label for="plannedEndDate"  class="required-field">Clôture</label>
+          <p-calendar formControlName="plannedEndDate" appendTo="body" type="text" id="plannedEndDate" placeholder="{{projectDetails?.plannedEndDate| date : 'dd/MM/YYYY'}}"></p-calendar>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="field">
+          <label for="direction"  class="required-field">Direction</label>
+          <p-dropdown formControlName="directionId" optionValue="id" filterBy="name,direction.name,direction.description" [filter]="true" optionLabel="name" [options]="directions" id="direction">
+            <ng-template pTemplate="item" let-item>
+              <div class="flex gap-2">
+                <span class="flex gap-2"> <fa-icon [icon]="faBuilding"></fa-icon> {{ item?.description }}</span>
+                <span>/</span>
+                <span>{{ item.name }}</span>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="selectedItem" let-selected>
+              <div class="flex gap-2">
+                <span class="flex gap-2"> <fa-icon class="text-primary" [icon]="faBuilding"></fa-icon> {{ selected?.description }}</span>
+                <span>/</span>
+                <span>{{ selected.name }}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+
+      <!-- 5 ligne -->
+      <div class="col-6">
+        <div class="field">
+          <label for="department"  class="required-field"> Départements</label>
+          <p-dropdown formControlName="departmentId" optionValue="id" filterBy="name,description" [filter]="true" optionLabel="description" [options]="departments" id="department">
+            <ng-template pTemplate="item" let-item>
+              <div class="flex gap-2">
+                <span class="flex gap-2"> <fa-icon [icon]="faBuilding"></fa-icon> {{ item?.description }}</span>
+                <span>/</span>
+                <span>{{ item.name }}</span>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="selectedItem" let-selected>
+              <div class="flex gap-2">
+                <span class="flex gap-2"> <fa-icon class="text-primary" [icon]="faBuilding"></fa-icon> {{ selected.direction?.description }}</span>
+                <span>/</span>
+                <span>{{ selected.name }}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="field">
+          <label for="chefProjet">Chef de projet</label>
+          <p-dropdown
+            formControlName="cuidChefProjet"
+            optionValue="cuid"
+            [showClear]="true"
+            emptyMessage="Aucune proposition trouvée !"
+            emptyFilterMessage="Aucune proposition trouvée !"
+            appendTo="body"
+            [filter]="true"
+            [options]="filteredUsers"
+            id="chefProjet"
+            placeholder="Chef de projet">
+
+            <ng-template pTemplate="filter" let-options="options">
+              <div class="flex gap-1">
+                <div class="p-inputgroup" (click)="$event.stopPropagation()">
+                  <span class="p-inputgroup-addon bg-white"><i class="pi pi-search"></i></span>
+                  <input
+                    type="text"
+                    pInputText
+                    placeholder="Rechercher ..."
+                    formControlName="filterValue"
+                    (input)="handleFilter($event)" />
+                </div>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-content-start gap-3">
+                <div class="flex-1">{{ selectedOption.displayname??selectedOption.displayName }}</div>
+                <div><p-badge [value]="selectedOption.cuid"></p-badge></div>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="item" let-item>
+              <div class="flex align-items-center gap-2">
+                <fa-icon [icon]="faUser"></fa-icon>
+                <div class="flex-1">{{ item.displayname??item.displayName }}</div>
+                <div class="mr-2"><p-badge [value]="item.cuid"></p-badge></div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+
+      <!-- 6 ligne -->
+      <div class="col-6">
+        <div class="field">
+          <label for="responsableEtude"  class="required-field">Responsable de l'étude</label>
+          <p-dropdown
+            formControlName="cuidResponsableEtude"
+            [options]="filteredUsers"
+            optionValue="cuid"
+            [showClear]="true"
+            emptyMessage="Aucun utilisateur trouvé"
+            emptyFilterMessage="Aucune proposition trouvée !"
+            appendTo="body"
+            [filter]="true"
+            placeholder="Sélectionnez un responsable de l'étude">
+
+            <ng-template pTemplate="filter" let-options="options">
+              <div class="flex gap-1">
+                <div class="p-inputgroup" (click)="$event.stopPropagation()">
+                  <span class="p-inputgroup-addon bg-white"><i class="pi pi-search"></i></span>
+                  <input
+                    type="text"
+                    pInputText
+                    placeholder="Rechercher ..."
+                    formControlName="filterValue"
+                    (input)="handleFilter($event)" />
+                </div>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="item" let-item>
+              <div class="flex align-items-center gap-2">
+                <fa-icon [icon]="faUser"></fa-icon>
+                <div class="flex-1">{{ item.displayName }}</div>
+                <div class="mr-2"><p-badge [value]="item.cuid"></p-badge></div>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-content-start gap-3">
+                <div class="flex-1">{{ selectedOption.displayName }}</div>
+                <div><p-badge [value]="selectedOption.cuid"></p-badge></div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="field">
+          <label for="projectType">Type de projet</label>
+          <p-dropdown
+            id="projectType"
+            formControlName="projectTypeId"
+            [options]="projectTypes"
+            optionValue="id"
+            optionLabel="name"
+            [showClear]="true"
+            [filter]="true"
+            emptyMessage="Aucun type de projet trouvé"
+            placeholder="Sélectionnez un type de projet"
+            (onChange)="handleProjectTypeChange($event)">
+            <ng-template pTemplate="item" let-item>
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-tag mr-2"></i>
+                <div class="flex-1">{{ item.name }}</div>
+                <div class="mr-2 text-sm text-gray-500">{{ item.description }}</div>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-content-start gap-3">
+                <i class="pi pi-tag mr-2"></i>
+                <div class="flex-1">{{ selectedOption.name }}</div>
+                <div><p-badge *ngIf="selectedOption.description" [value]="selectedOption.description"></p-badge></div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+
+      <!-- 7 ligne -->
+      <div class="col-6">
+        <div class="field">
+          <label for="budget">Budget Validé</label>
+          <input
+            type="number"
+            id="budget"
+            name="budget"
+            formControlName="budgetGlobal"
+            pInputText
+            placeholder="Saisissez le budget validé"
+            min="0"
+            step="1" />
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="field">
+          <label for="projectRoadmaap">Type de roadmap</label>
+          <p-dropdown
+            id="projectRoadmaap"
+            formControlName="projectRoadmapId"
+            [options]="projectRoadmaps"
+            optionValue="id"
+            optionLabel="name"
+            [showClear]="true"
+            [filter]="true"
+            emptyMessage="Aucun type de roadmap trouvé"
+            placeholder="Sélectionnez un type de roadmap"
+            (onChange)="handleProjectRoadmapChange($event)">
+            <ng-template pTemplate="item" let-item>
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-tag mr-2"></i>
+                <div class="flex-1">{{ item.name }}</div>
+                <div class="mr-2 text-sm text-gray-500">{{ item.description }}</div>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-content-start gap-3">
+                <i class="pi pi-tag mr-2"></i>
+                <div class="flex-1">{{ selectedOption.name }}</div>
+                <div><p-badge *ngIf="selectedOption.description" [value]="selectedOption.description"></p-badge></div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="field w-full">
+          <label for="template"  class="required-field">Modèle de phasage</label>
+          <p-dropdown (onChange)="handleTemplateChange($event)" [filter]="true" filterBy="name" formControlName="phasingTemplateId" id="template" optionValue="id" optionLabel="name" [options]="templates" class="w-full"></p-dropdown>
+
+          @if (selectedTemplate != undefined && selectedTemplate.phases != undefined) {
+            <div class="flex mt-2 gap-3 align-items-center flex-wrap">
+              <span class="text-sm text-gray-700">Etapes :</span>
+              @for (phase of selectedTemplate.phases; track $index){
+                <div class="px-2 py-1 font-bold border-round bg-light text-sm">
+                  {{ phase.name }}
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+
+      <div class="col-6">
+        <div class="field">
+          <label for="strategicCriterion">Critère stratégique</label>
+          <p-dropdown
+            id="strategicCriterion"
+            formControlName="strategicCriterionId"
+            [options]="strategicCriterions"
+            optionValue="id"
+            optionLabel="name"
+            [showClear]="true"
+            [filter]="true"
+            emptyMessage="Aucun critère stratégique trouvé"
+            placeholder="Sélectionnez un critère stratégique"
+            (onChange)="handleProjectCriterionChange($event)">
+            <ng-template pTemplate="item" let-item>
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-tag mr-2"></i>
+                <div class="flex-1">{{ item.name }}</div>
+                <div class="mr-2 text-sm text-gray-500">{{ item.description }}</div>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="selectedItem" let-selectedOption>
+              <div class="flex align-content-start gap-3">
+                <i class="pi pi-tag mr-2"></i>
+                <div class="flex-1">{{ selectedOption.name }}</div>
+                <div><p-badge *ngIf="selectedOption.description" [value]="selectedOption.description"></p-badge></div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="field">
+          <label for="negoClosingDate"  class="required-field">Date de clôture negocié</label>
+          <p-calendar formControlName="negoClosingDate" appendTo="body" type="text" id="negoClosingDate" placeholder="{{projectDetails?.negoClosingDate| date : 'dd/MM/YYYY'}}"></p-calendar>
+        </div>
+      </div>
+
+   <div class="col-12" *ngIf="projectDetails?.negoClosingDateChangeReason">
+  <div class="field">
+    <label class="font-medium text-gray-800 flex align-items-center gap-2 mb-2">
+      <i class="pi pi-clock text-primary"></i>
+      Motif de la modification de la date de clôture
+    </label>
+    <div class="p-3 bg-gray-50 border-round border-1 surface-border">
+      <p class="m-0 text-gray-700 line-height-3">
+        {{projectDetails.negoClosingDateChangeReason}}
+      </p>
+    </div>
+  </div>
+</div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button class="mr-2 p-button-outlined p-button-danger" pButton label="Annuler" (click)="showForm = false"></button>
+    <button [loading]="processing" type="submit" form="budgetForm" pButton label="Enregistrer"></button>
+  </ng-template>
+
+</p-dialog>
+
+
+<p-confirmDialog [style]="{width: '500px'}" appendTo="body"></p-confirmDialog>
+
+
+<!-- saisir le motif -->
+<p-dialog 
+  header="Motif de modification" 
+  [(visible)]="showMotifDialog" 
+  [modal]="true" 
+  [style]="{width: '500px', 'z-index': '10000'}"
+  appendTo="body">
+  
+  <div class="field">
+    <label for="motif" class="required-field">Indiquer le motif de modification de la date de clôture négociée :</label>
+    <textarea
+      id="motif"
+      [(ngModel)]="motifModification"
+      pInputTextarea
+      rows="4"
+      placeholder="Saisissez le motif de la modification..."
+      class="w-full">
+    </textarea>
+  </div>
+ 
+  <ng-template pTemplate="footer">
+    <button class="mr-2 p-button-outlined p-button-danger" pButton label="Annuler" (click)="cancelMotifDialog()"></button>
+    <button [disabled]="!motifModification || motifModification.trim() === ''" pButton label="Confirmer" (click)="confirmMotifDialog()"></button>
+  </ng-template>
+</p-dialog>
+
+
+
+
+
+
+
