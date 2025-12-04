@@ -1,1 +1,67 @@
-<p>syntheses-financieres works!</p>
+<div class="page">
+  <h3 class="title">Vue d'ensemble comptable</h3>
+
+  <!-- Cards sur une ligne -->
+  <div class="cards-row">
+    <p-card class="card-item blue-card">
+      <div class="card-content">
+        <i class="pi pi-chart-line card-icon"></i>
+        <div class="card-info">
+          <p class="label">Total ventes</p>
+          <h2 class="value">{{ synthese?.totalVentes | number:'1.0-0' }} FCFA</h2>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card class="card-item red-card">
+      <div class="card-content">
+        <i class="pi pi-arrow-down card-icon"></i>
+        <div class="card-info">
+          <p class="label">Total charges</p>
+          <h2 class="value">{{ synthese?.totalCharges | number:'1.0-0' }} FCFA</h2>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card class="card-item green-card">
+      <div class="card-content">
+        <i class="pi pi-money-bill card-icon"></i>
+        <div class="card-info">
+          <p class="label">Bénéfice net</p>
+          <h2 class="value">{{ synthese?.beneficeNet | number:'1.0-0' }} FCFA</h2>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Graphique -->
+  <div class="graph-container">
+    <p-card>
+      <h3 class="graph-title">Évolution mensuelle</h3>
+      <div class="chart-wrapper">
+        <p-chart type="line" [data]="lineData" [options]="lineOptions"></p-chart>
+      </div>
+    </p-card>
+  </div>
+  <div class="table-container">
+  <table class="synthese-table">
+    <thead>
+      <tr>
+        <th>Mois</th>
+        <th>Ventes (FCFA)</th>
+        <th>Charges (FCFA)</th>
+        <th>Bénéfice (FCFA)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of lineData.labels; let i = index">
+        <td>{{ m }}</td>
+        <td>{{ lineData.datasets[0].data[i] | number:'1.0-0' }}</td>
+        <td>{{ lineData.datasets[2].data[i] | number:'1.0-0' }}</td>
+        <td>{{ lineData.datasets[1].data[i] | number:'1.0-0' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div>

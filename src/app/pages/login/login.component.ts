@@ -47,6 +47,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {}
 
+
   handleSubmit() {
     if (this.loginForm.invalid) {
       this.toastr.error('Veuillez remplir tous les champs correctement');
@@ -56,24 +57,19 @@ export class LoginComponent implements OnInit {
     this.processing = true;
     this.errorMsg = '';
     
-    // 🔥 Données pour ton backend Spring
     const email = this.loginForm.get('username')?.value;
     const password = this.loginForm.get('password')?.value;
 
-    // 🔥 Appel direct au service d'authentification
     this.authService.login(email, password).subscribe({
       next: (response: any) => {
         this.processing = false;
         
-        // 🔥 Stocker les données utilisateur
         this.authService.setCurrentUser(response);
         
-        // 🔥 Stocker le token séparé si "se rappeler de moi"
-        if (this.checked && response.token) {
-          localStorage.setItem('token', response.token);
-        }
+        // if (this.checked && response.token) {
+        //   localStorage.setItem('token', response.token);
+        // }
 
-        // 🔥 Redirection vers le dashboard
         const redirectUrl = localStorage.getItem('redirectUrl') || '/dashboard';
         this.router.navigateByUrl(redirectUrl).then(() => {
           const nomComplet = response.nom && response.prenom 

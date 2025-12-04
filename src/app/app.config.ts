@@ -11,7 +11,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(
-      withInterceptors([AuthInterceptor]) // 🔥 Utilise ton interceptor existant
+      withInterceptors([AuthInterceptor]) 
     ),
     DialogService,
     provideRouter(routes, withComponentInputBinding()),
@@ -22,6 +22,5 @@ export const appConfig: ApplicationConfig = {
       preventDuplicates: true,
       progressAnimation: 'decreasing'
     }),
-    // 🔥 SUPPRIMER le doublon : provideToastr() était déjà configuré
   ]
 };

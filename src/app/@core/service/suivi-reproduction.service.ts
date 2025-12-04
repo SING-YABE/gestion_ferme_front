@@ -38,4 +38,13 @@ export class SuiviReproductionService {
   deleteById(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+
 }
+
+
+
+
+
+
+

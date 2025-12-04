@@ -7,6 +7,9 @@ import { DropdownModule } from 'primeng/dropdown';
 import { ChargesDiversesService } from '../../../@core/service/charges-diverses-service.service';
 import { ChargesDiversesDTO } from '../../../@core/service/charges-diverses-service.service';
 import { TypeDepenseService } from '../../../@core/service/type-depense.service';
+import { CalendarModule } from 'primeng/calendar';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 @Component({
   selector: 'app-chargesdiverses-form',
   standalone: true,
@@ -15,7 +18,10 @@ import { TypeDepenseService } from '../../../@core/service/type-depense.service'
     ReactiveFormsModule,
     DialogModule,
     ButtonModule,
-    DropdownModule
+    DropdownModule,
+    CalendarModule,
+    InputNumberModule,
+    InputTextareaModule
   ],
   templateUrl: './chargesdiverses-form.component.html'
 })

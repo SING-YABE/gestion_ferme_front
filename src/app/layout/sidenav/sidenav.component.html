@@ -4,6 +4,7 @@
   <div style="height: 69px;" class="flex align-items-center px-3 border-bottom-1 border-gray-700">
     <div class="flex gap-2 relative">
       <h1 class="m-0 font-bold">{{ appName.toUpperCase() }}</h1>
+      <h1 class="m-0 font-bold">{{ appName.toUpperCase() }}</h1>
       <div class="version-badge bg-red-500">{{ appVersion }}</div>
     </div>
   </div>
@@ -40,7 +41,7 @@
     </div>
 
     <div class="px-2 py-2">
-      <!-- <button (click)="menu.toggle($event)" pButton class="w-full p-button-outlined" icon="pi pi-user" [label]="appSession?.user?.cuid"></button> -->
+      <button (click)="menu.toggle($event)" pButton class="w-full p-button-outlined" icon="pi pi-user"></button>
     </div>
   </div>
 </div>

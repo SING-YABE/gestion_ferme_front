@@ -1,1 +1,88 @@
-<p>home works!</p>
+<div class="page">
+
+  <div class="stats-container">
+    <div class="row top-row">
+      <div class="card card-blue" *ngIf="stats">
+        <h3>Truies Gestantes</h3>
+        <p>{{ stats.truiesGestantes }}</p>
+      </div>
+      <div class="card card-green" *ngIf="stats">
+        <h3>Mises Bas ce Mois</h3>
+        <p>{{ stats.misesBasMois }}</p>
+      </div>
+      <div class="card card-orange" *ngIf="stats">
+        <h3>Porcelets Sevrés</h3>
+        <p>{{ stats.porceletsSevres }}</p>
+      </div>
+  
+      <div class="card card-purple" *ngIf="stats">
+        <h3>Taux Réussite</h3>
+        <p>{{ stats.tauxReussite | number:'1.2-2' }}%</p>
+      </div>
+
+      <div class="card card-red" *ngIf="stats">
+        <h3>Total Saillies</h3>
+        <p>{{ stats.totalSaillies }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="charges-chart" *ngIf="chartData">
+  <p-chart
+  type="doughnut"
+  [data]="chartData"
+  [style]="{ width: '100%', height: '280px' }">
+ </p-chart>
+</div>
+<div class="ventes-chart" *ngIf="venteChartData">
+  <h3>Évolution des Ventes</h3>
+  <p-chart
+      type="line"
+      [data]="venteChartData"
+      [style]="{ width: '100%', height: '320px' }">
+  </p-chart>
+</div> -->
+  <div class="charts-row" *ngIf="chartData && venteChartData">
+
+    <div class="chart-left">
+      <h3 class="chart-title">Répartition des Charges</h3>
+
+      <p-chart type="doughnut" [data]="chartData" [style]="{ width: '100%', height: '260px' }">
+      </p-chart>
+    </div>
+
+    <div class="chart-right">
+      <h3 class="chart-title">Évolution des Ventes</h3>
+
+      <div class="annee-filter">
+        <label>Année :</label>
+        <select [(ngModel)]="anneeSelectionnee" (change)="loadEvolutionVentes()">
+          <option *ngFor="let a of anneesDisponibles" [value]="a">
+            {{ a }}
+          </option>
+        </select>
+      </div>
+
+      <p-chart type="line" [data]="venteChartData" [style]="{ width: '100%', height: '320px' }">
+      </p-chart>
+    </div>
+
+  </div>
+
+
+  <div class="alertes-misebas" *ngIf="alertesMiseBas.length > 0">
+    <h3>Alertes Mise Bas (prochaines 7 jours)</h3>
+    <div class="alert-cards">
+      <div class="alert-card" *ngFor="let a of alertesMiseBas">
+        <div class="alert-header">
+          <span class="alert-truie">{{ a.truieCode }}</span>
+          <span class="alert-jours">{{ a.joursRestants }} jour{{ a.joursRestants > 1 ? 's' : '' }}</span>
+        </div>
+        <div class="alert-body">
+          Mise bas prévue le <strong>{{ a.dateMiseBasPrevue }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,209 @@
+.card-item ::ng-deep .p-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.card-item ::ng-deep .p-card-body,
+.card-item ::ng-deep .p-card-content {
+  background: transparent !important;
+  color: white !important;
+}
+
+
+.page {
+  padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  background: #f8fafc;
+  min-height: 100vh;
+  margin-bottom: 80px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 2rem;
+}
+
+/* Cards en ligne */
+.cards-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.card-item {
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  overflow: hidden;
+  border: none !important;
+}
+
+.card-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card-item ::ng-deep .p-card-body {
+  padding: 0 !important;
+}
+
+.card-item ::ng-deep .p-card-content {
+  padding: 0 !important;
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem !important;
+}
+
+.card-icon {
+  font-size: 4rem;
+  opacity: 1;
+}
+
+.card-info {
+  flex: 1;
+}
+
+.label {
+  font-size: 1.1rem;
+  margin: 0 0 0.75rem 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 1;
+}
+
+.value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Couleurs des cards */
+.blue-card {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+}
+
+.blue-card .card-icon,
+.blue-card .label,
+.blue-card .value {
+  color: white !important;
+}
+
+.red-card {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+}
+
+.red-card .card-icon,
+.red-card .label,
+.red-card .value {
+  color: white !important;
+}
+
+.green-card {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+}
+
+.green-card .card-icon,
+.green-card .label,
+.green-card .value {
+  color: white !important;
+}
+
+/* Graphique - TRES GRAND */
+.graph-container {
+  margin-top: 3rem;
+}
+
+.graph-container ::ng-deep .p-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.graph-container ::ng-deep .p-card-body {
+  padding: 2rem !important;
+}
+
+.graph-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 2rem 0;
+}
+.chart-wrapper {
+  width: 100%;
+  height: 400px !important;
+  min-height: 400px !important;
+}
+
+.chart-wrapper ::ng-deep canvas {
+  height: 400px !important;
+}
+
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .cards-row {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .chart-wrapper {
+    height: 600px !important;
+    min-height: 600px !important;
+  }
+  
+  .chart-wrapper ::ng-deep canvas {
+    height: 600px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .value {
+    font-size: 2rem;
+  }
+  
+  .chart-wrapper {
+    height: 500px !important;
+    min-height: 500px !important;
+  }
+  
+  .chart-wrapper ::ng-deep canvas {
+    height: 500px !important;
+  }
+}
+
+.synthese-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+
+  th, td {
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+  }
+
+  th {
+    background-color: #f3f4f6;
+    font-weight: 600;
+  }
+}

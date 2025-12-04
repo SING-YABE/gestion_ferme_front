@@ -17,6 +17,28 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
+/* Icône calendrier en vert ferme */
+.p-calendar .p-datepicker-trigger .p-icon,
+.p-calendar .p-datepicker-trigger .pi {
+  color: #228B22 !important; /* vert ferme */
+}
+
+/* Bord de l'input du calendrier */
+.p-calendar .p-inputtext {
+  border: 1px solid #2E8B57; /* vert ferme plus doux */
+  border-radius: 6px;
+}
+
+/* Bord et ombre au focus */
+.p-calendar .p-inputtext:focus {
+  border-color: #006400; /* vert foncé */
+  box-shadow: 0 0 0 0.2rem rgba(34,139,34,0.25); /* ombre vert clair */
+}
+
+/* Optionnel : survol de l'icône */
+.p-calendar .p-datepicker-trigger:hover .pi {
+  color: #2E8B57 !important;
+}
 
 
 .circle-progress {

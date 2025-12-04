@@ -1,4 +1,3 @@
-// src/app/pages/utilisateurs/utilisateurs.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';

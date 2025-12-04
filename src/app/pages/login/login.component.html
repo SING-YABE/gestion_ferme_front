@@ -11,13 +11,12 @@
 
         <!-- EMAIL -->
         <div class="field">
-          <label for="username">Votre email</label>
+          <label for="username">Email</label>
           <input
             id="username"
             type="email"
             pInputText
             formControlName="username"
-            placeholder="user@email.com"
           />
 
           @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
@@ -31,7 +30,6 @@
           <p-password
             id="password"
             formControlName="password"
-            placeholder="Votre mot de passe"
             [toggleMask]="true"
             [feedback]="false"
             styleClass="w-full"

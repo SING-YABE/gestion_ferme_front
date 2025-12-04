@@ -1,31 +1,13 @@
-<button 
-  (click)="handleShow()" 
-  pButton 
-  class="p-button-success" 
-  *ngIf="mode == 'create'" 
-  label="Nouvel Animal" 
+<button (click)="handleShow()" pButton class="p-button-success" *ngIf="mode == 'create'" label="Nouvel Animal"
   icon="pi pi-plus">
 </button>
 
-<button 
-  (click)="handleShow()" 
-  pButton 
-  *ngIf="mode == 'edit'" 
-  icon="pi pi-pencil" 
-  class="p-button-rounded" 
-  style="background:#16A34A ; border-color: #16A34A ;color:white;"
-        (click)="handleShow()">
+<button (click)="handleShow()" pButton *ngIf="mode == 'edit'" icon="pi pi-pencil" class="p-button-rounded"
+  style="background:#16A34A ; border-color: #16A34A ;color:white;" (click)="handleShow()">
 </button>
 
-<p-dialog 
-  [header]="dialogHeader" 
-  appendTo="body" 
-  [modal]="true" 
-  [style]="{width: '900px'}" 
-  [(visible)]="showForm"
-  [baseZIndex]="9000"
-  styleClass="farm-dialog"
->
+<p-dialog [header]="dialogHeader" appendTo="body" [modal]="true" [style]="{width: '900px'}" [(visible)]="showForm"
+  [baseZIndex]="9000" styleClass="farm-dialog">
   <div>
     <form id="animalForm" [formGroup]="animalForm" (ngSubmit)="handleSubmit()">
       <div class="grid">
@@ -34,19 +16,11 @@
             <label for="typeAnimalId" class="font-semibold">
               Type d'Animal <span style="color: red;">*</span>
             </label>
-            <p-dropdown
-              id="typeAnimalId"
-              formControlName="typeAnimalId"
-              [options]="typesAnimaux"
-              optionLabel="nom"
-              optionValue="id"
-              placeholder="Sélectionnez un type"
-              styleClass="w-full"
-              [showClear]="false"
-            ></p-dropdown>
+            <p-dropdown id="typeAnimalId" formControlName="typeAnimalId" [options]="typesAnimaux" optionLabel="nom"
+              optionValue="id" placeholder="Sélectionnez un type" styleClass="w-full" [showClear]="false"></p-dropdown>
           </div>
         </div>
-
+        <!-- 
         <div class="col-12 md:col-6">
           <div class="field">
             <label for="dateEntree" class="font-semibold">
@@ -60,6 +34,15 @@
               class="w-full"
             />
           </div>
+        </div> -->
+        <div class="col-12 md:col-6">
+          <div class="field">
+            <label>Date d'Entrée<span style="color: red;">*</span></label>
+            <p-calendar formControlName="dateEntree" dateFormat="dd/mm/yy" [showIcon]="true"
+            [appendTo]="'body'" [touchUI]="true" inputId="dateEntree"
+            [style]="{'width': '80%'}">
+</p-calendar>
+          </div>
         </div>
 
         <div class="col-12 md:col-6">
@@ -67,16 +50,8 @@
             <label for="poidsInitial" class="font-semibold">
               Poids Initial (kg) <span style="color: red;">*</span>
             </label>
-            <input 
-              id="poidsInitial"
-              type="number"
-              step="0.1"
-              min="0"
-              placeholder="ex: 120" 
-              formControlName="poidsInitial" 
-              pInputText 
-              class="w-full"
-            />
+            <input id="poidsInitial" type="number" step="0.1" min="0" placeholder="ex: 120"
+              formControlName="poidsInitial" pInputText class="w-full" />
           </div>
         </div>
 
@@ -85,16 +60,8 @@
             <label for="etatSanteId" class="font-semibold">
               État de Santé <span style="color: red;">*</span>
             </label>
-            <p-dropdown
-              id="etatSanteId"
-              formControlName="etatSanteId"
-              [options]="etatsSante"
-              optionLabel="description"
-              optionValue="id"
-              placeholder="Sélectionnez un état"
-              styleClass="w-full"
-              [showClear]="false"
-            ></p-dropdown>
+            <p-dropdown id="etatSanteId" formControlName="etatSanteId" [options]="etatsSante" optionLabel="description"
+              optionValue="id" placeholder="Sélectionnez un état" styleClass="w-full" [showClear]="false"></p-dropdown>
           </div>
         </div>
 
@@ -103,16 +70,8 @@
             <label for="batimentId" class="font-semibold">
               Bâtiment <span style="color: red;">*</span>
             </label>
-            <p-dropdown
-              id="batimentId"
-              formControlName="batimentId"
-              [options]="batiments"
-              optionLabel="nom"
-              optionValue="id"
-              placeholder="Sélectionnez un bâtiment"
-              styleClass="w-full"
-              [showClear]="false"
-            >
+            <p-dropdown id="batimentId" formControlName="batimentId" [options]="batiments" optionLabel="nom"
+              optionValue="id" placeholder="Sélectionnez un bâtiment" styleClass="w-full" [showClear]="false">
               <ng-template let-batiment pTemplate="item">
                 <div>
                   <strong>{{ batiment.nom }}</strong>
@@ -128,37 +87,21 @@
             <label for="observations" class="font-semibold">
               Observations
             </label>
-            <textarea 
-              id="observations"
-              rows="3"
-              placeholder="Observations sur l'animal..." 
-              formControlName="observations" 
-              pInputTextarea
-              class="w-full"
-            ></textarea>
+            <textarea id="observations" rows="3" placeholder="Observations sur l'animal..."
+              formControlName="observations" pInputTextarea class="w-full"></textarea>
           </div>
         </div>
       </div>
     </form>
   </div>
-  
+
   <ng-template pTemplate="footer">
-    <button 
-      (click)="showForm = false" 
-      pButton 
-      label="Annuler"
-      class="p-button-outlined mr-2" 
+    <button (click)="showForm = false" pButton label="Annuler" class="p-button-outlined mr-2"
       style="color:#8B5E3C; border-color:#8B5E3C;">
     </button>
 
-    <button 
-      type="submit" 
-      [disabled]="animalForm.invalid" 
-      form="animalForm" 
-      [loading]="processing" 
-      pButton 
-      label="Enregistrer"
-      class="p-button-success">
+    <button type="submit" [disabled]="animalForm.invalid" form="animalForm" [loading]="processing" pButton
+      label="Enregistrer" class="p-button-success">
     </button>
   </ng-template>
 </p-dialog>

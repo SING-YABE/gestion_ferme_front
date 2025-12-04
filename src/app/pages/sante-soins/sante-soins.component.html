@@ -1,1 +1,64 @@
-<p>sante-soins works!</p>
+<div class="odyssey-shadow-low border-round" style="background:#F5F0E6; border:1px solid #D9D2C2;">
+    <div class="px-4 py-2 flex gap-3 align-items-center"
+        style="background:#16A34A; color:white; border-radius:8px 8px 0 0;">
+
+        <h5 class="m-0 flex-1">Gestion des Soins de Santé</h5>
+
+        <app-santesoins-form mode="create" (onUpdate)="loadData()"></app-santesoins-form>
+    </div>
+
+
+    <p-table [value]="data" [loading]="loading" [rows]="pageSize" [paginator]="data.length > pageSize"
+        styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+            <tr style="background:#DCFCE7;">
+                <th>Date</th>
+                <th>Code Animal</th>
+                <th>Motif</th>
+                <th>Traitement</th>
+                <th>Coût</th>
+                <th>Vétérinaire</th>
+                <th style="text-align:center; width:150px">Actions</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-row>
+            <tr>
+                <td>{{ row.dateSoin }}</td>
+                <td>
+                    <span *ngIf="!row.soinCollectif && row.animal?.codeAnimal" class="font-semibold">
+                        {{ row.animal.codeAnimal }}
+                    </span>
+                    <span *ngIf="row.soinCollectif || !row.animal" style="color:#F59E0B; font-weight:600;">
+                        TOUS
+                    </span>
+                </td>
+
+                <td>{{ row.motif }}</td>
+                <td>{{ row.traitement }}</td>
+                <td><strong>{{ row.cout }} FCFA</strong></td>
+                <td>{{ row.veterinaire }}</td>
+                <td>
+                    <div class="flex justify-content-center gap-2">
+
+                        <app-santesoins-form [target]="row" mode="edit" (onUpdate)="loadData()"></app-santesoins-form>
+
+                        <button pButton icon="pi pi-trash" class="p-button-rounded"
+                            style="background:#B91C1C; border-color:#B91C1C;" (click)="confirmDelete(row)">
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="7" class="text-center py-4">
+                    <i class="pi pi-inbox mr-2"></i> Aucun soin trouvé
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

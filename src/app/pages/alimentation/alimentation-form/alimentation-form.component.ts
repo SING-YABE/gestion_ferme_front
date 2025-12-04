@@ -11,6 +11,7 @@ import { TypeAlimentService } from '../../../@core/service/type-aliment.service'
 import { AnimalService } from '../../../@core/service/animal.service';
 import { TypeAnimalService } from '../../../@core/service/type-animal.service';
 import { FournisseurService } from '../../../@core/service/fournisseur.service';
+import { Calendar, CalendarModule } from 'primeng/calendar';
 
 @Component({
   selector: 'app-alimentation-form',
@@ -22,7 +23,8 @@ import { FournisseurService } from '../../../@core/service/fournisseur.service';
     ButtonModule,
     DropdownModule,
     InputTextModule,
-    InputTextareaModule
+    InputTextareaModule,
+    CalendarModule
   ],
   templateUrl: './alimentation-form.component.html'
 })

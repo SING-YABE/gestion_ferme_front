@@ -1,0 +1,54 @@
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.field label {
+  color: #424242;
+  font-weight: 600;
+}
+
+.farm-dialog .p-dialog-header {
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  color: white;
+  border-radius: 6px 6px 0 0;
+}
+
+.farm-dialog .p-dialog-content {
+  padding: 2rem 1.5rem;
+}
+
+.farm-dialog .p-dialog-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+::ng-deep .farm-dialog .p-inputtext,
+::ng-deep .farm-dialog .p-dropdown,
+::ng-deep .farm-dialog .p-calendar,
+::ng-deep .farm-dialog .p-inputnumber-input {
+  border-radius: 6px;
+  border: 1px solid #d0d0d0;
+  transition: border-color 0.2s;
+}
+
+::ng-deep .farm-dialog .p-inputtext:focus,
+::ng-deep .farm-dialog .p-dropdown:not(.p-disabled):hover,
+::ng-deep .farm-dialog .p-calendar:not(.p-disabled):hover input {
+  border-color: #2E7D32;
+  box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.15);
+}
+
+::ng-deep .farm-dialog .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  background: #2E7D32;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .farm-dialog .p-dialog-content {
+    padding: 1.5rem 1rem;
+  }
+  
+  .field label {
+    font-size: 0.9rem;
+  }
+}

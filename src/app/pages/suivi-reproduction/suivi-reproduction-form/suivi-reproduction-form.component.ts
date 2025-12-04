@@ -77,39 +77,70 @@ export class SuiviReproductionFormComponent implements OnInit {
     this.showForm = true;
   }
 
-  handleSubmit() {
-    if (!this.form.valid) return;
-
-    this.processing = true;
-    const data: SuiviReproduction = this.form.value;
-
-    if (this.mode === 'create') {
-      this.srService.create(data).subscribe({
-        next: (res) => {
-          this.toastr.success('Suivi reproduction ajouté avec succès !');
-          this.onUpdate.emit(res);
-          this.showForm = false;
-          this.form.reset();
-        },
-        error: (err) => {
-          console.error(err);
-          this.toastr.error("Échec de l'ajout du suivi reproduction");
-        },
-        complete: () => (this.processing = false)
-      });
-    } else {
-      this.srService.update(this.target!.id!, data).subscribe({
-        next: (res) => {
-          this.toastr.success('Suivi reproduction mis à jour avec succès !');
-          this.onUpdate.emit(res);
-          this.showForm = false;
-        },
-        error: (err) => {
-          console.error(err);
-          this.toastr.error("Échec de la mise à jour du suivi reproduction");
-        },
-        complete: () => (this.processing = false)
-      });
+handleSubmit() {
+  if (!this.form.valid) return;
+  
+  this.processing = true;
+  
+  // Nettoyer et formater les données
+  const formValue = this.form.value;
+  const data: any = {};
+  
+  Object.keys(formValue).forEach(key => {
+    const value = formValue[key];
+    
+    // Ne pas inclure les valeurs vides
+    if (value === null || value === undefined || value === '') {
+      return;
     }
+    
+    // Convertir les dates au format dd/MM/yyyy
+    if (key === 'dateSaillie' || key === 'dateMiseBasPrevue' || key === 'dateMiseBasReelle') {
+      if (value instanceof Date) {
+        data[key] = this.formatDate(value);
+      } else {
+        data[key] = value;
+      }
+    } else {
+      data[key] = value;
+    }
+  });
+
+  if (this.mode === 'create') {
+    this.srService.create(data).subscribe({
+      next: (res) => {
+        this.toastr.success('Suivi reproduction ajouté avec succès !');
+        this.onUpdate.emit(res);
+        this.showForm = false;
+        this.form.reset();
+      },
+      error: (err) => {
+        console.error(err);
+        this.toastr.error("Échec de l'ajout du suivi reproduction");
+      },
+      complete: () => (this.processing = false)
+    });
+  } else {
+    this.srService.update(this.target!.id!, data).subscribe({
+      next: (res) => {
+        this.toastr.success('Suivi reproduction mis à jour avec succès !');
+        this.onUpdate.emit(res);
+        this.showForm = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.toastr.error("Échec de la mise à jour du suivi reproduction");
+      },
+      complete: () => (this.processing = false)
+    });
   }
+}
+
+// Ajouter cette méthode helper
+private formatDate(date: Date): string {
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
 }

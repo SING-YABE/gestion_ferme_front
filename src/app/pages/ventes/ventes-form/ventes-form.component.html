@@ -1,0 +1,52 @@
+<button pButton class="p-button-success" icon="pi pi-plus"
+  label="Ajouter vente" *ngIf="mode === 'create'" (click)="handleShow()">
+</button>
+
+<p-dialog header="Enregistrer une vente" [(visible)]="showForm" [modal]="true" [style]="{width:'600px'}" appendTo="body">
+
+    <form [formGroup]="form">
+        
+        <div class="field">
+            <label>Date Vente</label>
+            <p-calendar formControlName="dateVente" dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
+        </div>
+
+        <div class="field">
+            <label>Type</label>
+            <input pInputText formControlName="type" placeholder="Ex : Pour consommation">
+        </div>
+
+        <div class="field">
+            <label>Quantité</label>
+            <input pInputText formControlName="quantite" type="number">
+        </div>
+
+        <div class="field">
+            <label>Poids Total (kg)</label>
+            <input pInputText formControlName="poidsTotal" type="number">
+        </div>
+
+        <div class="field">
+            <label>Prix Unitaire</label>
+            <input pInputText formControlName="prixUnitaire" type="number">
+        </div>
+
+        <div class="field">
+            <label>Client</label>
+            <input pInputText formControlName="client">
+        </div>
+
+    </form>
+
+    <ng-template pTemplate="footer">
+        <button pButton class="p-button-outlined mr-2" label="Annuler" (click)="showForm=false"></button>
+
+        <button pButton class="p-button-success"
+            label="Enregistrer"
+            [loading]="processing"
+            [disabled]="form.invalid"
+            (click)="handleSubmit()">
+        </button>
+    </ng-template>
+
+</p-dialog>

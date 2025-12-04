@@ -18,34 +18,31 @@
                 placeholder="Sélectionner un verrat">
             </p-dropdown>
         </div>
-
-        <!-- <div class="field">
-            <label>Date Saillie</label>
-            <input pInputText formControlName="dateSaillie" placeholder="JJ/MM/AAAA">
-        </div> -->
+        
         <div class="field">
             <label>Date Saillie</label>
-            <p-calendar formControlName="dateSaillie" dateFormat="dd/mm/yy" [showIcon]="true" inputId="dateSaillie">
+
+            <p-calendar formControlName="dateSaillie" dateFormat="dd/mm/yy" [showIcon]="true" [appendTo]="'body'"
+                [touchUI]="true" inputId="dateSaillie" [style]="{'width': '100%'}">
+            </p-calendar>
+
+        </div>
+
+
+        <div class="field">
+            <label>Date Mise Bas Prévue</label>
+
+            <p-calendar formControlName="dateMiseBasPrevue" dateFormat="dd/mm/yy" [showIcon]="true" [appendTo]="'body'"
+                [touchUI]="true" inputId="dateMiseBasPrevue" [style]="{'width': '100%'}">
             </p-calendar>
         </div>
 
-        <!-- <div class="field">
-            <label>Date Mise Bas Prévue</label>
-            <input pInputText formControlName="dateMiseBasPrevue" placeholder="JJ/MM/AAAA">
-        </div> -->
-           <div class="field">
-            <label>Date Mise Bas Prévue</label>
-            <p-calendar formControlName="dateMiseBasPrevue" dateFormat="dd/mm/yy" [showIcon]="true" inputId="dateMiseBasPrevue">
-            </p-calendar>
-        </div>
-<!-- 
         <div class="field">
             <label>Date Mise Bas Réelle</label>
-            <input pInputText formControlName="dateMiseBasReelle" placeholder="JJ/MM/AAAA">
-        </div> -->
-         <div class="field">
-            <label>Date Mise Bas Réelle</label>
-            <p-calendar formControlName="dateMiseBasReelle" dateFormat="dd/mm/yy" [showIcon]="true" inputId="dateMiseBasReelle">
+
+
+            <p-calendar formControlName="dateMiseBasReelle" dateFormat="dd/mm/yy" [showIcon]="true" [appendTo]="'body'"
+                [touchUI]="true" inputId="dateMiseBasReelle" [style]="{'width': '100%'}">
             </p-calendar>
         </div>
 

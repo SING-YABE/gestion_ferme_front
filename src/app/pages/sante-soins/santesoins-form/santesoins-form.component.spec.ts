@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { KpiComponent } from './kpi.component';
+import { SantesoinsFormComponent } from './santesoins-form.component';
 
-describe('KpiComponent', () => {
-  let component: KpiComponent;
-  let fixture: ComponentFixture<KpiComponent>;
+describe('SantesoinsFormComponent', () => {
+  let component: SantesoinsFormComponent;
+  let fixture: ComponentFixture<SantesoinsFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [KpiComponent]
+      imports: [SantesoinsFormComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(KpiComponent);
+    fixture = TestBed.createComponent(SantesoinsFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

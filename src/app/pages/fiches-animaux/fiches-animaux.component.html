@@ -10,57 +10,6 @@
     </div>
 
     <div class="p-4">
-
-        <!-- <div class="p-4 border rounded shadow-sm" style=" border:1px solid #D9D2C2;">
-            <h4 class="mb-4 fw-bold" style="color:#16A34A;">Recherche et filtres</h4>
-
-            <div class="d-flex gap-3 flex-wrap">
-
-                <ng-container *ngFor="let item of [1,2,3,4]; let i = index">
-                    <div style="flex:1; min-width:200px;">
-                        <label class="form-label fw-bold fs-5">
-                            <ng-container [ngSwitch]="i">
-                                <i *ngSwitchCase="0" class="fas fa-search me-2"></i>
-                                <i *ngSwitchCase="1" class="fas fa-filter me-2"></i>
-                                <i *ngSwitchCase="2" class="fas fa-building me-2"></i>
-                                <i *ngSwitchCase="3" class="fas fa-redo me-2"></i>
-                            </ng-container>
-
-                            <ng-container [ngSwitch]="i">
-                                <span *ngSwitchCase="0">Code Animal</span>
-                                <span *ngSwitchCase="1">Type d'Animal</span>
-                                <span *ngSwitchCase="2">Bâtiment</span>
-                                <span *ngSwitchCase="3">&nbsp;</span>
-                            </ng-container>
-                        </label>
-
-                        <ng-container [ngSwitch]="i">
-                            <input *ngSwitchCase="0" type="text" class="form-control form-control-lg fs-5"
-                                [(ngModel)]="rechercheCode" (ngModelChange)="onRechercheChange()"
-                                placeholder="Ex: P2, V5..." />
-
-                            <select *ngSwitchCase="1" class="form-select form-select-lg fs-5"
-                                [(ngModel)]="filtreTypeAnimal" (ngModelChange)="onFiltreChange()">
-                                <option [ngValue]="null">Tous les types</option>
-                                <option *ngFor="let type of typesAnimaux" [ngValue]="type.id">{{ type.nom }}</option>
-                            </select>
-
-                            <select *ngSwitchCase="2" class="form-select form-select-lg fs-5"
-                                [(ngModel)]="filtreBatiment" (ngModelChange)="onFiltreChange()">
-                                <option [ngValue]="null">Tous les bâtiments</option>
-                                <option *ngFor="let bat of batiments" [ngValue]="bat.id">{{ bat.nom }}</option>
-                            </select>
-
-                            <button *ngSwitchCase="3" class="btn btn-outline-secondary btn-lg w-100 fs-5 mt-4"
-                                (click)="resetFiltres()">
-                                <i class="fas fa-redo me-2"></i>Réinitialiser
-                            </button>
-                        </ng-container>
-                    </div>
-                </ng-container>
-
-            </div>
-        </div> -->
         <div class="filters-card">
     <div class="filters-header">
         <div class="d-flex align-items-center gap-2">
@@ -142,7 +91,7 @@
                     <td>{{ animal.typeAnimal.nom }}</td>
                     <td>{{ animal.dateEntree }}</td>
                     <td>{{ animal.poidsInitial }} kg</td>
-                    <td><span class="badge bg-success">{{ animal.etatSante.description }}</span></td>
+                    <td>{{ animal.etatSante.description }}</td>
                     <td>{{ animal.batiment.nom }}</td>
                     <td>{{ animal.observations || '-' }}</td>
                     <td class="text-center">
