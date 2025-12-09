@@ -19,6 +19,10 @@ import { AnimalService } from '../../@core/service/animal.service';
 export class SuiviReproductionComponent {
   suivis: SuiviReproduction[] = [];
   loading = false;
+  selectedSuivi: SuiviReproduction | null = null;
+  showFormDialog = false;
+  modeForm: 'create' | 'edit' = 'create';
+
   pageSize = 5;
 
   constructor(
@@ -32,6 +36,8 @@ export class SuiviReproductionComponent {
     
     this.loadData();
   }
+
+  
 
   loadData(): void {
     this.loading = true;
@@ -71,4 +77,11 @@ export class SuiviReproductionComponent {
       }
     });
   }
+  editSuivi(suivi: SuiviReproduction) {
+  this.selectedSuivi = suivi;
+  this.modeForm = 'edit';
+  this.showFormDialog = true;
 }
+}
+
+

@@ -207,3 +207,14 @@
     font-weight: 600;
   }
 }
+.orange-card { background: #f97316; color: #fff; }
+.purple-card { background: #8b5cf6; color: #fff; }
+.yellow-card { background: #eab308; color: #fff; }
+.gray-card { background: #6b7280; color: #fff; }
+
+.categories-row {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}

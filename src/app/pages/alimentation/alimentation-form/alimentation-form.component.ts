@@ -24,7 +24,9 @@ import { Calendar, CalendarModule } from 'primeng/calendar';
     DropdownModule,
     InputTextModule,
     InputTextareaModule,
-    CalendarModule
+    CalendarModule,
+    InputTextModule,
+
   ],
   templateUrl: './alimentation-form.component.html'
 })
@@ -121,8 +123,7 @@ export class AlimentationFormComponent implements OnInit {
 
   handleSubmit() {
     if (!this.form.valid) return;
-
-    // Validation: au moins un animal ou un type animal doit être sélectionné
+    // 1 animal ou type
     const animalId = this.form.value.animalId;
     const typeAnimalId = this.form.value.typeAnimalId;
 

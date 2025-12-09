@@ -1,24 +1,36 @@
 <div class="login-container">
-
   <!-- SECTION FORMULAIRE -->
   <div class="login-left">
     <div class="login-card">
-
-      <h1 class="title">Gestion de la ferme</h1>
-      <div class="title-underline"></div>
+      <!-- Header avec icône -->
+      <div class="header-section">
+        <div class="logo-circle">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <h1 class="title">Bienvenue</h1>
+        <p class="subtitle">Connectez-vous à votre espace de gestion</p>
+      </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
-
         <!-- EMAIL -->
         <div class="field">
-          <label for="username">Email</label>
-          <input
-            id="username"
-            type="email"
-            pInputText
-            formControlName="username"
-          />
-
+          <label for="username">Adresse email</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input
+              id="username"
+              type="email"
+              pInputText
+              formControlName="username"
+              placeholder="votre@email.com"
+            />
+          </div>
           @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
             <small class="error">Veuillez entrer un email valide</small>
           }
@@ -27,59 +39,99 @@
         <!-- PASSWORD -->
         <div class="field">
           <label for="password">Mot de passe</label>
-          <p-password
-            id="password"
-            formControlName="password"
-            [toggleMask]="true"
-            [feedback]="false"
-            styleClass="w-full"
-          ></p-password>
-
+          <div class="input-wrapper">
+            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <p-password
+              id="password"
+              formControlName="password"
+              [toggleMask]="true"
+              [feedback]="false"
+              placeholder="••••••••"
+              styleClass="w-full"
+            ></p-password>
+          </div>
           @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
             <small class="error">Le mot de passe est requis</small>
           }
         </div>
 
-        <!-- REMEMBER ME -->
-        <div class="remember-row">
-          <p-checkbox
-            [(ngModel)]="checked"
-            binary
-            id="rememberme"
-            class="mr-2"
-            [ngModelOptions]="{ standalone: true }"
-          ></p-checkbox>
-          <label for="rememberme">Se rappeler de moi</label>
+        <!-- REMEMBER ME & FORGOT PASSWORD -->
+        <div class="options-row">
+          <div class="remember-row">
+            <p-checkbox
+              [(ngModel)]="checked"
+              binary
+              id="rememberme"
+              [ngModelOptions]="{ standalone: true }"
+            ></p-checkbox>
+            <label for="rememberme">Se souvenir de moi</label>
+          </div>
+          <a href="#" class="forgot-link">Mot de passe oublié ?</a>
         </div>
+
+        <!-- ERROR MESSAGE -->
+        @if (errorMsg) {
+          <div class="error-box">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            {{ errorMsg }}
+          </div>
+        }
 
         <!-- BUTTON -->
         <button
           type="submit"
           pButton
           class="btn-login"
-          label="Connexion"
+          label="Se connecter"
           [loading]="processing"
           [disabled]="loginForm.invalid"
         ></button>
-
-        @if (errorMsg) {
-          <div class="error-box">{{ errorMsg }}</div>
-        }
       </form>
 
       <!-- FOOTER -->
       <div class="footer">
-        <small>© 2025 GESTION DE LA FERME</small>
-        <small>FARM PRO</small>
+        <div class="divider">
+          <span>Gestion de la ferme</span>
+        </div>
+        <p class="footer-text">© 2025 Farm Pro - Tous droits réservés</p>
       </div>
-
     </div>
   </div>
 
+  <!-- SECTION IMAGE -->
   <div class="login-right">
-    <img src="assets/image/farm.png" class="farm-image" />
-
-    <h2 class="slogan">Le référentiel de gestion de ferme</h2>
+    <div class="overlay"></div>
+    <img src="assets/image/farm.png" class="farm-image" alt="Ferme" />
+    <div class="right-content">
+      <h2 class="slogan">Gérez votre exploitation agricole</h2>
+      <p class="slogan-subtitle"></p>
+      <div class="features">
+        <div class="feature-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Suivi en temps réel</span>
+        </div>
+        <div class="feature-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Gestion des ressources</span>
+        </div>
+        <div class="feature-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Analyses et rapports</span>
+        </div>
+      </div>
+    </div>
   </div>
-
 </div>

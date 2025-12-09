@@ -2,10 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+
 export interface SuiviReproduction {
   id?: number;
   truieId: number;
   verratId: number;
+  truie?: {
+    codeAnimal: string;
+    typeAnimal: { nom: string; prefix: string };
+  };
+  verrat?: {
+    codeAnimal: string;
+    typeAnimal: { nom: string; prefix: string };
+  };
   dateSaillie: string;
   dateMiseBasPrevue: string;
   dateMiseBasReelle?: string | null;
@@ -20,7 +29,7 @@ export interface SuiviReproduction {
 })
 export class SuiviReproductionService {
   private apiUrl = '/api/reproductions'; 
-
+ 
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<SuiviReproduction[]> {

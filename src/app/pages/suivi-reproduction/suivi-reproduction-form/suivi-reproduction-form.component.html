@@ -5,66 +5,100 @@
 
     <form [formGroup]="form" (ngSubmit)="handleSubmit()">
 
+
+
+        <!-- creation uniquement -->
+        <!-- Afficher en create ET edit, mais disabled en edit -->
         <div class="field">
             <label>Truie</label>
-            <p-dropdown [options]="truies" optionLabel="label" optionValue="value" formControlName="truieCode"
-                placeholder="Sélectionner une truie">
-            </p-dropdown>
+            <p-dropdown [options]="truies" formControlName="truieCode" [disabled]="mode==='edit'"></p-dropdown>
         </div>
 
         <div class="field">
             <label>Verrat</label>
-            <p-dropdown [options]="verrats" optionLabel="label" optionValue="value" formControlName="verratCode"
-                placeholder="Sélectionner un verrat">
-            </p-dropdown>
+            <p-dropdown [options]="verrats" formControlName="verratCode" [disabled]="mode==='edit'"></p-dropdown>
         </div>
-        
+
         <div class="field">
             <label>Date Saillie</label>
-
-            <p-calendar formControlName="dateSaillie" dateFormat="dd/mm/yy" [showIcon]="true" [appendTo]="'body'"
-                [touchUI]="true" inputId="dateSaillie" [style]="{'width': '100%'}">
+            <p-calendar formControlName="dateSaillie" dateFormat="dd/mm/yy" [showIcon]="true" [disabled]="mode==='edit'"
+                [style]="{'width': '100%'}">
             </p-calendar>
-
-        </div>
-
-
-        <div class="field">
-            <label>Date Mise Bas Prévue</label>
-
-            <p-calendar formControlName="dateMiseBasPrevue" dateFormat="dd/mm/yy" [showIcon]="true" [appendTo]="'body'"
-                [touchUI]="true" inputId="dateMiseBasPrevue" [style]="{'width': '100%'}">
-            </p-calendar>
-        </div>
-
-        <div class="field">
-            <label>Date Mise Bas Réelle</label>
-
-
-            <p-calendar formControlName="dateMiseBasReelle" dateFormat="dd/mm/yy" [showIcon]="true" [appendTo]="'body'"
-                [touchUI]="true" inputId="dateMiseBasReelle" [style]="{'width': '100%'}">
-            </p-calendar>
-        </div>
-
-        <div class="field">
-            <label>Nb Nés Vivants</label>
-            <input pInputText formControlName="nbNesVivants">
-        </div>
-
-        <div class="field">
-            <label>Nb Morts Nés</label>
-            <input pInputText formControlName="nbMortsNes">
-        </div>
-
-        <div class="field">
-            <label>Nb Sevrés</label>
-            <input pInputText formControlName="nbSevres">
         </div>
 
         <div class="field">
             <label>Observations</label>
             <input pInputText formControlName="observations">
         </div>
+
+        <!-- maj uniquement -->
+        <div class="field" *ngIf="mode==='edit'">
+            <label>Date Mise Bas Prévue</label>
+            <p-calendar formControlName="dateMiseBasPrevue" [disabled]="true"></p-calendar>
+        </div>
+
+        <div class="field" *ngIf="mode==='edit'">
+            <label>Date Mise Bas Réelle</label>
+            <p-calendar formControlName="dateMiseBasReelle"></p-calendar>
+        </div>
+
+    
+        <div class="field" *ngIf="mode==='edit'">
+            <label>Nb Nés Vivants</label>
+            <div class="flex gap-2 align-items-center">
+                <input pInputText formControlName="nbNesVivants" 
+                    type="number" class="flex-1">
+                <button pButton type="button" icon="pi pi-minus" 
+                        class="p-button-rounded p-button-danger p-button-sm"
+                        (click)="decrement('nbNesVivants')">
+                </button>
+                <button pButton type="button" icon="pi pi-plus" 
+                        class="p-button-rounded p-button-success p-button-sm"
+                        (click)="increment('nbNesVivants')">
+                </button>
+            </div>
+        </div>
+
+ 
+                <div class="field" *ngIf="mode==='edit'">
+            <label>Nb Morts Nés</label>
+            <div class="flex gap-2 align-items-center">
+                <input pInputText formControlName="nbMortsNes" 
+                    type="number" class="flex-1">
+                <button pButton type="button" icon="pi pi-minus" 
+                        class="p-button-rounded p-button-danger p-button-sm"
+                        (click)="decrement('nbMortsNes')">
+                </button>
+                <button pButton type="button" icon="pi pi-plus" 
+                        class="p-button-rounded p-button-success p-button-sm"
+                        (click)="increment('nbMortsNes')">
+                </button>
+            </div>
+        </div>
+
+   
+
+                <div class="field" *ngIf="mode==='edit'">
+            <label>Nb Sevrés</label>
+            <div class="flex gap-2 align-items-center">
+                <input pInputText formControlName="nbSevres" 
+                    type="number" class="flex-1">
+                <button pButton type="button" icon="pi pi-minus" 
+                        class="p-button-rounded p-button-danger p-button-sm"
+                        (click)="decrement('nbSevres')">
+                </button>
+                <button pButton type="button" icon="pi pi-plus" 
+                        class="p-button-rounded p-button-success p-button-sm"
+                        (click)="increment('nbSevres')">
+                </button>
+            </div>
+        </div>
+
+        <div class="field" *ngIf="mode==='edit'">
+            <label>Observations</label>
+            <input pInputText formControlName="observations">
+        </div>
+
 
     </form>
 

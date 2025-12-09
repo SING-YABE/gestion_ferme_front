@@ -14,10 +14,11 @@
         <h3>Porcelets Sevrés</h3>
         <p>{{ stats.porceletsSevres }}</p>
       </div>
-  
+
       <div class="card card-purple" *ngIf="stats">
-        <h3>Taux Réussite</h3>
-        <p>{{ stats.tauxReussite | number:'1.2-2' }}%</p>
+        <h3>Taux Réussite mois</h3>
+        <p>{{ stats.tauxReussite | number:'1.0-2' }}%</p>
+
       </div>
 
       <div class="card card-red" *ngIf="stats">

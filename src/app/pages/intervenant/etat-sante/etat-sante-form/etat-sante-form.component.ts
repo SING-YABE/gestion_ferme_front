@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -6,6 +6,8 @@ import { ButtonModule } from 'primeng/button';
 import { NgIf } from '@angular/common';
 import { EtatSanteDTO, EtatSanteResponseDTO, EtatSanteService } from '../../../../@core/service/etat-sante.service';
 import { ToastrService } from 'ngx-toastr';
+import { TypeAnimalService, TypeAnimalResponseDTO } from '../../../../@core/service/type-animal.service';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-etat-sante-form',
@@ -15,12 +17,13 @@ import { ToastrService } from 'ngx-toastr';
     DialogModule,
     InputTextModule,
     ButtonModule,
-    NgIf
+    NgIf,
+    DropdownModule
   ],
   templateUrl: './etat-sante-form.component.html',
   styleUrls: ['./etat-sante-form.component.scss']
 })
-export class EtatSanteFormComponent {
+export class EtatSanteFormComponent implements OnInit {
   @Input() target?: EtatSanteResponseDTO;
   @Input() mode: 'create' | 'edit' = 'create';
   @Output() onUpdate = new EventEmitter<void>();
@@ -28,23 +31,33 @@ export class EtatSanteFormComponent {
   showForm = false;
   processing = false;
   form: FormGroup;
-
+  typesAnimaux: TypeAnimalResponseDTO[] = [];
   constructor(
     private fb: FormBuilder,
     private service: EtatSanteService,
+    private typeAnimalService: TypeAnimalService,  
     private toastr: ToastrService
   ) {
     this.form = this.fb.group({
-      description: ['', Validators.required]
+      description: ['', Validators.required],
+      typeAnimalId:[0, [Validators.required, Validators.min(1)]]
     });
   }
+ngOnInit(): void {
+  this.typeAnimalService.getAll().subscribe({
+    next: (data) => this.typesAnimaux = data,
+    error: (err) => console.error('Erreur', err)
+  });
+}
 
-  ngOnChanges(): void {
-    if (this.mode === 'edit' && this.target) {
-      this.form.patchValue({ description: this.target.description });
-    }
+ngOnChanges(): void {
+  if (this.mode === 'edit' && this.target) {
+    this.form.patchValue({ 
+      description: this.target.description,
+      typeAnimalId: this.target.typeAnimal.id  
+    });
   }
-
+}
   handleShow(): void {
     this.showForm = true;
   }
@@ -53,7 +66,10 @@ export class EtatSanteFormComponent {
     if (this.form.invalid) return;
     this.processing = true;
 
-    const dto: EtatSanteDTO = { description: this.form.value.description };
+    const dto: EtatSanteDTO = {
+       description: this.form.value.description,
+       typeAnimalId: this.form.value.typeAnimalId
+      };
 
     if (this.mode === 'create') {
       this.service.create(dto).subscribe({

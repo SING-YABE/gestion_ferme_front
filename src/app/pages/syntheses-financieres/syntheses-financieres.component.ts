@@ -4,6 +4,9 @@ import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { SyntheseFinanciere, SyntheseFinanciereService } from '../../@core/service/synthese-financiere.service';
 import { forkJoin } from 'rxjs';
+import { ChargesDiversesService } from '../../@core/service/charges-diverses-service.service';
+import { AlimentationService } from '../../@core/service/alimentation.service';
+import { SanteSoinsService } from '../../@core/service/santesoins.service';
 
 @Component({
   selector: 'app-syntheses-financieres',
@@ -17,17 +20,45 @@ export class SynthesesFinancieresComponent implements OnInit {
   synthese!: SyntheseFinanciere;
   lineData: any;
   lineOptions: any;
+  totalAlimentation: number = 0;
+  totalSoins: number = 0;
+  totalTraitements: number = 0;
+  totalDepensesDiverses: number = 0;
 
-  constructor(private service: SyntheseFinanciereService) {}
+
+  constructor(
+    private service: SyntheseFinanciereService,
+    private chargesService: ChargesDiversesService,
+    private alimService: AlimentationService,
+    private soinService: SanteSoinsService
+
+  ) { }
 
   ngOnInit(): void {
     this.loadSynthese();
     this.loadChartData();
+    this.loadDepenseCategories();
   }
 
   loadSynthese(): void {
     this.service.getSynthese().subscribe((data) => {
       this.synthese = data;
+    });
+  }
+  loadDepenseCategories() {
+    // Alimentation
+    this.alimService.getAll().subscribe(data => {
+      this.totalAlimentation = data.reduce((sum, item) => sum + item.coutTotal, 0);
+    });
+
+    // soins vet
+    this.soinService.getAll().subscribe(data => {
+       this.totalSoins = data.reduce((sum, item) => sum + item.cout, 0);
+    });
+
+    // Dépenses diverses
+    this.chargesService.getAll().subscribe(data => {
+      this.totalDepensesDiverses = data.reduce((sum, item) => sum + item.montant, 0);
     });
   }
 
@@ -48,7 +79,7 @@ export class SynthesesFinancieresComponent implements OnInit {
     ];
 
     // Créer un tableau de requêtes pour chaque mois
-    const requetes = mois.map(m => 
+    const requetes = mois.map(m =>
       this.service.getSynthese(m.debut, m.fin)
     );
 
@@ -63,74 +94,76 @@ export class SynthesesFinancieresComponent implements OnInit {
     });
   }
   exportExcel() {
-}
+  }
 
-prepareChart(mois: string[], ventes: number[], charges: number[], benefices: number[]) {
-  this.lineData = {
-    labels: mois,
-    datasets: [
-      {
-        type: 'bar',
-        label: 'Ventes',
-        data: ventes,
-        backgroundColor: '#3b82f6', // bleu
-      },
-      {
-        type: 'bar',
-        label: 'Charges',
-        data: charges,
-        backgroundColor: '#ef4444', // rouge
-      },
-      {
-        type: 'bar',
-        label: 'Bénéfice',
-        data: benefices,
-        backgroundColor: '#22c55e', // vert
-      }
-    ]
-  };
+  prepareChart(mois: string[], ventes: number[], charges: number[], benefices: number[]) {
+    this.lineData = {
+      labels: mois,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Ventes',
+          data: ventes,
+          backgroundColor: '#3b82f6', // bleu
+        },
+        {
+          type: 'bar',
+          label: 'Charges',
+          data: charges,
+          backgroundColor: '#ef4444', // rouge
+        },
+        {
+          type: 'bar',
+          label: 'Bénéfice',
+          data: benefices,
+          backgroundColor: '#22c55e', // vert
+        }
+      ]
+    };
 
-  this.lineOptions = {
-    responsive: true,
-    plugins: {
-      legend: { position: 'top' },
-      tooltip: {
-        enabled: true,
-        callbacks: {
-          label: function(context: any) {
-            // context.raw fonctionne mieux pour bar charts avec datasets multiples
-            const value = context.raw;
-            return context.dataset.label + ': ' + value.toLocaleString() + ' FCFA';
+    this.lineOptions = {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          enabled: true,
+          callbacks: {
+            label: function (context: any) {
+              // context.raw fonctionne mieux pour bar charts avec datasets multiples
+              const value = context.raw;
+              return context.dataset.label + ': ' + value.toLocaleString() + ' FCFA';
+            }
           }
         }
-      }
-    },
-    scales: {
-      x: {
-        stacked: false,
-        ticks: {
-          color: '#6b7280',
-          font: { size: 14, weight: '500' }
-        },
-        grid: { color: '#e5e7eb', drawBorder: false }
       },
-      y: {
-        beginAtZero: true,
-        ticks: {
-          color: '#6b7280',
-          font: { size: 14, weight: '500' },
-          callback: function(value: any) {
-            if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M FCFA';
-            if (value >= 1000) return (value / 1000).toFixed(0) + 'k FCFA';
-            return value + ' FCFA';
-          }
+      scales: {
+        x: {
+          stacked: false,
+          ticks: {
+            color: '#6b7280',
+            font: { size: 14, weight: '500' }
+          },
+          grid: { color: '#e5e7eb', drawBorder: false }
         },
-        grid: { color: '#e5e7eb', drawBorder: false }
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: '#6b7280',
+            font: { size: 14, weight: '500' },
+            callback: function (value: any) {
+              if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M FCFA';
+              if (value >= 1000) return (value / 1000).toFixed(0) + 'k FCFA';
+              return value + ' FCFA';
+            }
+          },
+          grid: { color: '#e5e7eb', drawBorder: false }
+        }
       }
-    }
-  };
-}
+    };
+  }
 
 
 
 }
+
+

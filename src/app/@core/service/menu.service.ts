@@ -115,7 +115,7 @@ export class MenuService {
           routerLink: '/typeAnimaux',
         },
         {
-          title: 'bâtiment',
+          title: 'Bâtiment',
           icon: faBuilding,
           routerLink: '/batiments'
         },

@@ -26,7 +26,7 @@ export class TypeDepenseService {
   update(id: number, dto: TypeDepenseDTO): Observable<TypeDepenseDTO> {
     return this.http.put<TypeDepenseDTO>(`${this.baseUrl}/${id}`, dto);
   }
-
+  
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }

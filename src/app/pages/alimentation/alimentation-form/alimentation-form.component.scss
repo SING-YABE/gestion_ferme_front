@@ -1,0 +1,221 @@
+
+/* Dialog général */
+::ng-deep .alimentation-dialog .p-dialog-header {
+  background: #2E7D32;
+  color: white;
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px 8px 0 0;
+}
+
+::ng-deep .alimentation-dialog .p-dialog-header .p-dialog-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+::ng-deep .alimentation-dialog .p-dialog-content {
+  padding: 1.5rem;
+  background: #fafafa;
+}
+
+::ng-deep .alimentation-dialog .p-dialog-footer {
+  padding: 1rem 1.5rem;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Sections du formulaire */
+.form-section {
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.section-header {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  padding: 0.875rem 1.25rem;
+  border-bottom: 2px solid #2E7D32;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-weight: 600;
+  color: #2E7D32;
+  font-size: 0.95rem;
+}
+
+.section-header i {
+  font-size: 1.1rem;
+}
+
+.section-content {
+  padding: 1.5rem 1.25rem;
+}
+
+/* Champs de formulaire */
+.field {
+  margin-bottom: 1.25rem;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #424242;
+  font-size: 0.9rem;
+}
+
+.required {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+/* Sélecteur de mode */
+.mode-selector {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mode-btn {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e0e0e0;
+  background: white;
+  color: #666;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.mode-btn:hover {
+  border-color: #2E7D32;
+  background: #f1f8f4;
+  color: #2E7D32;
+}
+
+.mode-btn.active {
+  background: #2E7D32;
+  border-color: #2E7D32;
+  color: white;
+  box-shadow: 0 3px 8px rgba(46, 125, 50, 0.3);
+}
+
+/* Section coût total */
+.total-section {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border: 2px solid #2E7D32;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  box-shadow: 0 3px 10px rgba(46, 125, 50, 0.15);
+}
+
+.total-label {
+  font-weight: 600;
+  color: #1B5E20;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.total-label i {
+  font-size: 1.25rem;
+}
+
+.total-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1B5E20;
+  letter-spacing: 0.5px;
+}
+
+/* Footer */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* Amélioration des composants PrimeNG */
+::ng-deep .alimentation-dialog .p-inputtext,
+::ng-deep .alimentation-dialog .p-dropdown,
+::ng-deep .alimentation-dialog .p-calendar input,
+::ng-deep .alimentation-dialog .p-inputnumber-input {
+  border: 1.5px solid #d0d0d0;
+  border-radius: 6px;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .alimentation-dialog .p-inputtext:enabled:hover,
+::ng-deep .alimentation-dialog .p-dropdown:not(.p-disabled):hover,
+::ng-deep .alimentation-dialog .p-calendar:not(.p-disabled):hover input {
+  border-color: #2E7D32;
+}
+
+::ng-deep .alimentation-dialog .p-inputtext:enabled:focus,
+::ng-deep .alimentation-dialog .p-dropdown:not(.p-disabled).p-focus,
+::ng-deep .alimentation-dialog .p-calendar input:enabled:focus {
+  border-color: #2E7D32;
+  box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.15);
+}
+
+::ng-deep .alimentation-dialog .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  background: #2E7D32;
+  color: white;
+}
+
+::ng-deep .alimentation-dialog .p-button:focus {
+  box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.2);
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  ::ng-deep .alimentation-dialog .p-dialog-content {
+    padding: 1rem;
+  }
+  
+  .section-content {
+    padding: 1rem;
+  }
+  
+  .mode-btn {
+    min-width: 100%;
+  }
+  
+  .total-section {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+  
+  .total-amount {
+    font-size: 1.75rem;
+  }
+}
+
+/* Animation d'apparition */
+::ng-deep .alimentation-dialog {
+  animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

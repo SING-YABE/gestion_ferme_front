@@ -1,55 +1,37 @@
-<button *ngIf="mode === 'create'" pButton 
-        label="Ajouter état de santé" 
-        icon="pi pi-plus" 
-        (click)="handleShow()"
-        class="p-button-success p-button-rounded" 
-        style="background-color:#4CAF50; border-color:#4CAF50;">
+<button *ngIf="mode === 'create'" pButton label="Ajouter état de santé" icon="pi pi-plus" (click)="handleShow()"
+  class="p-button-success p-button-rounded" style="background-color:#4CAF50; border-color:#4CAF50;">
 </button>
 
-<button *ngIf="mode === 'edit'" pButton 
-        icon="pi pi-pencil" 
-        class="p-button-rounded p-button-warning" 
-        (click)="handleShow()"
-           style="background:#16A34A ; border-color: #16A34A ;color:white;"
-        (click)="handleShow()">
+<button *ngIf="mode === 'edit'" pButton icon="pi pi-pencil" class="p-button-rounded p-button-warning"
+  (click)="handleShow()" style="background:#16A34A ; border-color: #16A34A ;color:white;">
 </button>
 
+<p-dialog header="{{ mode === 'create' ? 'Nouveau état de santé' : 'Modifier état de santé' }}" appendTo="body"
+  [modal]="true" [style]="{width: '500px'}" [(visible)]="showForm">
 
-<p-dialog header="{{ mode === 'create' ? 'Nouveau état de santé' : 'Modifier état de santé' }}" 
-          appendTo="body" [modal]="true" 
-          [style]="{width: '500px'}" 
-          [(visible)]="showForm">
-
-  <!-- FORMULAIRE -->
   <form [formGroup]="form">
     <div class="field mb-3">
-      <label for="description">Description</label>
-      <input id="description" type="text" 
-             formControlName="description" 
-             pInputText 
-             placeholder="Ex: En croissance" />
+      <label for="typeAnimalId">Type d'animal <span style="color:red">*</span></label>
+      <p-dropdown id="typeAnimalId" formControlName="typeAnimalId" [options]="typesAnimaux" optionLabel="nom"
+        optionValue="id" placeholder="Sélectionnez un type" styleClass="w-full">
+      </p-dropdown>
+    </div>
+
+    <div class="field mb-3">
+      <label for="description">Description <span style="color:red">*</span></label>
+      <input id="description" type="text" formControlName="description" pInputText placeholder="Ex: En croissance" />
     </div>
   </form>
 
-  <!-- FOOTER DOIT ÊTRE DIRECTEMENT SOUS <p-dialog> -->
   <ng-template pTemplate="footer">
-
-    <button pButton type="button" 
-            class="p-button-outlined p-button-danger mr-2" 
-            style="border-color:#FF5722; color:#FF5722;"
-            (click)="showForm=false">
+    <button pButton type="button" class="p-button-outlined p-button-danger mr-2"
+      style="border-color:#FF5722; color:#FF5722;" (click)="showForm=false">
       Annuler
     </button>
 
-    <button pButton
-            class="p-button-success"
-            style="background-color:#4CAF50; border-color:#4CAF50;"
-            [disabled]="form.invalid"
-            [loading]="processing"
-            (click)="handleSubmit()">
+    <button pButton class="p-button-success" style="background-color:#4CAF50; border-color:#4CAF50;"
+      [disabled]="form.invalid" [loading]="processing" (click)="handleSubmit()">
       Enregistrer
     </button>
-
   </ng-template>
-
 </p-dialog>

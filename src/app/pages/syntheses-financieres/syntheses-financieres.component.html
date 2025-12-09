@@ -34,16 +34,66 @@
     </p-card>
   </div>
 
-  <!-- Graphique -->
-  <div class="graph-container">
-    <p-card>
-      <h3 class="graph-title">Évolution mensuelle</h3>
-      <div class="chart-wrapper">
-        <p-chart type="line" [data]="lineData" [options]="lineOptions"></p-chart>
+
+<h3 class="title">Dépenses par catégorie</h3>
+
+<div class="cards-row categories-row">
+
+  <p-card class="card-item orange-card">
+    <div class="card-content">
+      <i class="pi pi-shopping-cart card-icon"></i>
+      <div class="card-info">
+        <p class="label">Alimentation</p>
+        <h2 class="value">{{ totalAlimentation | number:'1.0-0' }} FCFA</h2>
       </div>
-    </p-card>
-  </div>
-  <div class="table-container">
+    </div>
+  </p-card>
+
+  <p-card class="card-item purple-card">
+    <div class="card-content">
+      <i class="pi pi-heart card-icon"></i>
+      <div class="card-info">
+        <p class="label">Soins animaux</p>
+        <h2 class="value">{{ totalSoins | number:'1.0-0' }} FCFA</h2>
+      </div>
+    </div>
+  </p-card>
+
+  <p-card class="card-item yellow-card">
+    <div class="card-content">
+      <i class="pi pi-shield card-icon"></i>
+      <div class="card-info">
+        <p class="label">Traitements</p>
+        <h2 class="value">{{ totalTraitements | number:'1.0-0' }} FCFA</h2>
+      </div>
+    </div>
+  </p-card>
+
+  <p-card class="card-item gray-card">
+    <div class="card-content">
+      <i class="pi pi-wallet card-icon"></i>
+      <div class="card-info">
+        <p class="label">Dépenses diverses</p>
+        <h2 class="value">{{ totalDepensesDiverses | number:'1.0-0' }} FCFA</h2>
+      </div>
+    </div>
+  </p-card>
+
+</div>
+
+
+  <!-- Graphique -->
+
+ <div class="graph-container" *ngIf="lineData">
+  <p-card>
+    <h3 class="graph-title">Évolution mensuelle</h3>
+    <div class="chart-wrapper">
+      <p-chart type="line" [data]="lineData" [options]="lineOptions"></p-chart>
+    </div>
+  </p-card>
+</div>
+
+<div class="table-container" *ngIf="lineData">
   <table class="synthese-table">
     <thead>
       <tr>
@@ -57,11 +107,17 @@
       <tr *ngFor="let m of lineData.labels; let i = index">
         <td>{{ m }}</td>
         <td>{{ lineData.datasets[0].data[i] | number:'1.0-0' }}</td>
-        <td>{{ lineData.datasets[2].data[i] | number:'1.0-0' }}</td>
         <td>{{ lineData.datasets[1].data[i] | number:'1.0-0' }}</td>
+        <td>{{ lineData.datasets[2].data[i] | number:'1.0-0' }}</td>
       </tr>
     </tbody>
   </table>
 </div>
 
 </div>
+
+
+
+
+
+

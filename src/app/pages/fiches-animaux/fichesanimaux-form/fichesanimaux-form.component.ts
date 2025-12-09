@@ -7,10 +7,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MessageService } from 'primeng/api';
-import { AnimalService,AnimalDTO,AnimalResponseDTO } from '../../../@core/service/animal.service';
-import { TypeAnimalService,TypeAnimalResponseDTO } from '../../../@core/service/type-animal.service';
-import { EtatSanteService,EtatSanteResponseDTO } from '../../../@core/service/etat-sante.service';
-import { BatimentService,BatimentResponseDTO } from '../../../@core/service/batiment.service';
+import { AnimalService, AnimalDTO, AnimalResponseDTO } from '../../../@core/service/animal.service';
+import { TypeAnimalService, TypeAnimalResponseDTO } from '../../../@core/service/type-animal.service';
+import { EtatSanteService, EtatSanteResponseDTO } from '../../../@core/service/etat-sante.service';
+import { BatimentService, BatimentResponseDTO } from '../../../@core/service/batiment.service';
 import { CalendarModule } from 'primeng/calendar';
 @Component({
   selector: 'app-fichesanimaux-form',
@@ -48,20 +48,27 @@ export class FichesanimauxFormComponent implements OnInit {
     private etatSanteService: EtatSanteService,
     private batimentService: BatimentService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
+    // chg type animal
+    this.animalForm.get('typeAnimalId')?.valueChanges.subscribe(typeId => {
+      if (typeId && typeId > 0) {
+        this.loadEtatsSanteByType(typeId);
+        this.animalForm.patchValue({ etatSanteId: 0 });
+      }
+    });
     this.loadReferenceData();
   }
 
-// Ajouter cette méthode helper
-private formatDateToYMD(date: Date): string {
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-}
+  // Ajouter cette méthode helper
+  private formatDateToYMD(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
 
   initForm(): void {
     this.animalForm = this.fb.group({
@@ -72,96 +79,99 @@ private formatDateToYMD(date: Date): string {
       batimentId: [0, [Validators.required, Validators.min(1)]],
       observations: ['']
     });
-  } 
-
-  loadReferenceData(): void {
-    this.typeAnimalService.getAll().subscribe({
-      next: (data) => this.typesAnimaux = data,
-      error: (err) => console.error('Erreur chargement types animaux', err)
-    });
-
-this.etatSanteService.getAll().subscribe({
-  next: (response) => this.etatsSante = response,
-  error: (err) => console.error('Erreur chargement états santé', err)
-});
-
-
-
-    this.batimentService.getAll().subscribe({
-      next: (data) => this.batiments = data,
-      error: (err) => console.error('Erreur chargement bâtiments', err)
-    });
   }
 
-  handleShow(): void {
-    this.showForm = true;
-    
-    if (this.mode === 'edit' && this.target) {
-      this.animalForm.patchValue({
-        typeAnimalId: this.target.typeAnimal.id,
-        dateEntree: this.target.dateEntree,
-        poidsInitial: this.target.poidsInitial,
-        etatSanteId: this.target.etatSante.id,
-        batimentId: this.target.batiment.id,
-        observations: this.target.observations || ''
-      });
-    } else {
-      this.animalForm.reset({
-        typeAnimalId: 0,
-        dateEntree: '',
-        poidsInitial: 0,
-        etatSanteId: 0,
-        batimentId: 0,
-        observations: ''
-      });
-    }
-  }
-handleSubmit(): void {
-  if (this.animalForm.invalid) {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Attention',
-      detail: 'Veuillez remplir tous les champs obligatoires'
-    });
-    return;
-  }
+loadReferenceData(): void {
+  this.typeAnimalService.getAll().subscribe({
+    next: (data) => this.typesAnimaux = data,
+    error: (err) => console.error('Erreur', err)
+  });
 
-  this.processing = true;
-  const formData: any = { ...this.animalForm.value };
-
-  // Conversion date en jj/mm/yyyy
-  formData.dateEntree = this.formatDateToYMD(formData.dateEntree);
-
-  const request$ = this.mode === 'create'
-    ? this.animalService.create(formData)
-    : this.animalService.update(this.target!.id, formData);
-
-  request$.subscribe({
-    next: () => {
-      this.processing = false;
-
-      // Afficher message de succès
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Succès',
-        detail: this.mode === 'create' ? "Animal ajouté avec succès" : "Animal modifié avec succès"
-      });
-
-      this.showForm = false;
-
-      this.onUpdate.emit();
-    },
-    error: (err) => {
-      this.processing = false;
-      console.error(err);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Erreur',
-        detail: 'Une erreur est survenue lors de l’enregistrement.'
-      });
-    }
+  this.batimentService.getAll().subscribe({
+    next: (data) => this.batiments = data,
+    error: (err) => console.error('Erreur', err)
   });
 }
+
+loadEtatsSanteByType(typeAnimalId: number): void {
+  this.etatSanteService.getByTypeAnimal(typeAnimalId).subscribe({
+    next: (data) => this.etatsSante = data,
+    error: (err) => console.error('Erreur états santé', err)
+  });
+}
+handleShow(): void {
+  this.showForm = true;
+
+  if (this.mode === 'edit' && this.target) {
+    // Charger les états santé du type avant de patcher
+    this.loadEtatsSanteByType(this.target.typeAnimal.id);
+    
+    this.animalForm.patchValue({
+      typeAnimalId: this.target.typeAnimal.id,
+      dateEntree: this.target.dateEntree,
+      poidsInitial: this.target.poidsInitial,
+      etatSanteId: this.target.etatSante.id,
+      batimentId: this.target.batiment.id,
+      observations: this.target.observations || ''
+    });
+  } else {
+    this.animalForm.reset({
+      typeAnimalId: 0,
+      dateEntree: '',
+      poidsInitial: 0,
+      etatSanteId: 0,
+      batimentId: 0,
+      observations: ''
+    });
+    this.etatsSante = []; 
+  }
+}
+  handleSubmit(): void {
+    if (this.animalForm.invalid) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Attention',
+        detail: 'Veuillez remplir tous les champs obligatoires'
+      });
+      return;
+    }
+
+    this.processing = true;
+    const formData: any = { ...this.animalForm.value };
+
+    // Conversion date en jj/mm/yyyy
+    formData.dateEntree = this.formatDateToYMD(formData.dateEntree);
+
+    const request$ = this.mode === 'create'
+      ? this.animalService.create(formData)
+      : this.animalService.update(this.target!.id, formData);
+
+    request$.subscribe({
+      next: () => {
+        this.processing = false;
+
+        // Afficher message de succès
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Succès',
+          detail: this.mode === 'create' ? "Animal ajouté avec succès" : "Animal modifié avec succès"
+        });
+
+        this.showForm = false;
+
+        this.onUpdate.emit();
+      },
+      error: (err) => {
+        this.processing = false;
+        console.error(err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Une erreur est survenue lors de l’enregistrement.'
+        });
+      }
+    });
+  }
 
 
   get dialogHeader(): string {

@@ -4,13 +4,19 @@ import { Observable } from 'rxjs';
 
 export interface EtatSanteDTO {
   description: string;
+  typeAnimalId: number; 
 }
+
 
 export interface EtatSanteResponseDTO {
   id: number;
   description: string;
+  typeAnimal: { 
+    id: number;
+    nom: string;
+    prefix: string;
+  };
 }
-
 interface ApiResponse<T> {
   successful: boolean;
   message: string;
@@ -27,12 +33,10 @@ export class EtatSanteService {
 
   constructor(private http: HttpClient) {}
 
-  // getAll(): Observable<ApiResponse<EtatSanteResponseDTO[]>> {
-  //   return this.http.get<ApiResponse<EtatSanteResponseDTO[]>>(this.apiUrl);
-  // }
-getAll(): Observable<EtatSanteResponseDTO[]> {
-  return this.http.get<EtatSanteResponseDTO[]>(this.apiUrl);
-}
+  getAll(): Observable<EtatSanteResponseDTO[]> {
+    return this.http.get<EtatSanteResponseDTO[]>(this.apiUrl);
+  }
+
   getById(id: number): Observable<ApiResponse<EtatSanteResponseDTO>> {
     return this.http.get<ApiResponse<EtatSanteResponseDTO>>(`${this.apiUrl}/${id}`);
   }
@@ -47,5 +51,9 @@ getAll(): Observable<EtatSanteResponseDTO[]> {
 
   deleteById(id: number): Observable<ApiResponse<any>> {
     return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${id}`);
+  }
+
+  getByTypeAnimal(typeAnimalId: number): Observable<EtatSanteResponseDTO[]> {
+    return this.http.get<EtatSanteResponseDTO[]>(`${this.apiUrl}/by-type/${typeAnimalId}`);
   }
 }

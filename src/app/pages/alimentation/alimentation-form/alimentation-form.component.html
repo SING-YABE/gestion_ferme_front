@@ -9,7 +9,7 @@
 
     <!-- Section Date et Type -->
     <fieldset style="border:1px solid #c8e6c9; padding:1rem; border-radius:8px; margin-bottom:1rem;">
-      <legend style="font-weight:300; color:#2E7D32;">Informations principales</legend>
+      <legend style="font-weight:300;">Informations principales</legend>
       <div class="grid formgrid">
         <div class="col-6">
           <div class="field">
@@ -30,16 +30,16 @@
 
     <!-- Section Mode -->
     <fieldset style="border:1px solid #c8e6c9; padding:1rem; border-radius:8px; margin-bottom:1rem;">
-      <legend style="font-weight:300; color:#2E7D32;">Mode d'alimentation</legend>
+      <legend style="font-weight:300;">Mode d'alimentation</legend>
       <div class="flex gap-3 mb-3">
         <button type="button" pButton label="Animal individuel"
                 [class]="modeAlimentation === 'individuel' ? 'p-button-success' : 'p-button-outlined'"
-                [style]="modeAlimentation === 'individuel' ? 'background:#2E7D32; border-color:#2E7D32;' : 'color:#2E7D32; border-color:#2E7D32;'"
+                [style]="modeAlimentation === 'individuel' ? 'border-color:#2E7D32;' : 'color:#2E7D32; border-color:#2E7D32;'"
                 (click)="switchMode('individuel')"></button>
 
         <button type="button" pButton label="Alimentation par lot"
                 [class]="modeAlimentation === 'lot' ? 'p-button-success' : 'p-button-outlined'"
-                [style]="modeAlimentation === 'lot' ? 'background:#2E7D32; border-color:#2E7D32;' : 'color:#2E7D32; border-color:#2E7D32;'"
+                [style]="modeAlimentation === 'lot' ?  'border-color:#2E7D32;' : 'color:#2E7D32; border-color:#2E7D32;'"
                 (click)="switchMode('lot')"></button>
       </div>
 
@@ -56,7 +56,6 @@
       </div>
     </fieldset>
 
-    <!-- Section Quantité et Prix -->
     <fieldset style="border:1px solid #c8e6c9; padding:1rem; border-radius:8px; margin-bottom:1rem;">
       <legend style="font-weight:300; color:#2E7D32;">Quantité et Prix</legend>
       <div class="grid formgrid">
@@ -81,7 +80,7 @@
     </fieldset>
 
     <!-- Coût total -->
-    <div class="field" style="padding:1rem; border-radius:8px; background:#e8f5e9; border:1px solid #c8e6c9; margin-bottom:1rem;">
+    <div class="field" style="padding:1rem; border-radius:8px;  border:1px solid #c8e6c9; margin-bottom:1rem;">
       <div class="flex justify-content-between align-items-center">
         <span style="font-weight:600; color:#1B5E20;">Coût total calculé :</span>
         <span style="font-size:1.25rem; font-weight:700; color:#2E7D32;">
@@ -103,5 +102,9 @@
             [disabled]="!form.valid" style="background:#1B5E20; border-color:#1B5E20;">
       Enregistrer
     </button>
+
   </ng-template>
 </p-dialog>
+
+
+

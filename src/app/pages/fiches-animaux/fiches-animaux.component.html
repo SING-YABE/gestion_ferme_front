@@ -1,6 +1,6 @@
 <div class="odyssey-shadow-low border-round" style="border:1px solid #D9D2C2;">
     <div class="px-4 py-2 flex gap-3 align-items-center"
-        style="background:#16A34A; color:white; border-radius:8px 8px 0 0;">
+        style="background:#2E7D32; color:white; border-radius:8px 8px 0 0;">
         <div class="flex-1">
             <h5 class="m-0">Gestion des fiches Animaux</h5>
         </div>
@@ -87,7 +87,7 @@
 
             <ng-template pTemplate="body" let-animal>
                 <tr>
-                    <td><span class="badge bg-info text-dark">{{ animal.codeAnimal }}</span></td>
+                    <td><span class="ani">{{ animal.codeAnimal }}</span></td>
                     <td>{{ animal.typeAnimal.nom }}</td>
                     <td>{{ animal.dateEntree }}</td>
                     <td>{{ animal.poidsInitial }} kg</td>
