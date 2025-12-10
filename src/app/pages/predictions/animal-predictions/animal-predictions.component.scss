@@ -1,0 +1,249 @@
+.animal-predictions-container {
+  position: relative;
+
+  // Section entraînement
+  .training-section {
+    margin-bottom: 2rem;
+
+    .training-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .training-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        flex: 1;
+
+        i {
+          font-size: 2rem;
+          color: #FFA726;
+          margin-top: 0.25rem;
+        }
+
+        h3 {
+          margin: 0 0 0.5rem 0;
+          font-size: 1.1rem;
+          color: #333;
+        }
+
+        p {
+          margin: 0;
+          color: #666;
+          font-size: 0.95rem;
+        }
+      }
+    }
+  }
+
+  // Grille de prédictions
+  .predictions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // Cards
+  ::ng-deep {
+    .prediction-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      .p-card-header {
+        padding: 0;
+      }
+
+      .card-header {
+        padding: 1.25rem;
+        background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 600;
+
+        i {
+          font-size: 1.3rem;
+        }
+      }
+
+      .p-card-body {
+        padding: 1.5rem;
+      }
+
+      .form-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+
+        .form-field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+
+          label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+          }
+        }
+
+        // Résultat prédiction
+        .prediction-result {
+          .result-main {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+
+            .result-label {
+              display: block;
+              font-size: 0.85rem;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              color: #666;
+              margin-bottom: 0.5rem;
+            }
+
+            .result-value {
+              display: block;
+              font-size: 2.5rem;
+              font-weight: 700;
+              color: #2E7D32;
+              line-height: 1;
+
+              small {
+                font-size: 1rem;
+                font-weight: 500;
+                color: #666;
+              }
+            }
+          }
+
+          .result-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+
+            .result-item {
+              padding: 1rem;
+              background: #f8f9fa;
+              border-radius: 8px;
+              display: flex;
+              flex-direction: column;
+              gap: 0.5rem;
+
+              .result-item-label {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.85rem;
+                color: #666;
+
+                i {
+                  font-size: 0.9rem;
+                }
+              }
+
+              .result-item-value {
+                font-weight: 600;
+                color: #333;
+                font-size: 1.1rem;
+              }
+            }
+          }
+
+          .result-footer {
+            display: flex;
+            justify-content: center;
+          }
+        }
+      }
+    }
+  }
+
+  // Chart section
+  .chart-section {
+    margin-bottom: 2rem;
+
+    .chart-container {
+      padding: 1rem 0;
+    }
+  }
+
+  // Table section
+  .table-section {
+    ::ng-deep {
+      .p-datatable {
+        .text-right {
+          text-align: right;
+        }
+
+        .text-center {
+          text-align: center;
+        }
+
+        .text-muted {
+          color: #999;
+        }
+
+        .animal-badge {
+          display: inline-block;
+          padding: 0.25rem 0.75rem;
+          background: #e8f5e9;
+          color: #2E7D32;
+          border-radius: 12px;
+          font-weight: 600;
+          font-size: 0.9rem;
+        }
+
+        .price-value {
+          color: #2E7D32;
+          font-size: 1.05rem;
+        }
+      }
+    }
+  }
+
+  // Loading overlay
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    z-index: 9999;
+
+    p {
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+  }
+}

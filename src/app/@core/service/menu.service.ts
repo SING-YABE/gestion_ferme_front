@@ -97,7 +97,7 @@ export class MenuService {
      {
       title: 'Modèle prévisionnel',
       icon: faChartLine,
-      // routerLink: '',
+      routerLink: '/predictions',
     },
    
     {

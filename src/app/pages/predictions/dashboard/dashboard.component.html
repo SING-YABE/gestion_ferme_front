@@ -1,0 +1,181 @@
+<div class="dashboard-container">
+
+  <!-- Bouton refresh -->
+  <div class="dashboard-header">
+    <h2 class="dashboard-title">
+      <i class="pi pi-chart-pie"></i>
+      Tableau de bord
+    </h2>
+    <p-button 
+      icon="pi pi-refresh" 
+      [loading]="loading"
+      (onClick)="refresh()"
+      severity="secondary"
+      [rounded]="true"
+      [text]="true"
+      label="Rafraîchir"
+    ></p-button>
+  </div>
+
+  <!-- Grille de cards -->
+  <div class="cards-grid">
+
+    <!-- CARD 1 : Prix Animaux -->
+    <p-card styleClass="stat-card card-animals">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-database card-icon"></i>
+          <span class="card-category">Prix Animaux</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loading && stats; else skeletonTemplate">
+        <div class="stat-main">
+          <span class="stat-value">{{ formatNumber(stats.total) }}</span>
+          <span class="stat-label">Prix collectés</span>
+        </div>
+
+        <div class="stat-details">
+          <div class="stat-item" *ngFor="let animal of objectKeys(stats.by_animal)">
+            <span class="stat-item-label">{{ animal | titlecase }}</span>
+            <span class="stat-item-value">{{ stats.by_animal[animal] }}</span>
+          </div>
+        </div>
+
+        <div class="stat-footer">
+          <p-tag 
+            [value]="getModelStatusLabel(animalModelTrained)" 
+            [severity]="getModelStatusSeverity(animalModelTrained)"
+            icon="pi pi-check-circle"
+          ></p-tag>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- CARD 2 : Prix Aliments -->
+    <p-card styleClass="stat-card card-aliments">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-box card-icon"></i>
+          <span class="card-category">Prix Aliments</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loading && alimentStats; else skeletonTemplate">
+        <div class="stat-main">
+          <span class="stat-value">{{ formatNumber(alimentStats.total) }}</span>
+          <span class="stat-label">Prix collectés</span>
+        </div>
+
+        <div class="stat-details">
+          <div class="stat-item" *ngFor="let cat of objectKeys(alimentStats.by_category)">
+            <span class="stat-item-label">{{ cat }}</span>
+            <span class="stat-item-value">{{ alimentStats.by_category[cat] }}</span>
+          </div>
+        </div>
+
+        <div class="stat-footer">
+          <p-tag 
+            [value]="getModelStatusLabel(alimentModelTrained)" 
+            [severity]="getModelStatusSeverity(alimentModelTrained)"
+            icon="pi pi-check-circle"
+          ></p-tag>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- CARD 3 : Prix Moyens -->
+    <p-card styleClass="stat-card card-prices">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-money-bill card-icon"></i>
+          <span class="card-category">Prix Moyens</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loading && stats?.ranges; else skeletonTemplate">
+        <div class="price-ranges">
+          <div class="price-item" *ngFor="let animal of objectKeys(stats.ranges)">
+            <div class="price-item-header">
+              <span class="price-item-label">{{ animal | titlecase }}</span>
+            </div>
+            <div class="price-item-values">
+              <div class="price-value">
+                <span class="price-value-label">Moyen</span>
+                <span class="price-value-amount">{{ formatNumber(stats.ranges[animal].avg) }} F</span>
+              </div>
+              <div class="price-range-minmax">
+                <span class="price-min">{{ formatNumber(stats.ranges[animal].min) }} F</span>
+                <span class="price-separator">→</span>
+                <span class="price-max">{{ formatNumber(stats.ranges[animal].max) }} F</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- CARD 4 : Période de données -->
+    <p-card styleClass="stat-card card-period">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-calendar card-icon"></i>
+          <span class="card-category">Période</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loading && stats?.date_range; else skeletonTemplate">
+        <div class="period-info">
+          <div class="period-item">
+            <i class="pi pi-calendar-minus period-icon"></i>
+            <div class="period-details">
+              <span class="period-label">Début</span>
+              <span class="period-date">{{ stats.date_range.start || 'N/A' }}</span>
+            </div>
+          </div>
+
+          <div class="period-divider">
+            <i class="pi pi-arrow-down"></i>
+          </div>
+
+          <div class="period-item">
+            <i class="pi pi-calendar-plus period-icon"></i>
+            <div class="period-details">
+              <span class="period-label">Fin</span>
+              <span class="period-date">{{ stats.date_range.end || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-footer">
+          <div class="models-status">
+            <span class="models-label">Modèles ML</span>
+            <div class="models-tags">
+              <p-tag 
+                value="Animaux" 
+                [severity]="getModelStatusSeverity(animalModelTrained)"
+                [rounded]="true"
+              ></p-tag>
+              <p-tag 
+                value="Aliments" 
+                [severity]="getModelStatusSeverity(alimentModelTrained)"
+                [rounded]="true"
+              ></p-tag>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-card>
+
+  </div>
+
+  <!-- Template skeleton pour loading -->
+  <ng-template #skeletonTemplate>
+    <div class="card-content">
+      <p-skeleton width="60%" height="2rem" styleClass="mb-3"></p-skeleton>
+      <p-skeleton width="40%" height="1.5rem" styleClass="mb-2"></p-skeleton>
+      <p-skeleton width="50%" height="1rem"></p-skeleton>
+    </div>
+  </ng-template>
+
+</div>

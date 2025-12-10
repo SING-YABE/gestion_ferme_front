@@ -1,0 +1,247 @@
+<div class="opportunities-container">
+
+  <!-- Message si modèle non entraîné -->
+  <p-message 
+    *ngIf="!modelTrained" 
+    severity="warn" 
+    text="Le modèle n'est pas entraîné. Entraînez le modèle animaux pour détecter les opportunités."
+    styleClass="mb-4"
+  ></p-message>
+
+  <!-- Contrôles -->
+  <div class="controls-section" *ngIf="modelTrained">
+    <p-card>
+      <div class="controls-content">
+        <div class="control-group">
+          <label>Score minimum</label>
+          <p-inputNumber 
+            [(ngModel)]="minScore"
+            [min]="0"
+            [max]="100"
+            [showButtons]="true"
+            suffix=" / 100"
+            [style]="{'width': '200px'}"
+          ></p-inputNumber>
+        </div>
+
+        <div class="control-actions">
+          <p-button 
+            label="Rechercher"
+            icon="pi pi-search"
+            [loading]="loading"
+            (onClick)="loadOpportunities()"
+            severity="success"
+          ></p-button>
+          <p-button 
+            label="Réinitialiser"
+            icon="pi pi-refresh"
+            (onClick)="reset()"
+            severity="secondary"
+            [outlined]="true"
+          ></p-button>
+          <p-button 
+            label="Exporter CSV"
+            icon="pi pi-download"
+            (onClick)="exportCSV()"
+            severity="help"
+            [outlined]="true"
+            [disabled]="opportunities.length === 0"
+          ></p-button>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-grid" *ngIf="opportunities.length > 0 && modelTrained">
+    <!-- Total opportunités -->
+    <p-card styleClass="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon opportunities">
+          <i class="pi pi-sparkles"></i>
+        </div>
+        <div class="stat-details">
+          <span class="stat-value">{{ totalOpportunities }}</span>
+          <span class="stat-label">Opportunités trouvées</span>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Économie moyenne -->
+    <p-card styleClass="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon savings">
+          <i class="pi pi-dollar"></i>
+        </div>
+        <div class="stat-details">
+          <span class="stat-value">{{ formatNumber(avgEconomie) }} F</span>
+          <span class="stat-label">Économie moyenne</span>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Meilleure affaire -->
+    <p-card styleClass="stat-card" *ngIf="bestDeal">
+      <div class="stat-content">
+        <div class="stat-icon best">
+          <i class="pi pi-star-fill"></i>
+        </div>
+        <div class="stat-details">
+          <span class="stat-value">{{ bestDeal.score }}</span>
+          <span class="stat-label">Meilleur score</span>
+          <span class="stat-sublabel">{{ bestDeal.animal_type | titlecase }} - {{ formatNumber(bestDeal.economie) }} F</span>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Tableau des opportunités -->
+  <div class="table-section" *ngIf="modelTrained">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <div class="header-left">
+            <i class="pi pi-list"></i>
+            <span>Liste des opportunités</span>
+          </div>
+          <p-tag 
+            *ngIf="opportunities.length > 0"
+            [value]="totalOpportunities + ' trouvée(s)'" 
+            severity="success"
+            [rounded]="true"
+          ></p-tag>
+        </div>
+      </ng-template>
+
+      <!-- Spinner pendant chargement -->
+      <div class="loading-container" *ngIf="loading">
+        <p-progressSpinner></p-progressSpinner>
+        <p>Recherche des bonnes affaires...</p>
+      </div>
+
+      <!-- Message si aucune opportunité -->
+      <div class="empty-state" *ngIf="!loading && opportunities.length === 0">
+        <i class="pi pi-info-circle"></i>
+        <h3>Aucune opportunité trouvée</h3>
+        <p>Aucun prix ne correspond à votre critère de score minimum ({{ minScore }}/100).</p>
+        <p>Essayez de réduire le score minimum ou attendez de nouvelles données.</p>
+      </div>
+
+      <!-- Tableau -->
+      <p-table 
+        *ngIf="!loading && opportunities.length > 0"
+        [value]="opportunities" 
+        [tableStyle]="{'min-width': '60rem'}"
+        styleClass="p-datatable-sm"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [globalFilterFields]="['animal_type', 'evaluation']"
+        #dt
+      >
+        <!-- Header avec recherche -->
+        <ng-template pTemplate="caption">
+          <div class="table-header">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input 
+                pInputText 
+                type="text" 
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
+                placeholder="Rechercher..." 
+              />
+            </span>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="score" style="width: 100px">
+              Score 
+              <p-sortIcon field="score"></p-sortIcon>
+            </th>
+            <th pSortableColumn="animal_type">
+              Animal
+              <p-sortIcon field="animal_type"></p-sortIcon>
+            </th>
+            <th class="text-right" pSortableColumn="prix">
+              Prix offert
+              <p-sortIcon field="prix"></p-sortIcon>
+            </th>
+            <th class="text-right" pSortableColumn="economie">
+              Économie
+              <p-sortIcon field="economie"></p-sortIcon>
+            </th>
+            <th class="text-right" pSortableColumn="economie_pct">
+              Économie %
+              <p-sortIcon field="economie_pct"></p-sortIcon>
+            </th>
+            <th>Évaluation</th>
+            <th style="width: 100px">ID</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-opp>
+          <tr [class.highlight-row]="opp.score >= 95">
+            <!-- Score -->
+            <td>
+              <p-tag 
+                [value]="opp.score" 
+                [severity]="getScoreSeverity(opp.score)"
+                [rounded]="true"
+                styleClass="score-tag"
+              ></p-tag>
+            </td>
+
+            <!-- Animal -->
+            <td>
+              <div class="animal-cell">
+                <i [class]="'pi ' + getAnimalIcon(opp.animal_type)"></i>
+                <span class="animal-name">{{ opp.animal_type | titlecase }}</span>
+              </div>
+            </td>
+
+            <!-- Prix -->
+            <td class="text-right">
+              <span class="price-value">{{ formatNumber(opp.prix) }} F</span>
+            </td>
+
+            <!-- Économie -->
+            <td class="text-right">
+              <span class="economy-value">+ {{ formatNumber(opp.economie) }} F</span>
+            </td>
+
+            <!-- Économie % -->
+            <td class="text-right">
+              <span class="economy-percent" [class.high-saving]="opp.economie_pct >= 30">
+                {{ formatPercent(opp.economie_pct) }}
+              </span>
+            </td>
+
+            <!-- Évaluation -->
+            <td>
+              <span 
+                class="evaluation-badge" 
+                [style.color]="getEvaluationColor(opp.evaluation)"
+              >
+                {{ opp.evaluation }}
+              </span>
+            </td>
+
+            <!-- ID -->
+            <td class="text-muted">#{{ opp.price_id }}</td>
+          </tr>
+        </ng-template>
+
+        <!-- Footer -->
+       <ng-template pTemplate="summary">
+            <div class="table-summary">
+                Total : {{ opportunities.length }} opportunité(s) | 
+                Économie totale : {{ formatNumber(totalEconomy) }} FCFA
+            </div>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+
+</div>

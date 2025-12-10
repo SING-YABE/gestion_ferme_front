@@ -1,0 +1,69 @@
+<div class="predictions-container">
+  
+  <!-- Toast pour notifications -->
+  <p-toast position="top-right"></p-toast>
+
+  <!-- En-tête de la page -->
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="pi pi-chart-line"></i>
+      Intelligence Prédictive
+    </h1>
+    <p class="page-subtitle">
+      Prédictions ML basées sur XGBoost et analyse des marchés
+    </p>
+  </div>
+
+  <!-- Dashboard (au-dessus des onglets) -->
+  <app-dashboard 
+    [animalModelTrained]="animalModelTrained"
+    [alimentModelTrained]="alimentModelTrained"
+    (refreshed)="onDashboardRefreshed()"
+  ></app-dashboard>
+
+  <!-- Onglets principaux -->
+  <div class="tabs-container">
+    <p-tabView [(activeIndex)]="activeTabIndex" styleClass="custom-tabview">
+      
+      <!-- ONGLET 1 : Prédictions Animaux -->
+      <p-tabPanel header="Prédictions Animaux" [cache]="false">
+        <ng-template pTemplate="header">
+          <i class="pi pi-chart-bar"></i>
+          <span>Prédictions Animaux</span>
+        </ng-template>
+        
+        <app-animal-predictions
+          [modelTrained]="animalModelTrained"
+          (modelTrained)="onModelTrained('animal')"
+        ></app-animal-predictions>
+      </p-tabPanel>
+
+      <!-- ONGLET 2 : Prédictions Aliments -->
+      <p-tabPanel header="Prédictions Aliments" [cache]="false">
+        <ng-template pTemplate="header">
+          <i class="pi pi-box"></i>
+          <span>Prédictions Aliments</span>
+        </ng-template>
+        
+        <app-aliment-predictions
+          [modelTrained]="alimentModelTrained"
+          (modelTrained)="onModelTrained('aliment')"
+        ></app-aliment-predictions>
+      </p-tabPanel>
+
+      <!-- ONGLET 3 : Opportunités -->
+      <p-tabPanel header="Opportunités" [cache]="false">
+        <ng-template pTemplate="header">
+          <i class="pi pi-sparkles"></i>
+          <span>Bonnes Affaires</span>
+        </ng-template>
+        
+        <app-opportunities
+          [modelTrained]="animalModelTrained"
+        ></app-opportunities>
+      </p-tabPanel>
+
+    </p-tabView>
+  </div>
+
+</div>

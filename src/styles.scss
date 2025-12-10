@@ -18,6 +18,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 
+// ==================-------------<<<<Rachid custom style for Predictions<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$primary-color: #2E7D32;
+$primary-light: #43A047;
+$primary-dark: #1B5E20;
+
+:root {
+  --primary-color: #{$primary-color};
+  --primary-lighter-color: #{$primary-light};
+  --primary-darker-color: #{$primary-dark};
+}
+// ==================-------------<<<<<<<<<<<<<<<<END<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 .circle-progress {
   width: 110px;

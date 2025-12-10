@@ -79,6 +79,11 @@ export const routes: Routes = [
             path: 'syntheses-financieres',
             loadComponent: () => import('./pages/syntheses-financieres/syntheses-financieres.component').then(m => m.SynthesesFinancieresComponent)
           },
+          {
+            title:'predictions',
+            path: 'predictions',
+            loadComponent: () => import('./pages/predictions/predictions.component').then(m => m.PredictionsComponent)
+          },
           ...intervenantsRoutes
         ]
       },
