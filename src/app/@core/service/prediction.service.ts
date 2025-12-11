@@ -31,6 +31,14 @@ export class PredictionService {
     return this.http.get<any>(`${this.apiUrl}/extractions`, { params });
   }
 
+  getExtractionsByAnimal(animalType: string, limit: number = 50): Observable<any> {
+    const params = new HttpParams()
+      .set('animal_type', animalType)
+      .set('limit', limit.toString());
+    
+    return this.http.get<any>(`${this.apiUrl}/extractions`, { params });
+  }
+
   // ========== STATISTICS ==========
   
   getStats(): Observable<any> {
