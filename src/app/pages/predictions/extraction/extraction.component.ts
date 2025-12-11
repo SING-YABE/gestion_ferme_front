@@ -90,6 +90,8 @@ export class ExtractionComponent {
       return;
     }
 
+    console.log('Uploading file:', this.selectedFile);
+
     this.uploading = true;
     this.uploadProgress = 0;
     this.showResult = false;
