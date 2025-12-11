@@ -1,0 +1,655 @@
+<div class="historique-analytics-container">
+
+  <!-- Header -->
+  <div class="historique-header">
+    <h2 class="historique-title">
+      <i class="pi pi-history"></i>
+      Historique & Analytics
+    </h2>
+    <p class="historique-subtitle">
+      Consultez l'historique des extractions et analysez les tendances du marché
+    </p>
+  </div>
+
+  <!-- Sous-onglets -->
+  <p-tabView [(activeIndex)]="activeSubTab" (onChange)="onSubTabChange($event)">
+
+    <!-- SOUS-ONGLET 1 : Historique Extractions -->
+    <p-tabPanel header="Historique Extractions">
+      <ng-template pTemplate="header">
+        <i class="pi pi-list"></i>
+        <span>Historique</span>
+      </ng-template>
+
+      <div class="tab-content">
+        
+        <!-- Filtres -->
+        <div class="filters-section">
+          <p-card>
+            <div class="filters-content">
+              <div class="filter-group">
+                <label>Filtrer par animal</label>
+                <p-dropdown 
+                  [(ngModel)]="selectedAnimalFilter"
+                  [options]="animalTypes"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Tous les animaux"
+                  [style]="{'width': '250px'}"
+                  (onChange)="filterByAnimal()"
+                ></p-dropdown>
+              </div>
+
+              <p-button 
+                label="Rafraîchir"
+                icon="pi pi-refresh"
+                [loading]="loadingExtractions"
+                (onClick)="loadExtractions()"
+                severity="secondary"
+              ></p-button>
+            </div>
+          </p-card>
+        </div>
+
+        <!-- Tableau extractions -->
+        <div class="table-section">
+          <p-card>
+            <ng-template pTemplate="header">
+              <div class="card-header">
+                <i class="pi pi-database"></i>
+                <span>Toutes les extractions ({{ extractions.length }})</span>
+              </div>
+            </ng-template>
+
+            <!-- Loading -->
+            <div class="loading-container" *ngIf="loadingExtractions">
+              <p-progressSpinner></p-progressSpinner>
+              <p>Chargement des extractions...</p>
+            </div>
+
+            <!-- Table -->
+            <p-table 
+              *ngIf="!loadingExtractions && extractions.length > 0"
+              [value]="extractions" 
+              [tableStyle]="{'min-width': '60rem'}"
+              styleClass="p-datatable-sm"
+              [paginator]="true"
+              [rows]="20"
+              [rowsPerPageOptions]="[10, 20, 50, 100]"
+              [globalFilterFields]="['animal_type', 'vendeur', 'action_type']"
+              #dt1
+            >
+              <!-- Caption avec recherche -->
+              <ng-template pTemplate="caption">
+                <div class="table-header">
+                  <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input 
+                      pInputText 
+                      type="text" 
+                      (input)="dt1.filterGlobal($any($event.target).value, 'contains')" 
+                      placeholder="Rechercher..." 
+                    />
+                  </span>
+                </div>
+              </ng-template>
+
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="id">
+                    ID
+                    <p-sortIcon field="id"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="animal_type">
+                    Animal
+                    <p-sortIcon field="animal_type"></p-sortIcon>
+                  </th>
+                  <th class="text-right" pSortableColumn="prix">
+                    Prix
+                    <p-sortIcon field="prix"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="action_type">
+                    Action
+                    <p-sortIcon field="action_type"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="date">
+                    Date
+                    <p-sortIcon field="date"></p-sortIcon>
+                  </th>
+                  <th>Vendeur</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-extraction>
+                <tr>
+                  <td class="text-muted">#{{ extraction.id }}</td>
+                  <td>
+                    <span class="animal-badge">{{ capitalize(extraction.animal_type) }}</span>
+                  </td>
+                  <td class="text-right">
+                    <strong class="price-value">{{ formatNumber(extraction.prix) }} F</strong>
+                  </td>
+                  <td>
+                    <p-tag 
+                      [value]="extraction.action_type" 
+                      [severity]="getActionSeverity(extraction.action_type)"
+                      [rounded]="true"
+                    ></p-tag>
+                  </td>
+                  <td>{{ formatDate(extraction.date) }}</td>
+                  <td class="text-muted">{{ extraction.vendeur || 'N/A' }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+
+            <!-- Empty state -->
+            <div class="empty-state" *ngIf="!loadingExtractions && extractions.length === 0">
+              <i class="pi pi-inbox"></i>
+              <h3>Aucune extraction</h3>
+              <p>Commencez par importer des fichiers WhatsApp</p>
+            </div>
+          </p-card>
+        </div>
+
+        <!-- Section Aliments Récents -->
+        <div class="aliments-section">
+          <p-card>
+            <ng-template pTemplate="header">
+              <div class="card-header aliment">
+                <i class="pi pi-box"></i>
+                <span>Aliments récents</span>
+              </div>
+            </ng-template>
+
+            <!-- Filtres aliments -->
+            <div class="filters-content">
+              <div class="filter-group">
+                <label>Catégorie</label>
+                <p-dropdown 
+                  [(ngModel)]="selectedCategorieFilter"
+                  [options]="alimentCategories"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Toutes"
+                  [style]="{'width': '200px'}"
+                ></p-dropdown>
+              </div>
+
+              <div class="filter-group">
+                <label>Derniers jours</label>
+                <p-inputNumber 
+                  [(ngModel)]="alimentDays"
+                  [min]="1"
+                  [max]="90"
+                  [showButtons]="true"
+                  [style]="{'width': '150px'}"
+                ></p-inputNumber>
+              </div>
+
+              <p-button 
+                label="Filtrer"
+                icon="pi pi-filter"
+                [loading]="loadingAliments"
+                (onClick)="filterAliments()"
+                severity="info"
+              ></p-button>
+            </div>
+
+            <!-- Table aliments -->
+            <p-table 
+              *ngIf="alimentsRecents.length > 0"
+              [value]="alimentsRecents" 
+              [tableStyle]="{'min-width': '50rem'}"
+              styleClass="p-datatable-sm"
+              [paginator]="true"
+              [rows]="10"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Aliment</th>
+                  <th>Catégorie</th>
+                  <th class="text-right">Prix</th>
+                  <th>Date</th>
+                  <th>Vendeur</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-aliment>
+                <tr>
+                  <td>
+                    <span class="aliment-name">{{ capitalize(aliment.aliment_type) }}</span>
+                  </td>
+                  <td>
+                    <p-tag 
+                      [value]="aliment.categorie" 
+                      [severity]="getCategorieSeverity(aliment.categorie)"
+                      [rounded]="true"
+                    ></p-tag>
+                  </td>
+                  <td class="text-right">
+                    <strong class="price-value">{{ formatNumber(aliment.prix) }} F</strong>
+                  </td>
+                  <td>{{ formatDate(aliment.date) }}</td>
+                  <td class="text-muted">{{ aliment.vendeur || 'N/A' }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+
+            <div class="empty-state" *ngIf="alimentsRecents.length === 0 && !loadingAliments">
+              <p>Cliquez sur "Filtrer" pour charger les données</p>
+            </div>
+          </p-card>
+        </div>
+
+      </div>
+    </p-tabPanel>
+
+    <!-- SOUS-ONGLET 2 : Tendances -->
+    <p-tabPanel header="Tendances">
+      <ng-template pTemplate="header">
+        <i class="pi pi-chart-line"></i>
+        <span>Tendances</span>
+      </ng-template>
+
+      <div class="tab-content">
+        
+        <!-- Filtres -->
+        <div class="filters-section">
+          <p-card>
+            <div class="filters-content">
+              <div class="filter-group">
+                <label>Animal</label>
+                <p-dropdown 
+                  [(ngModel)]="tendanceAnimal"
+                  [options]="animalTypes.slice(1)"
+                  optionLabel="label"
+                  optionValue="value"
+                  [style]="{'width': '200px'}"
+                ></p-dropdown>
+              </div>
+
+              <div class="filter-group">
+                <label>Période (jours)</label>
+                <p-inputNumber 
+                  [(ngModel)]="tendanceDays"
+                  [min]="7"
+                  [max]="90"
+                  [showButtons]="true"
+                  [style]="{'width': '150px'}"
+                ></p-inputNumber>
+              </div>
+
+              <p-button 
+                label="Analyser"
+                icon="pi pi-search"
+                [loading]="loadingTendances"
+                (onClick)="loadTendances()"
+                severity="success"
+              ></p-button>
+            </div>
+          </p-card>
+        </div>
+
+        <!-- Résultats tendances -->
+        <div class="tendances-results" *ngIf="tendances">
+          
+          <!-- Cards indicateurs -->
+          <div class="tendance-cards">
+            <p-card styleClass="tendance-card">
+              <div class="tendance-main">
+                <div class="tendance-icon" [style.color]="getTendanceColor(tendances.tendance)">
+                  <i [class]="'pi ' + getTendanceIcon(tendances.tendance)"></i>
+                </div>
+                <div class="tendance-info">
+                  <span class="tendance-label">Tendance</span>
+                  <span class="tendance-value" [style.color]="getTendanceColor(tendances.tendance)">
+                    {{ tendances.tendance }}
+                  </span>
+                </div>
+              </div>
+            </p-card>
+
+            <p-card styleClass="tendance-card">
+              <div class="tendance-main">
+                <div class="tendance-info">
+                  <span class="tendance-label">Variation</span>
+                  <span class="tendance-value" [style.color]="getTendanceColor(tendances.tendance)">
+                    {{ tendances.variation_pct?.toFixed(2) || '0.00' }}%
+                  </span>
+                </div>
+              </div>
+            </p-card>
+
+            <p-card styleClass="tendance-card">
+              <div class="tendance-main">
+                <div class="tendance-info">
+                  <span class="tendance-label">Prix actuel</span>
+                  <span class="tendance-value">
+                    {{ formatNumber(tendances.prix_actuel || 0) }} F
+                  </span>
+                </div>
+              </div>
+            </p-card>
+          </div>
+
+          <!-- Graphique -->
+          <div class="chart-section">
+            <p-card>
+              <ng-template pTemplate="header">
+                <div class="card-header">
+                  <i class="pi pi-chart-line"></i>
+                  <span>Évolution des prix - {{ capitalize(tendanceAnimal) }}</span>
+                </div>
+              </ng-template>
+
+              <div class="chart-container" *ngIf="tendanceChartData">
+                <p-chart 
+                  type="line" 
+                  [data]="tendanceChartData" 
+                  [options]="tendanceChartOptions"
+                  [style]="{'height': '400px'}"
+                ></p-chart>
+              </div>
+            </p-card>
+          </div>
+
+        </div>
+
+        <!-- Message initial -->
+        <div class="empty-state" *ngIf="!tendances && !loadingTendances">
+          <i class="pi pi-info-circle"></i>
+          <h3>Analysez les tendances</h3>
+          <p>Sélectionnez un animal et une période, puis cliquez sur "Analyser"</p>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-container" *ngIf="loadingTendances">
+          <p-progressSpinner></p-progressSpinner>
+          <p>Analyse des tendances...</p>
+        </div>
+
+      </div>
+    </p-tabPanel>
+
+    <!-- SOUS-ONGLET 3 : Évolution -->
+    <p-tabPanel header="Évolution">
+      <ng-template pTemplate="header">
+        <i class="pi pi-chart-bar"></i>
+        <span>Évolution</span>
+      </ng-template>
+
+      <div class="tab-content">
+        
+        <!-- Filtres -->
+        <div class="filters-section">
+          <p-card>
+            <div class="filters-content">
+              <div class="filter-group">
+                <label>Animal</label>
+                <p-dropdown 
+                  [(ngModel)]="evolutionAnimal"
+                  [options]="animalTypes.slice(1)"
+                  optionLabel="label"
+                  optionValue="value"
+                  [style]="{'width': '200px'}"
+                ></p-dropdown>
+              </div>
+
+              <div class="filter-group">
+                <label>Période</label>
+                <p-dropdown 
+                  [(ngModel)]="evolutionPeriod"
+                  [options]="evolutionPeriods"
+                  optionLabel="label"
+                  optionValue="value"
+                  [style]="{'width': '150px'}"
+                ></p-dropdown>
+              </div>
+
+              <p-button 
+                label="Charger"
+                icon="pi pi-refresh"
+                [loading]="loadingEvolution"
+                (onClick)="loadEvolution()"
+                severity="info"
+              ></p-button>
+            </div>
+          </p-card>
+        </div>
+
+        <!-- Résultats évolution -->
+        <div class="evolution-results" *ngIf="evolution">
+          
+          <!-- Graphique -->
+          <div class="chart-section">
+            <p-card>
+              <ng-template pTemplate="header">
+                <div class="card-header">
+                  <i class="pi pi-chart-bar"></i>
+                  <span>Évolution détaillée - {{ capitalize(evolutionAnimal) }} ({{ evolutionPeriod }})</span>
+                </div>
+              </ng-template>
+
+              <div class="chart-container" *ngIf="evolutionChartData">
+                <p-chart 
+                  type="line" 
+                  [data]="evolutionChartData" 
+                  [options]="evolutionChartOptions"
+                  [style]="{'height': '450px'}"
+                ></p-chart>
+              </div>
+            </p-card>
+          </div>
+
+          <!-- Statistiques -->
+          <div class="evolution-stats">
+            <p-card>
+              <ng-template pTemplate="header">
+                <div class="card-header">
+                  <i class="pi pi-chart-pie"></i>
+                  <span>Statistiques période</span>
+                </div>
+              </ng-template>
+
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <span class="stat-label">Prix moyen</span>
+                  <span class="stat-value">{{ formatNumber(evolution.avg_price || 0) }} F</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Prix minimum</span>
+                  <span class="stat-value min">{{ formatNumber(evolution.min_price || 0) }} F</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Prix maximum</span>
+                  <span class="stat-value max">{{ formatNumber(evolution.max_price || 0) }} F</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Écart-type</span>
+                  <span class="stat-value">{{ formatNumber(evolution.std_dev || 0) }} F</span>
+                </div>
+              </div>
+            </p-card>
+          </div>
+
+        </div>
+
+        <!-- Message initial -->
+        <div class="empty-state" *ngIf="!evolution && !loadingEvolution">
+          <i class="pi pi-info-circle"></i>
+          <h3>Consultez l'évolution</h3>
+          <p>Sélectionnez un animal et une période, puis cliquez sur "Charger"</p>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-container" *ngIf="loadingEvolution">
+          <p-progressSpinner></p-progressSpinner>
+          <p>Chargement évolution...</p>
+        </div>
+
+      </div>
+    </p-tabPanel>
+
+    <!-- SOUS-ONGLET 4 : Accuracy Modèle -->
+    <p-tabPanel header="Précision Modèle">
+      <ng-template pTemplate="header">
+        <i class="pi pi-check-circle"></i>
+        <span>Accuracy</span>
+      </ng-template>
+
+      <div class="tab-content">
+        
+        <!-- Filtres -->
+        <div class="filters-section">
+          <p-card>
+            <div class="filters-content">
+              <div class="filter-group">
+                <label>Analyser sur (jours)</label>
+                <p-inputNumber 
+                  [(ngModel)]="accuracyDays"
+                  [min]="7"
+                  [max]="90"
+                  [showButtons]="true"
+                  [style]="{'width': '150px'}"
+                ></p-inputNumber>
+              </div>
+
+              <p-button 
+                label="Analyser précision"
+                icon="pi pi-calculator"
+                [loading]="loadingAccuracy"
+                (onClick)="loadAccuracy()"
+                severity="success"
+              ></p-button>
+            </div>
+          </p-card>
+        </div>
+
+        <!-- Résultats accuracy -->
+        <div class="accuracy-results" *ngIf="accuracy && accuracy.mae">
+          
+          <!-- Cards métriques -->
+          <div class="metrics-grid">
+            <p-card styleClass="metric-card">
+              <div class="metric-content">
+                <i class="pi pi-chart-line metric-icon"></i>
+                <div class="metric-info">
+                  <span class="metric-label">MAE (Erreur moyenne)</span>
+                  <span class="metric-value">{{ formatNumber(accuracy.mae) }} F</span>
+                </div>
+              </div>
+            </p-card>
+
+            <p-card styleClass="metric-card">
+              <div class="metric-content">
+                <i class="pi pi-percentage metric-icon"></i>
+                <div class="metric-info">
+                  <span class="metric-label">MAPE</span>
+                  <span class="metric-value">{{ accuracy.mape?.toFixed(2) || '0.00' }}%</span>
+                </div>
+              </div>
+            </p-card>
+
+            <p-card styleClass="metric-card">
+              <div class="metric-content">
+                <i class="pi pi-list metric-icon"></i>
+                <div class="metric-info">
+                  <span class="metric-label">Prédictions analysées</span>
+                  <span class="metric-value">{{ accuracy.nb_avec_donnees_reelles || 0 }}</span>
+                </div>
+              </div>
+            </p-card>
+
+            <p-card styleClass="metric-card">
+              <div class="metric-content">
+                <i class="pi pi-check-circle metric-icon"></i>
+                <div class="metric-info">
+                  <span class="metric-label">Précision intervalle</span>
+                  <span class="metric-value">{{ accuracy.precision_intervalle?.toFixed(1) || '0.0' }}%</span>
+                </div>
+              </div>
+            </p-card>
+          </div>
+
+          <!-- Message info -->
+          <p-message 
+            severity="info" 
+            text="Ces métriques comparent les prédictions passées avec les prix réels observés sur la période sélectionnée."
+          ></p-message>
+
+          <!-- Détails (si disponibles) -->
+          <div class="details-section" *ngIf="accuracy.details && accuracy.details.length > 0">
+            <p-card>
+              <ng-template pTemplate="header">
+                <div class="card-header">
+                  <i class="pi pi-list"></i>
+                  <span>Détail des prédictions (20 dernières)</span>
+                </div>
+              </ng-template>
+
+              <p-table 
+                [value]="accuracy.details" 
+                [tableStyle]="{'min-width': '60rem'}"
+                styleClass="p-datatable-sm"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Date</th>
+                    <th>Animal</th>
+                    <th class="text-right">Prédit</th>
+                    <th class="text-right">Réel</th>
+                    <th class="text-right">Erreur</th>
+                    <th class="text-right">Erreur %</th>
+                    <th class="text-center">Dans intervalle</th>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-detail>
+                  <tr>
+                    <td>{{ detail.date }}</td>
+                    <td>
+                      <span class="animal-badge">{{ capitalize(detail.animal) }}</span>
+                    </td>
+                    <td class="text-right">{{ formatNumber(detail.predit) }} F</td>
+                    <td class="text-right">{{ formatNumber(detail.reel) }} F</td>
+                    <td class="text-right" [class.error-positive]="detail.erreur > 0" [class.error-negative]="detail.erreur < 0">
+                      {{ detail.erreur > 0 ? '+' : '' }}{{ formatNumber(detail.erreur) }} F
+                    </td>
+                    <td class="text-right">{{ detail.erreur_pct?.toFixed(1) }}%</td>
+                    <td class="text-center">
+                      <i [class]="detail.dans_intervalle ? 'pi pi-check-circle text-success' : 'pi pi-times-circle text-danger'"></i>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-card>
+          </div>
+
+        </div>
+
+        <!-- Message si pas de données -->
+        <div class="empty-state" *ngIf="accuracy && !accuracy.mae && !loadingAccuracy">
+          <i class="pi pi-info-circle"></i>
+          <h3>Pas de données d'accuracy</h3>
+          <p>{{ accuracy.message || 'Aucune prédiction passée à analyser' }}</p>
+        </div>
+
+        <!-- Message initial -->
+        <div class="empty-state" *ngIf="!accuracy && !loadingAccuracy">
+          <i class="pi pi-info-circle"></i>
+          <h3>Analysez la précision</h3>
+          <p>Cliquez sur "Analyser précision" pour évaluer les performances du modèle</p>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-container" *ngIf="loadingAccuracy">
+          <p-progressSpinner></p-progressSpinner>
+          <p>Analyse de la précision...</p>
+        </div>
+
+      </div>
+    </p-tabPanel>
+
+  </p-tabView>
+
+</div>

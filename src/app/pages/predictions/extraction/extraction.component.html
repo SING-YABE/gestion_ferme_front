@@ -1,0 +1,262 @@
+<div class="extraction-container">
+
+  <!-- Toast notifications -->
+  <p-toast position="top-right"></p-toast>
+
+  <!-- Header -->
+  <div class="extraction-header">
+    <h2 class="extraction-title">
+      <i class="pi pi-upload"></i>
+      Extraction de données WhatsApp
+    </h2>
+    <p class="extraction-subtitle">
+      Importez vos conversations WhatsApp pour extraire automatiquement les prix
+    </p>
+  </div>
+
+  <!-- Section Upload -->
+  <div class="upload-section">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-cloud-upload"></i>
+          <span>Importer un fichier</span>
+        </div>
+      </ng-template>
+
+      <div class="upload-content">
+        
+        <!-- Zone drag & drop -->
+        <div class="upload-zone" *ngIf="!selectedFile && !uploading">
+          <p-fileUpload 
+            mode="basic" 
+            name="file"
+            accept=".txt"
+            [maxFileSize]="5242880"
+            [auto]="false"
+            chooseLabel="Sélectionner un fichier .txt"
+            (onSelect)="onFileSelect($event)"
+            styleClass="custom-upload"
+          ></p-fileUpload>
+
+          <div class="upload-instructions">
+            <i class="pi pi-info-circle"></i>
+            <p>
+              <strong>Format accepté :</strong> Fichiers .txt uniquement<br>
+              <strong>Taille maximale :</strong> 5 MB<br>
+              <strong>Contenu :</strong> Export de conversation WhatsApp
+            </p>
+          </div>
+        </div>
+
+        <!-- Fichier sélectionné -->
+        <div class="file-selected" *ngIf="selectedFile && !uploading">
+          <div class="file-info">
+            <i class="pi pi-file"></i>
+            <div class="file-details">
+              <span class="file-name">{{ selectedFile.name }}</span>
+              <span class="file-size">{{ formatFileSize(selectedFile.size) }}</span>
+            </div>
+          </div>
+
+          <div class="file-actions">
+            <p-button 
+              label="Extraire"
+              icon="pi pi-play"
+              (onClick)="uploadAndExtract()"
+              severity="success"
+            ></p-button>
+            <p-button 
+              label="Annuler"
+              icon="pi pi-times"
+              (onClick)="cancelSelection()"
+              severity="secondary"
+              [outlined]="true"
+            ></p-button>
+          </div>
+        </div>
+
+        <!-- Upload en cours -->
+        <div class="uploading-state" *ngIf="uploading">
+          <p-progressSpinner styleClass="custom-spinner"></p-progressSpinner>
+          <div class="uploading-info">
+            <span class="uploading-label">Extraction en cours...</span>
+            <span class="uploading-progress">{{ uploadProgress }}%</span>
+          </div>
+          <p class="uploading-message">
+            Le fichier est en cours d'analyse avec Gemini AI
+          </p>
+        </div>
+
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Résultat de l'extraction -->
+  <div class="result-section" *ngIf="showResult && extractionResult">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header success">
+          <i class="pi pi-check-circle"></i>
+          <span>Résultat de l'extraction</span>
+        </div>
+      </ng-template>
+
+      <div class="result-content">
+        
+        <!-- Statistiques globales -->
+        <div class="result-stats">
+          <div class="stat-box">
+            <i class="pi pi-database"></i>
+            <div class="stat-info">
+              <span class="stat-value">{{ extractionResult.nb_animaux || 0 }}</span>
+              <span class="stat-label">Prix animaux</span>
+            </div>
+          </div>
+
+          <div class="stat-box">
+            <i class="pi pi-box"></i>
+            <div class="stat-info">
+              <span class="stat-value">{{ extractionResult.nb_aliments || 0 }}</span>
+              <span class="stat-label">Prix aliments</span>
+            </div>
+          </div>
+
+          <div class="stat-box">
+            <i class="pi pi-list"></i>
+            <div class="stat-info">
+              <span class="stat-value">{{ (extractionResult.nb_animaux || 0) + (extractionResult.nb_aliments || 0) }}</span>
+              <span class="stat-label">Total</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Détails par animal -->
+        <div class="result-details" *ngIf="extractionResult.animaux_par_type">
+          <h4>Répartition animaux</h4>
+          <div class="details-grid">
+            <div class="detail-item" *ngFor="let animal of objectKeys(extractionResult.animaux_par_type)">
+              <span class="detail-label">{{ animal | titlecase }}</span>
+              <p-tag 
+                [value]="extractionResult.animaux_par_type[animal].toString()" 
+                severity="success"
+                [rounded]="true"
+              ></p-tag>
+            </div>
+          </div>
+        </div>
+
+        <!-- Détails par catégorie aliment -->
+        <div class="result-details" *ngIf="extractionResult.aliments_par_categorie">
+          <h4>Répartition aliments</h4>
+          <div class="details-grid">
+            <div class="detail-item" *ngFor="let cat of objectKeys(extractionResult.aliments_par_categorie)">
+              <span class="detail-label">{{ cat }}</span>
+              <p-tag 
+                [value]="extractionResult.aliments_par_categorie[cat].toString()" 
+                severity="info"
+                [rounded]="true"
+              ></p-tag>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="result-actions">
+          <p-button 
+            label="Voir les statistiques"
+            icon="pi pi-chart-bar"
+            severity="info"
+            [outlined]="true"
+          ></p-button>
+          <p-button 
+            label="Nouvelle extraction"
+            icon="pi pi-plus"
+            (onClick)="cancelSelection()"
+            severity="success"
+          ></p-button>
+        </div>
+
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Historique des extractions récentes -->
+  <div class="history-section">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <div class="header-left">
+            <i class="pi pi-history"></i>
+            <span>Extractions récentes</span>
+          </div>
+          <p-button 
+            icon="pi pi-refresh" 
+            [loading]="loadingHistory"
+            (onClick)="loadRecentExtractions()"
+            severity="secondary"
+            [rounded]="true"
+            [text]="true"
+          ></p-button>
+        </div>
+      </ng-template>
+
+      <!-- Spinner loading -->
+      <div class="loading-container" *ngIf="loadingHistory">
+        <p-progressSpinner></p-progressSpinner>
+        <p>Chargement de l'historique...</p>
+      </div>
+
+      <!-- Tableau -->
+      <p-table 
+        *ngIf="!loadingHistory && recentExtractions.length > 0"
+        [value]="recentExtractions" 
+        [tableStyle]="{'min-width': '50rem'}"
+        styleClass="p-datatable-sm"
+        [paginator]="true"
+        [rows]="5"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>ID</th>
+            <th>Animal</th>
+            <th class="text-right">Prix</th>
+            <th>Action</th>
+            <th>Date</th>
+            <th>Vendeur</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-extraction>
+          <tr>
+            <td class="text-muted">#{{ extraction.id }}</td>
+            <td>
+              <span class="animal-badge">{{ extraction.animal_type | titlecase }}</span>
+            </td>
+            <td class="text-right">
+              <strong class="price-value">{{ formatNumber(extraction.prix) }} F</strong>
+            </td>
+            <td>
+              <p-tag 
+                [value]="extraction.action_type" 
+                [severity]="getActionSeverity(extraction.action_type)"
+                [rounded]="true"
+              ></p-tag>
+            </td>
+            <td>{{ formatDate(extraction.date) }}</td>
+            <td class="text-muted">{{ extraction.vendeur || 'N/A' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <!-- Message si vide -->
+      <div class="empty-state" *ngIf="!loadingHistory && recentExtractions.length === 0">
+        <i class="pi pi-inbox"></i>
+        <h3>Aucune extraction</h3>
+        <p>Commencez par importer un fichier WhatsApp</p>
+      </div>
+
+    </p-card>
+  </div>
+
+</div>

@@ -7,11 +7,14 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
 // Components enfants
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardGlobalComponent } from './dashboard-global/dashboard-global.component';
 import { AnimalPredictionsComponent } from './animal-predictions/animal-predictions.component';
 import { AlimentPredictionsComponent } from './aliment-predictions/aliment-predictions.component';
 import { OpportunitiesComponent } from './opportunities/opportunities.component';
+import { ExtractionComponent } from './extraction/extraction.component';
+import { HistoriqueAnalyticsComponent } from './historique-analytics/historique-analytics.component';
 
+// Service
 import { PredictionService } from '../../@core/service/prediction.service';
 
 @Component({
@@ -21,10 +24,12 @@ import { PredictionService } from '../../@core/service/prediction.service';
     CommonModule,
     TabViewModule,
     ToastModule,
-    DashboardComponent,
+    DashboardGlobalComponent,
     AnimalPredictionsComponent,
     AlimentPredictionsComponent,
-    OpportunitiesComponent
+    OpportunitiesComponent,
+    ExtractionComponent,
+    HistoriqueAnalyticsComponent
   ],
   providers: [MessageService],
   templateUrl: './predictions.component.html',
@@ -32,12 +37,12 @@ import { PredictionService } from '../../@core/service/prediction.service';
 })
 export class PredictionsComponent implements OnInit {
 
+  // Onglet actif
+  activeTabIndex = 0;
+
   // État des modèles
   animalModelTrained = false;
   alimentModelTrained = false;
-  
-  // Index onglet actif
-  activeTabIndex = 0;
 
   constructor(
     private predictionService: PredictionService,
@@ -55,7 +60,7 @@ export class PredictionsComponent implements OnInit {
     // Check modèle animaux
     this.predictionService.getStats().subscribe({
       next: (data) => {
-        // Si on a des stats, le modèle existe
+        // Si on a des stats, le modèle existe probablement
         this.animalModelTrained = data.total > 0;
       },
       error: () => {
@@ -88,6 +93,28 @@ export class PredictionsComponent implements OnInit {
   }
 
   /**
+   * Callback quand une extraction est effectuée
+   */
+  onDataExtracted(): void {
+    this.showSuccess('Données extraites avec succès');
+    this.checkModelsStatus();
+  }
+
+  /**
+   * Callback quand le dashboard est rafraîchi
+   */
+  onDashboardRefreshed(): void {
+    this.checkModelsStatus();
+  }
+
+  /**
+   * Change d'onglet
+   */
+  onTabChange(event: any): void {
+    this.activeTabIndex = event.index;
+  }
+
+  /**
    * Affiche un message de succès
    */
   showSuccess(message: string): void {
@@ -109,12 +136,5 @@ export class PredictionsComponent implements OnInit {
       detail: message,
       life: 5000
     });
-  }
-
-  /**
-   * Callback quand le dashboard est rafraîchi
-   */
-  onDashboardRefreshed(): void {
-    this.checkModelsStatus();
   }
 }
