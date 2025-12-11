@@ -1,0 +1,360 @@
+<div class="aliment-predictions-container">
+
+  <!-- Message si modèle non entraîné -->
+  <p-message 
+    *ngIf="!modelTrained" 
+    severity="warn" 
+    text="Le modèle aliments n'est pas encore entraîné. Entraînez-le pour commencer les prédictions."
+    styleClass="mb-4"
+  ></p-message>
+
+  <!-- Bouton entraînement -->
+  <div class="training-section" *ngIf="!modelTrained">
+    <p-card>
+      <div class="training-content">
+        <div class="training-info">
+          <i class="pi pi-info-circle"></i>
+          <div>
+            <h3>Entraînement requis</h3>
+            <p>Le modèle aliments doit être entraîné avec minimum 50 prix pour faire des prédictions.</p>
+          </div>
+        </div>
+        <p-button 
+          label="Entraîner le modèle aliments"
+          icon="pi pi-cog"
+          [loading]="trainingModel"
+          (onClick)="trainModel()"
+          severity="info"
+          [raised]="true"
+        ></p-button>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Onglets de prédiction -->
+  <div class="tabs-section" *ngIf="modelTrained">
+    <p-tabView [(activeIndex)]="activeTabIndex">
+      
+      <!-- ONGLET 1 : Prédiction unique -->
+      <p-tabPanel header="Aliment unique">
+        <ng-template pTemplate="header">
+          <i class="pi pi-shopping-cart"></i>
+          <span>Aliment unique</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="predictions-grid">
+            <!-- Formulaire -->
+            <p-card styleClass="prediction-card">
+              <ng-template pTemplate="header">
+                <div class="card-header aliment">
+                  <i class="pi pi-shopping-bag"></i>
+                  <span>Prédire un aliment</span>
+                </div>
+              </ng-template>
+
+              <div class="form-content">
+                <!-- Sélection aliment -->
+                <div class="form-field">
+                  <label>Aliment</label>
+                  <p-dropdown 
+                    [(ngModel)]="selectedAliment"
+                    [options]="alimentsCommuns"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Sélectionnez un aliment"
+                    [style]="{'width': '100%'}"
+                    [filter]="true"
+                    filterBy="label"
+                    (onChange)="reset()"
+                  >
+                    <ng-template pTemplate="selectedItem" let-option>
+                      <div class="dropdown-item">
+                        <span>{{ option.label }}</span>
+                        <p-tag 
+                          [value]="option.categorie" 
+                          [severity]="getCategorySeverity(option.categorie)"
+                          styleClass="ml-2"
+                        ></p-tag>
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="item" let-option>
+                      <div class="dropdown-item">
+                        <span>{{ option.label }}</span>
+                        <p-tag 
+                          [value]="option.categorie" 
+                          [severity]="getCategorySeverity(option.categorie)"
+                          styleClass="ml-2"
+                        ></p-tag>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
+                </div>
+
+                <!-- Date -->
+                <div class="form-field">
+                  <label>Date de prédiction</label>
+                  <p-calendar 
+                    [(ngModel)]="predictionDate"
+                    dateFormat="dd/mm/yy"
+                    [showIcon]="true"
+                    [style]="{'width': '100%'}"
+                    placeholder="Sélectionnez une date"
+                    [minDate]="minDate"
+                  ></p-calendar>
+                </div>
+
+                <!-- Bouton -->
+                <p-button 
+                  label="Prédire"
+                  icon="pi pi-chart-line"
+                  [loading]="loadingSinglePrediction"
+                  (onClick)="predictSingle()"
+                  [style]="{'width': '100%'}"
+                  severity="info"
+                ></p-button>
+
+                <!-- Résultat -->
+                <div class="prediction-result" *ngIf="singlePrediction">
+                  <p-divider></p-divider>
+                  
+                  <div class="result-header">
+                    <p-tag 
+                      [value]="singlePrediction.categorie" 
+                      [severity]="getCategorySeverity(singlePrediction.categorie)"
+                      [rounded]="true"
+                    ></p-tag>
+                  </div>
+
+                  <div class="result-main">
+                    <span class="result-label">Prix prédit</span>
+                    <span class="result-value aliment">{{ formatNumber(singlePrediction.prix_predit) }} <small>FCFA</small></span>
+                  </div>
+
+                  <div class="result-details">
+                    <div class="result-item">
+                      <span class="result-item-label">
+                        <i class="pi pi-arrow-down"></i>
+                        Minimum
+                      </span>
+                      <span class="result-item-value">{{ formatNumber(singlePrediction.intervalle_min) }} F</span>
+                    </div>
+                    <div class="result-item">
+                      <span class="result-item-label">
+                        <i class="pi pi-arrow-up"></i>
+                        Maximum
+                      </span>
+                      <span class="result-item-value">{{ formatNumber(singlePrediction.intervalle_max) }} F</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </p-card>
+
+            <!-- Prédictions futures même aliment -->
+            <p-card styleClass="prediction-card">
+              <ng-template pTemplate="header">
+                <div class="card-header aliment">
+                  <i class="pi pi-calendar-plus"></i>
+                  <span>Évolution future</span>
+                </div>
+              </ng-template>
+
+              <div class="form-content">
+                <div class="form-field">
+                  <label>Aliment</label>
+                  <p-dropdown 
+                    [(ngModel)]="selectedAliment"
+                    [options]="alimentsCommuns"
+                    optionLabel="label"
+                    optionValue="value"
+                    [style]="{'width': '100%'}"
+                    (onChange)="reset()"
+                  ></p-dropdown>
+                </div>
+
+                <div class="form-field">
+                  <label>Nombre de mois</label>
+                  <p-inputNumber 
+                    [(ngModel)]="futureMonths"
+                    [min]="1"
+                    [max]="12"
+                    [showButtons]="true"
+                    buttonLayout="horizontal"
+                    incrementButtonIcon="pi pi-plus"
+                    decrementButtonIcon="pi pi-minus"
+                    [style]="{'width': '100%'}"
+                  ></p-inputNumber>
+                </div>
+
+                <p-button 
+                  label="Générer prédictions"
+                  icon="pi pi-forward"
+                  [loading]="loadingFuturePredictions"
+                  (onClick)="predictFuture()"
+                  [style]="{'width': '100%'}"
+                  severity="info"
+                ></p-button>
+              </div>
+            </p-card>
+          </div>
+        </div>
+      </p-tabPanel>
+
+      <!-- ONGLET 2 : Par catégorie -->
+      <p-tabPanel header="Par catégorie">
+        <ng-template pTemplate="header">
+          <i class="pi pi-box"></i>
+          <span>Par catégorie</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <p-card styleClass="prediction-card">
+            <ng-template pTemplate="header">
+              <div class="card-header aliment">
+                <i class="pi pi-th-large"></i>
+                <span>Prédictions par catégorie</span>
+              </div>
+            </ng-template>
+
+            <div class="form-content">
+              <div class="form-field">
+                <label>Catégorie</label>
+                <p-dropdown 
+                  [(ngModel)]="selectedCategory"
+                  [options]="categories"
+                  optionLabel="label"
+                  optionValue="value"
+                  [style]="{'width': '100%'}"
+                >
+                  <ng-template pTemplate="selectedItem" let-option>
+                    <div class="dropdown-item">
+                      <i [class]="option.icon"></i>
+                      <span>{{ option.label }}</span>
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="item" let-option>
+                    <div class="dropdown-item">
+                      <i [class]="option.icon"></i>
+                      <span>{{ option.label }}</span>
+                    </div>
+                  </ng-template>
+                </p-dropdown>
+              </div>
+
+              <div class="form-field">
+                <label>Date de prédiction</label>
+                <p-calendar 
+                  [(ngModel)]="categoryPredictionDate"
+                  dateFormat="dd/mm/yy"
+                  [showIcon]="true"
+                  [style]="{'width': '100%'}"
+                  [minDate]="minDate"
+                ></p-calendar>
+              </div>
+
+              <p-button 
+                label="Prédire la catégorie"
+                icon="pi pi-chart-bar"
+                [loading]="loadingCategoryPredictions"
+                (onClick)="predictByCategory()"
+                [style]="{'width': '100%'}"
+                severity="info"
+              ></p-button>
+
+              <!-- Résultats par catégorie -->
+              <div class="category-results" *ngIf="categoryPredictions">
+                <p-divider></p-divider>
+                
+                <div class="category-header">
+                  <h4>{{ categoryPredictions.categorie }}</h4>
+                  <span class="date-label">{{ formatDateFromAPI(categoryPredictions.date) }}</span>
+                </div>
+
+                <div class="aliments-grid">
+                  <div class="aliment-result-card" *ngFor="let aliment of categoryPredictions.aliments">
+                    <div class="aliment-name">{{ aliment.aliment | titlecase }}</div>
+                    <div class="aliment-price">{{ formatNumber(aliment.prix_predit) }} F</div>
+                    <div class="aliment-range">
+                      {{ formatNumber(aliment.intervalle_min) }} - {{ formatNumber(aliment.intervalle_max) }} F
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-card>
+        </div>
+      </p-tabPanel>
+
+    </p-tabView>
+  </div>
+
+  <!-- Graphique -->
+  <div class="chart-section" *ngIf="chartData && modelTrained">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header aliment">
+          <i class="pi pi-chart-bar"></i>
+          <span>Évolution prévue - {{ selectedAliment | titlecase }}</span>
+        </div>
+      </ng-template>
+      
+      <div class="chart-container">
+        <p-chart 
+          type="line" 
+          [data]="chartData" 
+          [options]="chartOptions"
+          [style]="{'height': '400px'}"
+        ></p-chart>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Tableau -->
+  <div class="table-section" *ngIf="futurePredictions.length > 0 && modelTrained">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header aliment">
+          <i class="pi pi-table"></i>
+          <span>Détail des prédictions</span>
+        </div>
+      </ng-template>
+
+      <p-table 
+        [value]="futurePredictions" 
+        [tableStyle]="{'min-width': '50rem'}"
+        styleClass="p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Date</th>
+            <th>Aliment</th>
+            <th class="text-right">Prix prédit</th>
+            <th class="text-right">Intervalle min</th>
+            <th class="text-right">Intervalle max</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-pred>
+          <tr>
+            <td>{{ formatDateFromAPI(pred.date) }}</td>
+            <td>
+              <span class="aliment-badge">{{ pred.aliment_type | titlecase }}</span>
+            </td>
+            <td class="text-right">
+              <strong class="price-value">{{ formatNumber(pred.prix_predit) }} F</strong>
+            </td>
+            <td class="text-right text-muted">{{ formatNumber(pred.intervalle_min) }} F</td>
+            <td class="text-right text-muted">{{ formatNumber(pred.intervalle_max) }} F</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" *ngIf="trainingModel">
+    <p-progressSpinner></p-progressSpinner>
+    <p>Entraînement en cours...</p>
+  </div>
+
+</div>

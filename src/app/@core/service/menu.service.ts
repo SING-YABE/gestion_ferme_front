@@ -87,6 +87,7 @@ export class MenuService {
     {
       title: 'Modèle prévisionnel',
       icon: faChartLine,
+      routerLink: '/predictions',
     },
     {
       title: 'Mon compte',

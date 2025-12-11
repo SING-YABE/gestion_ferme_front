@@ -1,0 +1,476 @@
+.extraction-container {
+  padding: 2rem;
+
+  // Header
+  .extraction-header {
+    margin-bottom: 2rem;
+
+    .extraction-title {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      i {
+        color: #7B1FA2;
+        font-size: 1.6rem;
+      }
+    }
+
+    .extraction-subtitle {
+      margin: 0;
+      color: #666;
+      font-size: 1rem;
+    }
+  }
+
+  // Section upload
+  .upload-section {
+    margin-bottom: 2rem;
+
+    ::ng-deep {
+      .p-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+        .p-card-header {
+          padding: 0;
+        }
+
+        .card-header {
+          padding: 1.25rem;
+          background: linear-gradient(135deg, #7B1FA2 0%, #BA68C8 100%);
+          color: white;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          font-weight: 600;
+
+          i {
+            font-size: 1.3rem;
+          }
+        }
+      }
+    }
+
+    .upload-content {
+      padding: 2rem;
+
+      .upload-zone {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        padding: 3rem 2rem;
+        border: 2px dashed #BA68C8;
+        border-radius: 12px;
+        background: #f9f5fb;
+        transition: all 0.3s ease;
+
+        &:hover {
+          border-color: #7B1FA2;
+          background: #f3e5f5;
+        }
+
+        ::ng-deep {
+          .custom-upload {
+            .p-button {
+              background: #7B1FA2;
+              border-color: #7B1FA2;
+              padding: 1rem 2rem;
+              font-size: 1rem;
+              font-weight: 600;
+
+              &:hover {
+                background: #6A1B9A;
+                border-color: #6A1B9A;
+              }
+            }
+          }
+        }
+
+        .upload-instructions {
+          text-align: center;
+          color: #666;
+
+          i {
+            font-size: 2rem;
+            color: #7B1FA2;
+            margin-bottom: 1rem;
+            display: block;
+          }
+
+          p {
+            margin: 0;
+            line-height: 1.8;
+          }
+
+          strong {
+            color: #333;
+          }
+        }
+      }
+
+      // Fichier sélectionné
+      .file-selected {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        padding: 2rem;
+        background: #f9f5fb;
+        border-radius: 12px;
+        border: 2px solid #BA68C8;
+
+        .file-info {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+
+          i {
+            font-size: 3rem;
+            color: #7B1FA2;
+          }
+
+          .file-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+
+            .file-name {
+              font-size: 1.1rem;
+              font-weight: 600;
+              color: #333;
+            }
+
+            .file-size {
+              font-size: 0.9rem;
+              color: #666;
+            }
+          }
+        }
+
+        .file-actions {
+          display: flex;
+          gap: 1rem;
+          justify-content: center;
+
+          @media (max-width: 768px) {
+            flex-direction: column;
+
+            ::ng-deep .p-button {
+              width: 100%;
+            }
+          }
+        }
+      }
+
+      // Upload en cours
+      .uploading-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 3rem 2rem;
+
+        ::ng-deep .custom-spinner {
+          .p-progress-spinner-circle {
+            stroke: #7B1FA2;
+          }
+        }
+
+        .uploading-info {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+
+          .uploading-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+          }
+
+          .uploading-progress {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #7B1FA2;
+          }
+        }
+
+        .uploading-message {
+          margin: 0;
+          color: #666;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  // Section résultat
+  .result-section {
+    margin-bottom: 2rem;
+
+    ::ng-deep {
+      .card-header.success {
+        background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
+      }
+    }
+
+    .result-content {
+      padding: 2rem;
+
+      .result-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+
+        .stat-box {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+          padding: 1.5rem;
+          background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+          border-radius: 12px;
+          border-left: 4px solid #2E7D32;
+
+          i {
+            font-size: 2.5rem;
+            color: #2E7D32;
+          }
+
+          .stat-info {
+            display: flex;
+            flex-direction: column;
+
+            .stat-value {
+              font-size: 2rem;
+              font-weight: 700;
+              color: #2E7D32;
+              line-height: 1;
+            }
+
+            .stat-label {
+              font-size: 0.9rem;
+              color: #666;
+              margin-top: 0.5rem;
+            }
+          }
+        }
+      }
+
+      .result-details {
+        margin-bottom: 2rem;
+
+        h4 {
+          margin: 0 0 1rem 0;
+          color: #333;
+          font-size: 1.1rem;
+          font-weight: 600;
+        }
+
+        .details-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 1rem;
+
+          .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+
+            .detail-label {
+              font-weight: 600;
+              color: #333;
+            }
+          }
+        }
+      }
+
+      .result-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e0e0e0;
+
+        @media (max-width: 768px) {
+          flex-direction: column;
+
+          ::ng-deep .p-button {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+  // Section historique
+  .history-section {
+    ::ng-deep {
+      .p-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+        .p-card-header {
+          padding: 0;
+        }
+
+        .card-header {
+          padding: 1.25rem;
+          background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
+          color: white;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+
+            i {
+              font-size: 1.3rem;
+            }
+          }
+        }
+      }
+
+      // Loading
+      .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        gap: 1rem;
+
+        p {
+          color: #666;
+          font-size: 1rem;
+        }
+      }
+
+      // Empty state
+      .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #666;
+
+        i {
+          font-size: 4rem;
+          color: #ccc;
+          margin-bottom: 1rem;
+        }
+
+        h3 {
+          margin: 0 0 0.5rem 0;
+          color: #333;
+        }
+
+        p {
+          margin: 0;
+          font-size: 0.95rem;
+        }
+      }
+
+      // Table
+      .p-datatable {
+        .text-right {
+          text-align: right;
+        }
+
+        .text-muted {
+          color: #999;
+          font-size: 0.9rem;
+        }
+
+        .animal-badge {
+          display: inline-block;
+          padding: 0.25rem 0.75rem;
+          background: #e8f5e9;
+          color: #2E7D32;
+          border-radius: 12px;
+          font-weight: 600;
+          font-size: 0.9rem;
+        }
+
+        .price-value {
+          color: #2E7D32;
+          font-size: 1.05rem;
+        }
+
+        th {
+          background: #f8f9fa;
+          font-weight: 600;
+          text-transform: uppercase;
+          font-size: 0.85rem;
+          letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+          transition: all 0.2s;
+
+          &:hover {
+            background: rgba(46, 125, 50, 0.05);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .extraction-container {
+    padding: 1rem;
+
+    .extraction-header {
+      .extraction-title {
+        font-size: 1.4rem;
+      }
+
+      .extraction-subtitle {
+        font-size: 0.9rem;
+      }
+    }
+
+    .upload-section {
+      .upload-content {
+        padding: 1rem;
+
+        .upload-zone {
+          padding: 2rem 1rem;
+        }
+
+        .file-selected {
+          padding: 1.5rem;
+
+          .file-info {
+            flex-direction: column;
+            text-align: center;
+          }
+        }
+      }
+    }
+
+    .result-section {
+      .result-content {
+        padding: 1rem;
+
+        .result-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+}

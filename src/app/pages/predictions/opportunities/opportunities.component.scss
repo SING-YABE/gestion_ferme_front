@@ -1,0 +1,330 @@
+.opportunities-container {
+
+  // Section contrôles
+  .controls-section {
+    margin-bottom: 2rem;
+
+    .controls-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        label {
+          font-weight: 600;
+          color: #333;
+          font-size: 0.9rem;
+        }
+      }
+
+      .control-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+
+        @media (max-width: 768px) {
+          width: 100%;
+
+          ::ng-deep .p-button {
+            flex: 1;
+          }
+        }
+      }
+    }
+  }
+
+  // Grille stats
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+    ::ng-deep {
+      .stat-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .p-card-body {
+          padding: 1.5rem;
+        }
+
+        .stat-content {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+
+          .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+
+            &.opportunities {
+              background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
+            }
+
+            &.savings {
+              background: linear-gradient(135deg, #F57C00 0%, #FFA726 100%);
+            }
+
+            &.best {
+              background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+            }
+          }
+
+          .stat-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+
+            .stat-value {
+              font-size: 2rem;
+              font-weight: 700;
+              color: #2E7D32;
+              line-height: 1;
+            }
+
+            .stat-label {
+              font-size: 0.9rem;
+              color: #666;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+
+            .stat-sublabel {
+              font-size: 0.85rem;
+              color: #999;
+              margin-top: 0.25rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Section tableau
+  .table-section {
+    ::ng-deep {
+      .card-header {
+        padding: 1.25rem;
+        background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .header-left {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          font-weight: 600;
+
+          i {
+            font-size: 1.3rem;
+          }
+        }
+      }
+
+      .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        gap: 1rem;
+
+        p {
+          color: #666;
+          font-size: 1rem;
+        }
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #666;
+
+        i {
+          font-size: 4rem;
+          color: #ccc;
+          margin-bottom: 1rem;
+        }
+
+        h3 {
+          margin: 0 0 1rem 0;
+          color: #333;
+        }
+
+        p {
+          margin: 0.5rem 0;
+          font-size: 0.95rem;
+        }
+      }
+
+      .table-header {
+        padding: 1rem 0;
+
+        .p-input-icon-left {
+          width: 300px;
+
+          input {
+            width: 100%;
+            padding-left: 2.5rem;
+          }
+        }
+      }
+
+      .p-datatable {
+        .text-right {
+          text-align: right;
+        }
+
+        .text-muted {
+          color: #999;
+          font-size: 0.9rem;
+        }
+
+        th {
+          background: #f8f9fa;
+          font-weight: 600;
+          text-transform: uppercase;
+          font-size: 0.85rem;
+          letter-spacing: 0.5px;
+          white-space: nowrap;
+        }
+
+        tbody tr {
+          transition: all 0.2s;
+
+          &:hover {
+            background: rgba(46, 125, 50, 0.05);
+          }
+
+          &.highlight-row {
+            background: rgba(46, 125, 50, 0.08);
+            border-left: 4px solid #2E7D32;
+          }
+        }
+
+        // Score tag
+        .score-tag {
+          font-weight: 700;
+          font-size: 1rem;
+          padding: 0.5rem 0.75rem;
+        }
+
+        // Animal cell
+        .animal-cell {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+
+          i {
+            font-size: 1.1rem;
+            color: #2E7D32;
+          }
+
+          .animal-name {
+            font-weight: 600;
+            color: #333;
+          }
+        }
+
+        // Prix
+        .price-value {
+          font-weight: 600;
+          color: #333;
+          font-size: 1.05rem;
+        }
+
+        // Économie
+        .economy-value {
+          font-weight: 700;
+          color: #2E7D32;
+          font-size: 1.05rem;
+        }
+
+        .economy-percent {
+          font-weight: 600;
+          color: #666;
+
+          &.high-saving {
+            color: #2E7D32;
+            font-size: 1.1rem;
+          }
+        }
+
+        // Évaluation
+        .evaluation-badge {
+          font-weight: 600;
+          font-size: 0.95rem;
+          padding: 0.25rem 0.5rem;
+          border-radius: 6px;
+          background: rgba(46, 125, 50, 0.1);
+        }
+
+        // Summary
+        .table-summary {
+          padding: 1rem;
+          background: #f8f9fa;
+          border-radius: 6px;
+          font-weight: 600;
+          color: #333;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .opportunities-container {
+    ::ng-deep {
+      .p-datatable {
+        font-size: 0.9rem;
+
+        th, td {
+          padding: 0.5rem;
+        }
+
+        .animal-cell {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.25rem;
+        }
+      }
+
+      .table-header .p-input-icon-left {
+        width: 100%;
+      }
+    }
+  }
+}

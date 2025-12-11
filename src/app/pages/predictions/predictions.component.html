@@ -1,0 +1,87 @@
+<div class="predictions-page">
+
+  <!-- Toast notifications globales -->
+  <p-toast position="top-right"></p-toast>
+
+  <!-- TabView principal avec 6 onglets -->
+  <p-tabView 
+    [(activeIndex)]="activeTabIndex" 
+    (onChange)="onTabChange($event)"
+    styleClass="predictions-tabview"
+  >
+
+    <!-- ONGLET 1 : Dashboard Global -->
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-chart-pie"></i>
+        <span>Dashboard</span>
+      </ng-template>
+
+      <app-dashboard-global
+        (refreshed)="onDashboardRefreshed()"
+      ></app-dashboard-global>
+    </p-tabPanel>
+
+    <!-- ONGLET 2 : Prédictions Animaux -->
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-chart-bar"></i>
+        <span>Prédictions Animaux</span>
+      </ng-template>
+
+      <app-animal-predictions
+        [modelTrained]="animalModelTrained"
+        (modelTrainedEvent)="onModelTrained('animal')"
+      ></app-animal-predictions>
+    </p-tabPanel>
+
+    <!-- ONGLET 3 : Prédictions Aliments -->
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-box"></i>
+        <span>Prédictions Aliments</span>
+      </ng-template>
+
+      <app-aliment-predictions
+        [modelTrained]="alimentModelTrained"
+        (modelTrainedEvent)="onModelTrained('aliment')"
+      ></app-aliment-predictions>
+    </p-tabPanel>
+
+    <!-- ONGLET 4 : Opportunités -->
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-sparkles"></i>
+        <span>Bonnes Affaires</span>
+      </ng-template>
+
+      <app-opportunities
+        [modelTrained]="animalModelTrained"
+      ></app-opportunities>
+    </p-tabPanel>
+
+    <!-- ONGLET 5 : Extraction -->
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-upload"></i>
+        <span>Extraction</span>
+      </ng-template>
+
+      <app-extraction
+        (extracted)="onDataExtracted()"
+      ></app-extraction>
+    </p-tabPanel>
+
+    <!-- ONGLET 6 : Historique & Analytics -->
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-history"></i>
+        <span>Historique & Analytics</span>
+      </ng-template>
+
+      <app-historique-analytics></app-historique-analytics>
+    </p-tabPanel>
+
+  </p-tabView>
+
+</div>

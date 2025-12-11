@@ -1,0 +1,326 @@
+<div class="dashboard-global-container">
+
+  <!-- Header avec bouton refresh -->
+  <div class="dashboard-header">
+    <div class="header-left">
+      <h2 class="dashboard-title">
+        <i class="pi pi-chart-pie"></i>
+        Tableau de bord général
+      </h2>
+      <p class="dashboard-subtitle">Vue d'ensemble des données et prédictions</p>
+    </div>
+    <p-button 
+      icon="pi pi-refresh" 
+      [loading]="loading"
+      (onClick)="refresh()"
+      severity="secondary"
+      [rounded]="true"
+      label="Rafraîchir"
+    ></p-button>
+  </div>
+
+  <!-- Grille de 8 cards -->
+  <div class="stats-grid">
+
+    <!-- CARD 1 : Prix Animaux -->
+    <p-card styleClass="stat-card card-animaux">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-database"></i>
+          <span>Prix Animaux</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loadingCards[0] && statsAnimaux; else skeletonTemplate">
+        <div class="stat-main">
+          <span class="stat-value">{{ formatNumber(statsAnimaux.total) }}</span>
+          <span class="stat-label">Prix collectés</span>
+        </div>
+
+        <div class="stat-details">
+          <div class="stat-item" *ngFor="let animal of objectKeys(statsAnimaux.by_animal)">
+            <span class="stat-item-label">{{ capitalize(animal) }}</span>
+            <span class="stat-item-value">{{ statsAnimaux.by_animal[animal] }}</span>
+          </div>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- CARD 2 : Prix Aliments -->
+    <p-card styleClass="stat-card card-aliments">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-box"></i>
+          <span>Prix Aliments</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loadingCards[1] && statsAliments; else skeletonTemplate">
+        <div class="stat-main">
+          <span class="stat-value">{{ formatNumber(statsAliments.total) }}</span>
+          <span class="stat-label">Prix collectés</span>
+        </div>
+
+        <div class="stat-details">
+          <div class="stat-item" *ngFor="let cat of objectKeys(statsAliments.by_category)">
+            <span class="stat-item-label">{{ cat }}</span>
+            <span class="stat-item-value">{{ statsAliments.by_category[cat] }}</span>
+          </div>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- CARD 3 : Tendance Générale -->
+    <p-card styleClass="stat-card card-tendance">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-chart-line"></i>
+          <span>Tendance Générale</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loadingCards[2] && tendanceGenerale; else skeletonTemplate">
+        <div class="stat-main">
+          <div class="tendance-icon" [style.color]="getTendanceColor(tendanceGenerale.tendance)">
+            <i [class]="'pi ' + getTendanceIcon(tendanceGenerale.tendance)"></i>
+          </div>
+          <span class="stat-value tendance-text" [style.color]="getTendanceColor(tendanceGenerale.tendance)">
+            {{ tendanceGenerale.variation_pct?.toFixed(1) || '0.0' }}%
+          </span>
+          <span class="stat-label">{{ tendanceGenerale.tendance || 'Stable' }}</span>
+        </div>
+
+        <div class="stat-footer">
+          <span class="footer-text">Sur 7 derniers jours</span>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- CARD 4 : Dernière Extraction -->
+    <p-card styleClass="stat-card card-extraction">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-upload"></i>
+          <span>Dernière Extraction</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loadingCards[3]; else skeletonTemplate">
+        <div class="stat-main" *ngIf="derniereExtraction; else noExtraction">
+          <span class="stat-value">{{ getTimeAgo(derniereExtraction.date) }}</span>
+          <span class="stat-label">Dernière mise à jour</span>
+        </div>
+
+        <div class="stat-details" *ngIf="derniereExtraction">
+          <div class="stat-item">
+            <span class="stat-item-label">Animal</span>
+            <span class="stat-item-value">{{ capitalize(derniereExtraction.animal_type || 'N/A') }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item-label">Prix</span>
+            <span class="stat-item-value">{{ formatNumber(derniereExtraction.prix || 0) }} F</span>
+          </div>
+        </div>
+
+        <ng-template #noExtraction>
+          <div class="stat-main">
+            <span class="stat-value">-</span>
+            <span class="stat-label">Aucune extraction</span>
+          </div>
+        </ng-template>
+      </div>
+    </p-card>
+
+    <!-- CARD 5 : Opportunités -->
+    <p-card styleClass="stat-card card-opportunites">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-sparkles"></i>
+          <span>Opportunités</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loadingCards[4] && opportunites; else skeletonTemplate">
+        <div class="stat-main">
+          <span class="stat-value">{{ opportunites.total || 0 }}</span>
+          <span class="stat-label">Bonnes affaires</span>
+        </div>
+
+        <div class="stat-details">
+          <div class="stat-item">
+            <span class="stat-item-label">Économie totale</span>
+            <span class="stat-item-value economy">{{ formatNumber(opportunites.economie_totale || 0) }} F</span>
+          </div>
+        </div>
+
+        <div class="stat-footer">
+          <span class="footer-text">Score minimum: 80</span>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- CARD 6 : Accuracy Modèles -->
+    <p-card styleClass="stat-card card-accuracy">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-check-circle"></i>
+          <span>Précision Modèle</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loadingCards[5] && accuracy; else skeletonTemplate">
+        <div class="stat-main" *ngIf="accuracy.mae; else noAccuracy">
+          <span class="stat-value">{{ formatNumber(accuracy.mae) }} F</span>
+          <span class="stat-label">Erreur moyenne (MAE)</span>
+        </div>
+
+        <div class="stat-details" *ngIf="accuracy.mae">
+          <div class="stat-item">
+            <span class="stat-item-label">MAPE</span>
+            <span class="stat-item-value">{{ accuracy.mape?.toFixed(1) || '0.0' }}%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item-label">Prédictions</span>
+            <span class="stat-item-value">{{ accuracy.nb_avec_donnees_reelles || 0 }}</span>
+          </div>
+        </div>
+
+        <ng-template #noAccuracy>
+          <div class="stat-main">
+            <span class="stat-value">-</span>
+            <span class="stat-label">Pas de données</span>
+          </div>
+        </ng-template>
+      </div>
+    </p-card>
+
+    <!-- CARD 7 : Volume Semaine -->
+    <p-card styleClass="stat-card card-volume">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-calendar"></i>
+          <span>Volume Total</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loadingCards[6]; else skeletonTemplate">
+        <div class="stat-main">
+          <span class="stat-value">{{ formatNumber(volumeSemaine) }}</span>
+          <span class="stat-label">Prix en base</span>
+        </div>
+
+        <div class="stat-footer">
+          <span class="footer-text">Toutes périodes confondues</span>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- CARD 8 : Période Données -->
+    <p-card styleClass="stat-card card-periode">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-clock"></i>
+          <span>Période Données</span>
+        </div>
+      </ng-template>
+
+      <div class="card-content" *ngIf="!loadingCards[7] && periodeData; else skeletonTemplate">
+        <div class="periode-info">
+          <div class="periode-item">
+            <i class="pi pi-calendar-minus periode-icon"></i>
+            <div class="periode-details">
+              <span class="periode-label">Début</span>
+              <span class="periode-date">{{ periodeData.start || 'N/A' }}</span>
+            </div>
+          </div>
+
+          <div class="periode-divider">
+            <i class="pi pi-arrow-right"></i>
+          </div>
+
+          <div class="periode-item">
+            <i class="pi pi-calendar-plus periode-icon"></i>
+            <div class="periode-details">
+              <span class="periode-label">Fin</span>
+              <span class="periode-date">{{ periodeData.end || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-card>
+
+  </div>
+
+  <!-- Section Graphiques -->
+  <div class="charts-section" *ngIf="!loadingCharts">
+    
+    <!-- Graphe 1 : Évolution globale -->
+    <div class="chart-card">
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="card-header chart">
+            <i class="pi pi-chart-line"></i>
+            <span>Évolution des prix (7 derniers jours)</span>
+          </div>
+        </ng-template>
+
+        <div class="chart-container" *ngIf="evolutionChartData">
+          <p-chart 
+            type="line" 
+            [data]="evolutionChartData" 
+            [options]="evolutionChartOptions"
+            [style]="{'height': '350px'}"
+          ></p-chart>
+        </div>
+
+        <div class="no-data" *ngIf="!evolutionChartData">
+          <i class="pi pi-info-circle"></i>
+          <p>Données insuffisantes pour afficher le graphique</p>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Graphe 2 : Répartition par type -->
+    <div class="chart-card">
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="card-header chart">
+            <i class="pi pi-chart-pie"></i>
+            <span>Répartition par type d'animal</span>
+          </div>
+        </ng-template>
+
+        <div class="chart-container" *ngIf="repartitionChartData">
+          <p-chart 
+            type="pie" 
+            [data]="repartitionChartData" 
+            [options]="repartitionChartOptions"
+            [style]="{'height': '350px'}"
+          ></p-chart>
+        </div>
+
+        <div class="no-data" *ngIf="!repartitionChartData">
+          <i class="pi pi-info-circle"></i>
+          <p>Données insuffisantes pour afficher le graphique</p>
+        </div>
+      </p-card>
+    </div>
+
+  </div>
+
+  <!-- Loading graphiques -->
+  <div class="charts-loading" *ngIf="loadingCharts">
+    <p-progressSpinner></p-progressSpinner>
+    <p>Chargement des graphiques...</p>
+  </div>
+
+  <!-- Template skeleton pour loading -->
+  <ng-template #skeletonTemplate>
+    <div class="card-content">
+      <p-skeleton width="60%" height="2.5rem" styleClass="mb-3"></p-skeleton>
+      <p-skeleton width="40%" height="1.5rem" styleClass="mb-2"></p-skeleton>
+      <p-skeleton width="50%" height="1rem"></p-skeleton>
+    </div>
+  </ng-template>
+
+</div>
