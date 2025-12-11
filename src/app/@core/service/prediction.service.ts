@@ -156,4 +156,11 @@ export class PredictionService {
   healthCheck(): Observable<any> {
     return this.http.get<any>('http://localhost:8000/');
   }
+
+ getExtractionsByAnimal(animal: string, limit: number = 100): Observable<any> {
+  const params = new HttpParams().set('limit', limit.toString());
+  return this.http.get<any>(`${this.apiUrl}/extractions/${animal}`, { params });
+}
+
+
 }
