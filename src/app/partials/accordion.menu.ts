@@ -60,12 +60,13 @@ import {HasPermissionDirective} from "../@core/security/directives/has-permissio
       display: flex;
       justify-content: space-between;
       align-items: center;
-      color: #FFFFFF;
+      color:black;
       gap: 15px;
       text-decoration: none;
       position: relative;
       transition: 600ms;
-      font-size: 15px;
+      font-size: 18px;
+      font-weight: 600;
       background: transparent;
     }
 
@@ -76,7 +77,7 @@ import {HasPermissionDirective} from "../@core/security/directives/has-permissio
     }
 
     .accordion-content {
-      background: #161717;
+      background: black;
     }
 
     .arrow {
@@ -147,3 +148,18 @@ export class AccordionComponent implements OnInit {
     });
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

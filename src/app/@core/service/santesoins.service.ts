@@ -2,16 +2,24 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+
 export interface SoinAnimalDTO {
-  id?: number;
-  codeAnimal?: string; 
+    id?: number;   
+  codeAnimal?: string;
+  
+  animalCodes?: string[];
+  applyToAll?: boolean;
   dateSoin: string;
   motif: string;
   traitement: string;
+  traitementApporte?: string;
   cout: number;
+  coutMedicament?: number;
   veterinaire: string;
   observations?: string;
 }
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -26,9 +34,10 @@ export class SanteSoinsService {
     return this.http.get<SoinAnimalDTO[]>(this.baseUrl);
   }
 
-  getByAnimal(codeAnimal: string): Observable<SoinAnimalDTO[]> {
-    return this.http.get<SoinAnimalDTO[]>(`${this.baseUrl}/${codeAnimal}`);
+  getByAnimal(code: string): Observable<SoinAnimalDTO[]> {
+    return this.http.get<SoinAnimalDTO[]>(`${this.baseUrl}/${code}`);
   }
+
 
   create(dto: SoinAnimalDTO): Observable<SoinAnimalDTO> {
     return this.http.post<SoinAnimalDTO>(this.baseUrl, dto);
@@ -42,4 +51,14 @@ export class SanteSoinsService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
+  getAnimals(): Observable<any[]> {
+    return this.http.get<any[]>('/api/animaux');
+  }
 }
+
+
+
+
+
+
+

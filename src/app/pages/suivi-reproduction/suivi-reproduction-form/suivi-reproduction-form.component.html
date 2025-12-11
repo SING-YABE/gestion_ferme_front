@@ -1,114 +1,159 @@
 <button pButton class="p-button-success" icon="pi pi-plus" label="Ajouter reproduction" (click)="handleShow()"
-    *ngIf="mode==='create'"></button>
+  *ngIf="mode==='create'">
+</button>
 
-<p-dialog header="Suivi Reproduction" [(visible)]="showForm" [modal]="true" [style]="{width: '700px'}" appendTo="body">
+<p-dialog header="Suivi Reproduction" [(visible)]="showForm" [modal]="true" [style]="{width: '700px'}" 
+  appendTo="body" [draggable]="false" [resizable]="false">
 
-    <form [formGroup]="form" (ngSubmit)="handleSubmit()">
-
-
-
-        <!-- creation uniquement -->
-        <!-- Afficher en create ET edit, mais disabled en edit -->
-        <div class="field">
-            <label>Truie</label>
-            <p-dropdown [options]="truies" formControlName="truieCode" [disabled]="mode==='edit'"></p-dropdown>
-        </div>
-
-        <div class="field">
-            <label>Verrat</label>
-            <p-dropdown [options]="verrats" formControlName="verratCode" [disabled]="mode==='edit'"></p-dropdown>
-        </div>
-
-        <div class="field">
-            <label>Date Saillie</label>
-            <p-calendar formControlName="dateSaillie" dateFormat="dd/mm/yy" [showIcon]="true" [disabled]="mode==='edit'"
-                [style]="{'width': '100%'}">
-            </p-calendar>
-        </div>
-
-        <div class="field">
-            <label>Observations</label>
-            <input pInputText formControlName="observations">
-        </div>
-
-        <!-- maj uniquement -->
-        <div class="field" *ngIf="mode==='edit'">
-            <label>Date Mise Bas Prévue</label>
-            <p-calendar formControlName="dateMiseBasPrevue" [disabled]="true"></p-calendar>
-        </div>
-
-        <div class="field" *ngIf="mode==='edit'">
-            <label>Date Mise Bas Réelle</label>
-            <p-calendar formControlName="dateMiseBasReelle"></p-calendar>
-        </div>
-
+  <form [formGroup]="form" (ngSubmit)="handleSubmit()">
     
-        <div class="field" *ngIf="mode==='edit'">
-            <label>Nb Nés Vivants</label>
-            <div class="flex gap-2 align-items-center">
-                <input pInputText formControlName="nbNesVivants" 
-                    type="number" class="flex-1">
-                <button pButton type="button" icon="pi pi-minus" 
-                        class="p-button-rounded p-button-danger p-button-sm"
-                        (click)="decrement('nbNesVivants')">
-                </button>
-                <button pButton type="button" icon="pi pi-plus" 
-                        class="p-button-rounded p-button-success p-button-sm"
-                        (click)="increment('nbNesVivants')">
-                </button>
-            </div>
-        </div>
+    <!-- Mode création uniquement -->
+    <div class="field mb-4" *ngIf="mode==='create'">
+      <label class="block font-semibold mb-2" style="font-size: 14px;">
+        Truie <span style="color: red;">*</span>
+      </label>
+      <p-dropdown [options]="truies" formControlName="truieCode" 
+        placeholder="Sélectionnez une truie" styleClass="w-full" 
+        [style]="{'height': '45px'}">
+      </p-dropdown>
+    </div>
 
- 
-                <div class="field" *ngIf="mode==='edit'">
-            <label>Nb Morts Nés</label>
-            <div class="flex gap-2 align-items-center">
-                <input pInputText formControlName="nbMortsNes" 
-                    type="number" class="flex-1">
-                <button pButton type="button" icon="pi pi-minus" 
-                        class="p-button-rounded p-button-danger p-button-sm"
-                        (click)="decrement('nbMortsNes')">
-                </button>
-                <button pButton type="button" icon="pi pi-plus" 
-                        class="p-button-rounded p-button-success p-button-sm"
-                        (click)="increment('nbMortsNes')">
-                </button>
-            </div>
-        </div>
+    <div class="field mb-4" *ngIf="mode==='create'">
+      <label class="block font-semibold mb-2" style="font-size: 14px;">
+        Verrat <span style="color: red;">*</span>
+      </label>
+      <p-dropdown [options]="verrats" formControlName="verratCode" 
+        placeholder="Sélectionnez un verrat" styleClass="w-full" 
+        [style]="{'height': '45px'}">
+      </p-dropdown>
+    </div>
 
-   
+    <div class="field mb-4">
+      <label class="block font-semibold mb-2" style="font-size: 14px;">
+        Date Saillie <span style="color: red;">*</span>
+      </label>
+      <p-calendar formControlName="dateSaillie" dateFormat="dd/mm/yy" [showIcon]="true"
+        appendTo="body" inputId="dateSaillie" styleClass="w-full"
+        [inputStyle]="{'height': '45px'}" [disabled]="mode==='edit'">
+      </p-calendar>
+    </div>
 
-                <div class="field" *ngIf="mode==='edit'">
-            <label>Nb Sevrés</label>
-            <div class="flex gap-2 align-items-center">
-                <input pInputText formControlName="nbSevres" 
-                    type="number" class="flex-1">
-                <button pButton type="button" icon="pi pi-minus" 
-                        class="p-button-rounded p-button-danger p-button-sm"
-                        (click)="decrement('nbSevres')">
-                </button>
-                <button pButton type="button" icon="pi pi-plus" 
-                        class="p-button-rounded p-button-success p-button-sm"
-                        (click)="increment('nbSevres')">
-                </button>
-            </div>
-        </div>
+    <div class="field mb-4" *ngIf="mode==='create'">
+      <label class="block font-semibold mb-2" style="font-size: 14px;">
+        Observations
+      </label>
+      <textarea pInputTextarea formControlName="observations" rows="2" 
+        placeholder="Notes additionnelles..." class="w-full" 
+        style="font-size: 14px; padding: 10px;">
+      </textarea>
+    </div>
 
-        <div class="field" *ngIf="mode==='edit'">
-            <label>Observations</label>
-            <input pInputText formControlName="observations">
-        </div>
+    <!-- Mode édition uniquement -->
+    <div class="field mb-4" *ngIf="mode==='edit'">
+      <label class="block font-semibold mb-2" style="font-size: 14px;">
+        Date Mise Bas Prévue
+      </label>
+      <p-calendar formControlName="dateMiseBasPrevue" dateFormat="dd/mm/yy" 
+        [showIcon]="true" appendTo="body" styleClass="w-full" [disabled]="true"
+        [inputStyle]="{'height': '45px'}">
+      </p-calendar>
+    </div>
 
+    <div class="field mb-4" *ngIf="mode==='edit'">
+      <label class="block font-semibold mb-2" style="font-size: 14px;">
+        Date Mise Bas Réelle
+      </label>
+      <p-calendar formControlName="dateMiseBasReelle" dateFormat="dd/mm/yy" 
+        [showIcon]="true" appendTo="body" styleClass="w-full"
+        [inputStyle]="{'height': '45px'}">
+      </p-calendar>
+    </div>
 
-    </form>
-
-    <ng-template pTemplate="footer">
-        <button type="button" pButton label="Annuler" class="p-button-outlined mr-2" (click)="showForm=false">
+    <div class="field mb-4" *ngIf="mode==='edit'">
+      <label class="block font-semibold mb-2" style="font-size: 14px;">
+        Nb Nés Vivants
+      </label>
+      <div class="flex gap-2 align-items-center">
+        <input pInputText formControlName="nbNesVivants" type="number" 
+          class="flex-1" style="height: 45px; font-size: 14px;">
+        <button pButton type="button" icon="pi pi-minus" 
+          class="p-button-rounded p-button-danger p-button-sm"
+          style="width: 35px; height: 35px;"
+          (click)="decrement('nbNesVivants')">
         </button>
-
-        <button type="submit" pButton label="Enregistrer" [disabled]="form.invalid" [loading]="processing"
-            class="p-button-success" (click)="handleSubmit()">
+        <button pButton type="button" icon="pi pi-plus" 
+          class="p-button-rounded p-button-success p-button-sm"
+          style="width: 35px; height: 35px;"
+          (click)="increment('nbNesVivants')">
         </button>
-    </ng-template>
+      </div>
+    </div>
+
+    <div class="field mb-4" *ngIf="mode==='edit'">
+      <label class="block font-semibold mb-2" style="font-size: 14px;">
+        Nb Morts Nés
+      </label>
+      <div class="flex gap-2 align-items-center">
+        <input pInputText formControlName="nbMortsNes" type="number" 
+          class="flex-1" style="height: 45px; font-size: 14px;">
+        <button pButton type="button" icon="pi pi-minus" 
+          class="p-button-rounded p-button-danger p-button-sm"
+          style="width: 35px; height: 35px;"
+          (click)="decrement('nbMortsNes')">
+        </button>
+        <button pButton type="button" icon="pi pi-plus" 
+          class="p-button-rounded p-button-success p-button-sm"
+          style="width: 35px; height: 35px;"
+          (click)="increment('nbMortsNes')">
+        </button>
+      </div>
+    </div>
+
+    <div class="field mb-4" *ngIf="mode==='edit'">
+      <label class="block font-semibold mb-2" style="font-size: 14px;">
+        Nb Sevrés
+      </label>
+      <div class="flex gap-2 align-items-center">
+        <input pInputText formControlName="nbSevres" type="number" 
+          class="flex-1" style="height: 45px; font-size: 14px;">
+        <button pButton type="button" icon="pi pi-minus" 
+          class="p-button-rounded p-button-danger p-button-sm"
+          style="width: 35px; height: 35px;"
+          (click)="decrement('nbSevres')">
+        </button>
+        <button pButton type="button" icon="pi pi-plus" 
+          class="p-button-rounded p-button-success p-button-sm"
+          style="width: 35px; height: 35px;"
+          (click)="increment('nbSevres')">
+        </button>
+      </div>
+    </div>
+
+    <div class="field mb-3" *ngIf="mode==='edit'">
+      <label class="block font-semibold mb-2" style="font-size: 14px;">
+        Observations
+      </label>
+      <textarea pInputTextarea formControlName="observations" rows="2" 
+        placeholder="Notes additionnelles..." class="w-full" 
+        style="font-size: 14px; padding: 10px;">
+      </textarea>
+    </div>
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex gap-3 w-full">
+      <button type="submit" pButton label="Enregistrer" [disabled]="form.invalid" 
+        [loading]="processing" class="p-button-success flex-1" 
+        style="height: 45px; font-size: 14px; font-weight: 500;"
+        (click)="handleSubmit()">
+      </button>
+
+      <button type="button" pButton label="Annuler" class="p-button-outlined" 
+        style="color:#8B5E3C; border-color:#8B5E3C; height: 45px; font-size: 14px; font-weight: 500; min-width: 140px;"
+        (click)="showForm=false">
+      </button>
+    </div>
+  </ng-template>
 
 </p-dialog>

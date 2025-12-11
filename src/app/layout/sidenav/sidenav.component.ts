@@ -36,7 +36,6 @@ import { HasPermissionDirective } from '../../@core/security/directives/has-perm
 })
 
 export class SidenavComponent implements OnInit{
-
   appName = environment.appName;
   appVersion = environment.appVersion;
   appSession: any;

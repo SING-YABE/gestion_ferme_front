@@ -5,7 +5,14 @@ import { Observable } from 'rxjs';
 export interface TraitementDTO {
   id?: number;
   nom: string;
-  description?: string;
+  description: string;
+}
+
+
+export interface TraitementResponseDTO {
+  id: number;
+  nom: string;
+  description: string;
 }
 
 @Injectable({
@@ -16,16 +23,17 @@ export class TraitementService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<TraitementDTO[]> {
-    return this.http.get<TraitementDTO[]>(this.baseUrl);
+ 
+  getAll(): Observable<TraitementResponseDTO[]> {
+    return this.http.get<TraitementResponseDTO[]>(this.baseUrl);
   }
 
-  create(dto: TraitementDTO): Observable<TraitementDTO> {
-    return this.http.post<TraitementDTO>(this.baseUrl, dto);
+  create(dto: TraitementDTO): Observable<TraitementResponseDTO> {
+    return this.http.post<TraitementResponseDTO>(this.baseUrl, dto);
   }
 
-  update(id: number, dto: TraitementDTO): Observable<TraitementDTO> {
-    return this.http.put<TraitementDTO>(`${this.baseUrl}/${id}`, dto);
+  update(id: number, dto: TraitementDTO): Observable<TraitementResponseDTO> {
+    return this.http.put<TraitementResponseDTO>(`${this.baseUrl}/${id}`, dto);
   }
 
   delete(id: number): Observable<void> {

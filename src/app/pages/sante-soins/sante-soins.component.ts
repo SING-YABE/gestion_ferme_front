@@ -6,6 +6,12 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { SantesoinsFormComponent } from './santesoins-form/santesoins-form.component';
 import { SoinAnimalDTO,SanteSoinsService } from '../../@core/service/santesoins.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { DropdownModule } from 'primeng/dropdown';
+import { CheckboxModule } from 'primeng/checkbox';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { CalendarModule } from 'primeng/calendar';
 @Component({
   selector: 'app-sante-soins',
   standalone: true,
@@ -14,8 +20,15 @@ import { SoinAnimalDTO,SanteSoinsService } from '../../@core/service/santesoins.
     TableModule,
     ButtonModule,
     ConfirmDialogModule,
-    SantesoinsFormComponent
+    SantesoinsFormComponent,
+    FormsModule,
+    RadioButtonModule,
+DropdownModule,
+    CheckboxModule,
+    MultiSelectModule,
+    CalendarModule
   ],
+  
   providers: [ConfirmationService],
   templateUrl: './sante-soins.component.html',
 })

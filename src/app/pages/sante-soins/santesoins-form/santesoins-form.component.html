@@ -6,112 +6,152 @@
   style="background:#4CAF50; border-color:#4CAF50;" (click)="handleShow()">
 </button>
 
+<p-dialog [(visible)]="showForm" [modal]="true" appendTo="body" [style]="{width: '700px'}" [draggable]="false"
+  [resizable]="false">
 
-  <p-dialog [(visible)]="showForm" [modal]="true" appendTo="body" header="Soin de Santé"
-          [style]="{width: '800px'}" styleClass="farm-dialog" [baseZIndex]="10000">
-
+  <!-- Header -->
+  <ng-template pTemplate="header">
+    <div class="flex align-items-center gap-2">
+      <i class="pi pi-heart" style="font-size: 1.5rem;"></i>
+      <span class="text-xl font-semibold">Formulaire de Soin Animal</span>
+    </div>
+  </ng-template>
 
   <form [formGroup]="form" id="soinsForm" (ngSubmit)="handleSubmit()">
 
-    <!-- Soin collectif -->
-    <div class="field mb-4 flex align-items-center gap-2">
-      <p-checkbox [(ngModel)]="isSoinCollectif" [ngModelOptions]="{standalone: true}" [binary]="true"
-        inputId="soinCollectif" (onChange)="onSoinCollectifChange()"></p-checkbox>
-      <label for="soinCollectif" class="mb-0" style="cursor: pointer;">
-        <strong style="color:#F59E0B;">Soin collectif (pour tous les animaux)</strong>
-      </label>
-    </div>
-
-    <!-- Code Animal et Date en deux colonnes -->
-    <div class="grid formgrid mb-3">
-      <div class="col-6" *ngIf="!isSoinCollectif">
-        <div class="field">
-          <label class="font-semibold">Code Animal *</label>
-          <input pInputText formControlName="codeAnimal" placeholder="P3"
-            style="width: 100%; height: 55px; font-size: 1rem; padding: 0.5rem; text-transform: uppercase;">
-          <small class="block mt-1" style="color:#6B7280;">
-            Laissez vide ou cochez "Soin collectif" pour un traitement de groupe
-          </small>
-
+    <!-- Type de soin -->
+    <div class="mb-4">
+      <label class="block font-semibold mb-3" style="font-size: 15px;">Type de soin</label>
+      <div class="flex gap-4">
+        <div class="flex align-items-center">
+          <p-radioButton name="type" value="individuel" inputId="individuel" [(ngModel)]="typeSoin"
+            [ngModelOptions]="{standalone: true}" (onClick)="onTypeSoinChange()">
+          </p-radioButton>
+          <label for="individuel" class="ml-2 cursor-pointer" style="font-size: 14px;">
+            <i class="pi pi-user mr-1"></i> Soin Individuel
+          </label>
         </div>
-      </div>
 
-      <div class="col-6">
-        <div class="field">
-          <label>Date du soin <span style="color: red;">*</span></label>
-<p-calendar formControlName="dateSoin" dateFormat="dd/mm/yy" [showIcon]="true"
-            [appendTo]="'body'" [touchUI]="true" inputId="date"
-            [style]="{'width': '100%'}">
-</p-calendar>
-
-
+        <div class="flex align-items-center">
+          <p-radioButton name="type" value="collectif" inputId="collectif" [(ngModel)]="typeSoin"
+            [ngModelOptions]="{standalone: true}" (onClick)="onTypeSoinChange()">
+          </p-radioButton>
+          <label for="collectif" class="ml-2 cursor-pointer" style="font-size: 14px;">
+            <i class="pi pi-users mr-1"></i> Soin Collectif
+          </label>
         </div>
       </div>
     </div>
 
-    <!-- Motif et Traitement -->
-    <div class="grid formgrid mb-3">
-      <div class="col-6">
-        <div class="field">
-          <label class="font-semibold">Motif *</label>
-          <textarea pInputTextarea rows="2" formControlName="motif" placeholder="Vaccination"
-            style="width: 100%; font-size: 1rem; padding: 0.5rem;"></textarea>
-        </div>
+    <!-- SOIN INDIVIDUEL -->
+    <div *ngIf="isIndividuel" class="mb-4">
+      <label class="block font-semibold mb-2" style="font-size: 15px;">Sélection de l'animal</label>
+      <p-dropdown formControlName="codeAnimal" [options]="animals" optionLabel="label" optionValue="value"
+        placeholder="Choisir un animal..." [filter]="true" filterBy="label" [showClear]="true" 
+        styleClass="w-full" [style]="{'height': '45px'}">
+      </p-dropdown>
+    </div>
+
+    <!-- SOIN COLLECTIF -->
+    <div *ngIf="isCollectif" class="mb-4">
+      <label class="block font-semibold mb-3" style="font-size: 15px;">Sélection des animaux</label>
+
+      <div class="flex align-items-center gap-2 mb-3">
+        <p-checkbox formControlName="applyToAll" [binary]="true" inputId="applyToAll"></p-checkbox>
+        <label for="applyToAll" class="mb-0 cursor-pointer" style="font-size: 14px;">
+          Appliquer à tous les animaux ({{ animals.length }} animaux)
+        </label>
       </div>
+
+      <p-multiSelect formControlName="animalCodes" [options]="animals" optionLabel="label" optionValue="value"
+        placeholder="Ajouter des animaux..." [filter]="true" filterBy="label" [showClear]="true" display="chip"
+        styleClass="w-full" [style]="{'min-height': '45px'}">
+      </p-multiSelect>
+    </div>
+
+    <!-- Date et Vétérinaire -->
+    <div class="grid mb-4">
       <div class="col-6">
-        <div class="field">
-          <label class="font-semibold">Traitement *</label>
-          <textarea pInputTextarea rows="2" formControlName="traitement" placeholder="Vectocid"
-            style="width: 100%; font-size: 1rem; padding: 0.5rem;"></textarea>
-        </div>
+        <label class="block mb-2 font-semibold" style="font-size: 14px;">Date du soin *</label>
+        <p-calendar formControlName="dateSoin" dateFormat="dd/mm/yy" [showIcon]="true" 
+          styleClass="w-full" [inputStyle]="{'height': '45px'}">
+        </p-calendar>
+      </div>
+
+      <div class="col-6">
+        <label class="block mb-2 font-semibold" style="font-size: 14px;">Vétérinaire</label>
+        <p-dropdown formControlName="veterinaire" [options]="[
+            {label: 'Dr. Dupont', value: 'Dr. Dupont'},
+            {label: 'Dr. Martin', value: 'Dr. Martin'},
+            {label: 'Dr. Bernard', value: 'Dr. Bernard'}
+          ]" optionLabel="label" optionValue="value" placeholder="Dr. Dupont" [editable]="true" [showClear]="true"
+          styleClass="w-full" [style]="{'height': '45px'}">
+        </p-dropdown>
       </div>
     </div>
 
-    <!-- Coût et Vétérinaire -->
-    <div class="grid formgrid mb-3">
+    <!-- Motif -->
+    <div class="field mb-4">
+      <label class="block mb-2 font-semibold" style="font-size: 14px;">Motif *</label>
+      <textarea pInputTextarea formControlName="motif" rows="2" placeholder="Ex: Contrôle annuel, maladie..."
+        class="w-full" style="font-size: 14px; padding: 10px;"></textarea>
+    </div>
+
+    <!-- Traitement -->
+    <div class="field mb-4">
+      <label class="block mb-2 font-semibold" style="font-size: 14px;">Traitement *</label>
+      <p-dropdown formControlName="traitement" [options]="traitements" optionLabel="nom" optionValue="nom"
+        placeholder="Choisir un traitement..." [filter]="true" [showClear]="true" 
+        styleClass="w-full" [style]="{'height': '45px'}">
+      </p-dropdown>
+    </div>
+
+    <!-- Coûts -->
+    <div class="grid mb-4">
       <div class="col-6">
-        <div class="field">
-          <label class="font-semibold">Coût (FCFA) *</label>
-          <input pInputText type="number" formControlName="cout" (input)="formatCout()"
-            style="width: 100%; height: 40px; font-size: 1rem; padding: 0.5rem;">
-          <div class="mt-2 flex gap-2 flex-wrap">
-            <button *ngFor="let c of coutPresets" pButton type="button" class="p-button-outlined p-button-sm"
-              style="border-color:#2E7D32; color:#2E7D32;" (click)="applyCout(c)">
-              {{ c | number }} FCFA
-            </button>
-          </div>
-        </div>
+        <label class="block mb-2 font-semibold" style="font-size: 14px;">Coût prestation (FCFA)</label>
+        <p-inputNumber formControlName="cout" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0"
+          placeholder="0.00" styleClass="w-full" [inputStyle]="{'height': '45px'}">
+        </p-inputNumber>
       </div>
 
       <div class="col-6">
-        <div class="field">
-          <label class="font-semibold">Vétérinaire *</label>
-          <input pInputText formControlName="veterinaire" placeholder="Dr KABORE"
-            style="width: 100%; height: 40px; font-size: 1rem; padding: 0.5rem;">
-        </div>
+        <label class="block mb-2 font-semibold" style="font-size: 14px;">Coût médicament (FCFA)</label>
+        <p-inputNumber formControlName="coutMedicament" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"
+          [min]="0" placeholder="0.00" styleClass="w-full" [inputStyle]="{'height': '45px'}">
+        </p-inputNumber>
+      </div>
+    </div>
+
+    <!-- Total -->
+    <div class="field mb-4">
+      <label class="block mb-2 font-semibold" style="font-size: 14px;">Total (FCFA)</label>
+      <div class="w-full p-3 text-center font-bold" 
+        style="background: #e5e7eb; border-radius: 6px; font-size: 20px; padding: 12px;">
+        {{ (form.get('cout')?.value || 0) + (form.get('coutMedicament')?.value || 0) | number:'1.2-2' }} FCFA
       </div>
     </div>
 
     <!-- Observations -->
     <div class="field mb-3">
-      <label class="font-semibold">Observations</label>
-      <textarea pInputTextarea rows="4" formControlName="observations" placeholder="Détails du traitement"
-        style="width: 100%; font-size: 1rem; padding: 0.5rem;"></textarea>
+      <label class="block mb-2 font-semibold" style="font-size: 14px;">Observations</label>
+      <textarea pInputTextarea formControlName="observations" rows="3" placeholder="Notes additionnelles..."
+        class="w-full" style="font-size: 14px; padding: 10px;"></textarea>
     </div>
 
   </form>
 
-  <!-- Footer -->
   <ng-template pTemplate="footer">
-    <button pButton class="p-button-outlined mr-2" style="color:#2E7D32; border-color:#2E7D32;"
-      (click)="showForm = false">
-      Annuler
-    </button>
+    <div class="flex gap-3 w-full">
+      <button pButton label="Enregistrer le soin" class="flex-1" 
+        style="background: #1e293b; border-color: #1e293b; height: 45px; font-size: 14px; font-weight: 500;"
+        [disabled]="processing || !form.valid" [loading]="processing" (click)="handleSubmit()">
+      </button>
 
-    <button pButton class="p-button-success" form="soinsForm" type="submit" [loading]="processing"
-      [disabled]="!form.valid" style="background:#1B5E20; border-color:#1B5E20;">
-      Enregistrer
-    </button>
+      <button pButton label="Réinitialiser" class="p-button-outlined" 
+        style="height: 45px; font-size: 14px; font-weight: 500; min-width: 140px;"
+        (click)="resetForm()">
+      </button>
+    </div>
   </ng-template>
-
 </p-dialog>

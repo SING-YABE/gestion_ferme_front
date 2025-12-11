@@ -2,34 +2,24 @@ import { Injectable } from '@angular/core';
 import { IconDefinition } from "@fortawesome/free-regular-svg-icons";
 import { 
   faChartLine,
-  faDashboard, 
-  faLightbulb, 
-  faDesktop, 
-  faUsers, 
-  faFileAlt,
-  faCow, 
-  faPaw, 
-  faHeartbeat, 
-  faWheatAwn, 
-  faPills,
-  faBox,
-  faBuilding,
-  faCogs,
-  faMapMarkerAlt,
-  faMapMarker,
-  faTruck,
-  faExclamationTriangle,
-  faFolder,
-  faMoneyBill,
-  faProjectDiagram,
-  faTasks,
-  faUserAlt,
-  faTags,
-  faUserCheck,
-  faMoneyBillTransfer,
-  faInbox,
-  faUsersCog,
-  faTabletButton
+  faGauge,            // Dashboard (plus moderne que faDashboard)
+  faClipboardList,    // Fiches animaux
+  faVenusMars,        // Reproduction (plus clair)
+  faUtensils,         // Alimentation
+  faKitMedical,       // Santé et soins
+  faMoneyBillWave,    // Ventes
+  faCircleDollarToSlot, // Charges
+  faChartPie,         // Synthèses financières
+  faUsers,            // Utilisateurs
+  faUser,             // Mon compte
+  faGears,            // Administration
+  faCow,              // Type animaux
+  faWarehouse,        // Bâtiment
+  faHeartPulse,       // État de santé
+  faWheatAwn,         // Type aliment
+  faTruck,            // Fournisseur
+  faCapsules,         // Traitement
+  faDollarSign        // Type dépense
 } from "@fortawesome/free-solid-svg-icons";
 
 export interface ShamsyMenu {
@@ -50,43 +40,43 @@ export class MenuService {
   public mainMenu: ShamsyMenu[] = [
     {
       title: "Tableau de bord",
-      icon: faDashboard,
+      icon: faGauge,
       routerLink: "/dashboard",
       exact: true
     },
     {
       title: 'Fiches Animaux',
-      icon: faPaw, 
+      icon: faClipboardList,
       routerLink: '/fiches-animaux',
     },
     {
-      title: 'Suivi réproduction',
-      icon: faHeartbeat, 
+      title: 'Suivi reproduction',
+      icon: faVenusMars,
       routerLink: '/suivi-reproduction',
     },
     {
       title: 'Alimentation',
-      icon: faWheatAwn,
+      icon: faUtensils,
       routerLink: '/alimentation',
     },
     {
       title: 'Santé et soins',
-      icon: faHeartbeat,
+      icon: faKitMedical,
       routerLink: '/sante-soins',
     },
     {
       title: 'Ventes',
-      icon: faMoneyBill,
+      icon: faMoneyBillWave,
       routerLink: '/ventes', 
     },
     {
       title: 'Charges diverses',
-      icon: faMoneyBillTransfer,
+      icon: faCircleDollarToSlot,
       routerLink: '/charges',
     },
     {
-      title: 'Synthèses financière',
-      icon: faProjectDiagram,
+      title: 'Synthèses financières',
+      icon: faChartPie,
       routerLink: '/syntheses-financieres',
     },
     {
@@ -94,56 +84,27 @@ export class MenuService {
       icon: faUsers,
       routerLink: '/gestion/utilisateurs',
     },
-     {
+    {
       title: 'Modèle prévisionnel',
       icon: faChartLine,
-      // routerLink: '',
     },
-   
     {
       title: 'Mon compte',
-      icon: faUserAlt,
+      icon: faUser,
       routerLink: '/profile',
     },
+
     {
       title: 'Administration',
-      icon: faCogs,
+      icon: faGears,
       children: [
-        {
-          title: 'Type Animaux',
-          icon: faCow,
-          routerLink: '/typeAnimaux',
-        },
-        {
-          title: 'Bâtiment',
-          icon: faBuilding,
-          routerLink: '/batiments'
-        },
-        {
-          title: 'État de santé',
-          icon: faHeartbeat,
-          routerLink: '/etatSante'
-        },
-        {
-          title: 'Type Aliment',
-          icon: faWheatAwn,
-          routerLink: '/typeAliment'
-        },
-        {
-          title: 'Fournisseur',
-          icon: faTruck,
-          routerLink: '/fournisseurs'
-        },
-        {
-          title: 'Traitement',
-          icon: faPills,
-          routerLink: '/traitement'
-        },
-        {
-          title: 'Type de dépense',
-          icon: faMoneyBill,
-          routerLink: '/typeDepense'
-        }
+        { title: 'Type Animaux', icon: faCow, routerLink: '/typeAnimaux' },
+        { title: 'Bâtiment', icon: faWarehouse, routerLink: '/batiments' },
+        { title: 'État de santé', icon: faHeartPulse, routerLink: '/etatSante' },
+        { title: 'Type Aliment', icon: faWheatAwn, routerLink: '/typeAliment' },
+        { title: 'Fournisseur', icon: faTruck, routerLink: '/fournisseurs' },
+        { title: 'Traitement', icon: faCapsules, routerLink: '/traitement' },
+        { title: 'Type de dépense', icon: faDollarSign, routerLink: '/typeDepense' }
       ]
     },
   ];
