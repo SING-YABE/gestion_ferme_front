@@ -33,7 +33,7 @@
 
       <div class="card-content" *ngIf="!loadingCards[0] && statsAnimaux; else skeletonTemplate">
         <div class="stat-main">
-          <span class="stat-value">{{ formatNumber(statsAnimaux.total) }}</span>
+          <span class="stat-value">{{ formatNumber(statsAnimaux.total_prices) }}</span>
           <span class="stat-label">Prix collectés</span>
         </div>
 
