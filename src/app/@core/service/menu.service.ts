@@ -19,7 +19,8 @@ import {
   faWheatAwn,         // Type aliment
   faTruck,            // Fournisseur
   faCapsules,         // Traitement
-  faDollarSign        // Type dépense
+  faDollarSign  ,
+  faCarrot      // Type dépense
 } from "@fortawesome/free-solid-svg-icons";
 
 export interface ShamsyMenu {
@@ -104,6 +105,7 @@ export class MenuService {
         { title: 'État de santé', icon: faHeartPulse, routerLink: '/etatSante' },
         { title: 'Type Aliment', icon: faWheatAwn, routerLink: '/typeAliment' },
         { title: 'Fournisseur', icon: faTruck, routerLink: '/fournisseurs' },
+        { title: 'Ingredient', icon: faCarrot, routerLink: '/ingredients' },
         { title: 'Traitement', icon: faCapsules, routerLink: '/traitement' },
         { title: 'Type de dépense', icon: faDollarSign, routerLink: '/typeDepense' }
       ]

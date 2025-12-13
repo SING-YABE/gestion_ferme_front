@@ -2,14 +2,20 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface AlimentationDTO {
-  date: string;
-  typeAlimentId: number;
+
+export interface IngredientAlimentationDTO {
+  ingredientId: number;
   quantiteKg: number;
   prixUnitaire: number;
-  animalId?: number | null;
-  typeAnimalId?: number | null;
+}
+
+export interface AlimentationDTO {
+  date: string;
+  mode: 'ACHAT' | 'FABRICATION'; 
   fournisseurId?: number | null;
+  codeAnimal?: number | null;      
+  typeAnimalId?: number | null;
+  ingredients: IngredientAlimentationDTO[];
 }
 
 export interface TypeAlimentInfo {

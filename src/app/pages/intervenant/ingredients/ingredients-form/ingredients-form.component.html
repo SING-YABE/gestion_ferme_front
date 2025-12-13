@@ -1,0 +1,70 @@
+<button *ngIf="mode === 'create'"
+        pButton icon="pi pi-plus"
+        label="Ajouter ingrédient"
+        class="p-button-success"
+        (click)="handleShow()">
+</button>
+
+<button *ngIf="mode === 'edit'"
+        pButton icon="pi pi-pencil"
+        class="p-button-rounded"
+        style="background:#16A34A; border-color:#16A34A; color:white;"
+        (click)="handleShow()">
+</button>
+
+<p-dialog header="{{ mode === 'create' ? 'Nouvel ingrédient' : 'Modifier ingrédient' }}"
+          [(visible)]="showForm"
+          [modal]="true"
+          [style]="{ width:'650px' }">
+
+  <form [formGroup]="form" class="p-fluid">
+
+    <div class="form-grid p-fluid grid p-3">
+
+      <!-- NOM -->
+      <div class="col-12 mb-3">
+        <label class="font-bold mb-2">Nom de l’ingrédient</label>
+        <input pInputText formControlName="nom" placeholder="Ex : Carbonate de calcium" />
+      </div>
+
+      <!-- TYPE DROPDOWN -->
+      <div class="col-12 mb-3">
+        <label class="font-bold mb-2">Type d’aliment</label>
+      <p-dropdown 
+    [options]="typeAliments"
+    optionLabel="libelle"
+    optionValue="id"
+    formControlName="typeAlimentId"
+    (onChange)="onSelectType($event)"
+    placeholder="Sélectionner un type d'aliment"
+    class="w-full">
+</p-dropdown>
+
+      </div>
+
+      <!-- LIBELLE -->
+      <div class="col-12 mb-3">
+        <label class="font-bold mb-2">Libellé (automatique)</label>
+        <input pInputText formControlName="typeAlimentLibelle" placeholder="Ex : Minéraux" />
+      </div>
+
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button pButton 
+            class="p-button-outlined p-button-danger mr-2" 
+            (click)="showForm=false">
+      Annuler
+    </button>
+
+    <button pButton 
+            class="p-button-success"
+            [disabled]="form.invalid"
+            [loading]="processing"
+            (click)="handleSubmit()">
+      {{ mode === 'create' ? 'Enregistrer' : 'Mettre à jour' }}
+    </button>
+  </ng-template>
+
+</p-dialog>

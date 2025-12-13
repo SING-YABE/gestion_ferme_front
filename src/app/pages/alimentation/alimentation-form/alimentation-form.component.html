@@ -2,135 +2,335 @@
   class="p-button-success" style="background:#2E7D32; border-color:#2E7D32;" (click)="handleShow()">
 </button>
 
-<p-dialog [(visible)]="showForm" [modal]="true" appendTo="body" header="Alimentation"
-  [style]="{width: '700px'}" [draggable]="false" [resizable]="false">
+<p-dialog [(visible)]="showForm" [modal]="true" appendTo="body" 
+  [header]="'Gestion de l\'Alimentation'" [style]="{width: '850px', maxHeight: '90vh'}" 
+  [draggable]="false" [resizable]="false">
   
+  <div class="text-center mb-4">
+    <p class="text-sm text-gray-600 m-0">
+      Enregistrez vos achats d'ingrédients ou gérez la fabrication d'aliments sur place
+    </p>
+  </div>
+
+  <!-- Achat ou Fabrication -->
+  <div class="mb-4">
+    <div class="grid">
+      <div class="col-6">
+        <button type="button" pButton 
+          [label]="'Mode Achat'" 
+          icon="pi pi-shopping-cart"
+          [class]="modeGestion === 'achat' ? 'p-button-success w-full' : 'p-button-outlined w-full'"
+          [style.background]="modeGestion === 'achat' ? '#2E7D32' : 'transparent'"
+          [style.border-color]="'#2E7D32'"
+          [style.color]="modeGestion === 'achat' ? 'white' : '#2E7D32'"
+          style="height: 48px; font-size: 15px; font-weight: 500;"
+          (click)="switchModeGestion('achat')">
+        </button>
+      </div>
+      <div class="col-6">
+        <button type="button" pButton 
+          [label]="'Mode Fabrication'" 
+          icon="pi pi-cog"
+          [class]="modeGestion === 'fabrication' ? 'p-button-success w-full' : 'p-button-outlined w-full'"
+          [style.background]="modeGestion === 'fabrication' ? '#2E7D32' : 'transparent'"
+          [style.border-color]="'#2E7D32'"
+          [style.color]="modeGestion === 'fabrication' ? 'white' : '#2E7D32'"
+          style="height: 48px; font-size: 15px; font-weight: 500;"
+          (click)="switchModeGestion('fabrication')">
+        </button>
+      </div>
+    </div>
+  </div>
+
   <form [formGroup]="form" id="alimentationForm" (ngSubmit)="handleSubmit()">
 
-    <!-- Date et Type d'aliment -->
-    <div class="grid mb-4">
-      <div class="col-6">
-        <label class="block font-semibold mb-2" style="font-size: 14px;">
-          Date d'entrée <span style="color: red;">*</span>
-        </label>
-        <p-calendar formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true" 
-          inputId="date" styleClass="w-full" [inputStyle]="{'height': '45px'}">
-        </p-calendar>
+    <!--MODE ACHAT-->
+    <div *ngIf="modeGestion === 'achat'">
+      
+      <!-- Date d'entrée et Fournisseur -->
+      <div class="grid mb-4">
+        <div class="col-6">
+          <label class="block font-semibold mb-2" style="font-size: 14px;">
+            <i class="pi pi-calendar mr-1"></i> Date d'entrée <span style="color: red;">*</span>
+          </label>
+          <p-calendar formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true" 
+            inputId="date" styleClass="w-full" [inputStyle]="{'height': '45px'}">
+          </p-calendar>
+        </div>
+
+        <div class="col-6">
+          <label class="block font-semibold mb-2" style="font-size: 14px;">
+            Fournisseur
+          </label>
+          <p-dropdown formControlName="fournisseurId" [options]="fournisseurs" 
+            optionLabel="nom" optionValue="id" placeholder="Sélectionner un fournisseur"
+            [filter]="true" [showClear]="true" styleClass="w-full" [style]="{'height': '45px'}">
+          </p-dropdown>
+        </div>
       </div>
 
-      <div class="col-6">
-        <label class="block font-semibold mb-2" style="font-size: 14px;">
-          Type d'aliment <span style="color: red;">*</span>
-        </label>
-        <p-dropdown formControlName="typeAlimentId" [options]="typeAliments"
-          optionLabel="libelle" optionValue="id" placeholder="Sélectionner un type"
-          [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
-        </p-dropdown>
-      </div>
-    </div>
+      <!-- Section: Ingrédients à acheter -->
+      <div class="mb-4 p-3" style="background: #F9FAFB; border-radius: 8px; border: 1px solid #E5E7EB;">
+        <h6 class="font-semibold mb-3" style="color: #374151;">INGRÉDIENTS À ACHETER</h6>
 
-    <!-- Mode d'alimentation -->
-    <div class="field mb-4">
-      <label class="block font-semibold mb-2" style="font-size: 14px;">
-        Mode d'alimentation
-      </label>
-      <div class="flex gap-2">
-        <button type="button" pButton label="Animal individuel"
-          [class]="modeAlimentation === 'individuel' ? 'p-button-success' : 'p-button-outlined'"
-          class="flex-1" style="height: 42px; font-size: 14px;"
-          [style.background]="modeAlimentation === 'individuel' ? '#2E7D32' : 'transparent'"
-          [style.border-color]="'#2E7D32'"
-          [style.color]="modeAlimentation === 'individuel' ? 'white' : '#2E7D32'"
-          (click)="switchMode('individuel')">
+        <div formArrayName="ingredientsAchat">
+          <div *ngFor="let control of ingredientsAchatArray.controls; let i = index" 
+               [formGroupName]="i" class="mb-3">
+            <div class="p-3" style="background: white; border-radius: 6px; border: 1px solid #E5E7EB;">
+              <div class="mb-2 font-semibold text-sm" style="color: #6B7280;">INGRÉDIENT {{ i + 1 }}</div>
+
+              <!-- Type d'ingrédient, Nom, Quantité -->
+              <div class="grid mb-3">
+                <div class="col-4">
+                  <label class="block mb-2 text-sm font-semibold">Type d'ingrédient <span style="color: red;">*</span></label>
+                  <p-dropdown formControlName="typeAlimentId" [options]="typeAliments"
+                    optionLabel="libelle" optionValue="id" placeholder="Sélectionner le type"
+                    [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
+                  </p-dropdown>
+                </div>
+
+                <div class="col-4">
+                  <label class="block mb-2 text-sm font-semibold">Nom de l'ingrédient <span style="color: red;">*</span></label>
+                  <p-dropdown formControlName="ingredientId" 
+                    [options]="getIngredientsByTypeAchat(control.value.typeAlimentId)" 
+                    optionLabel="nom" optionValue="id"
+                    placeholder="Choisir l'ingrédient" [filter]="true" styleClass="w-full" 
+                    [style]="{'height': '45px'}">
+                  </p-dropdown>
+                </div>
+
+                <div class="col-4">
+                  <label class="block mb-2 text-sm font-semibold">Quantité (Kg) <span style="color: red;">*</span></label>
+                  <input pInputText type="number" step="0.01" formControlName="quantiteKg"
+                    class="w-full" style="height: 45px;" />
+                </div>
+              </div>
+
+              <!-- Prix unitaire et Sous-total -->
+              <div class="grid mb-3">
+                <div class="col-6">
+                  <label class="block mb-2 text-sm font-semibold">Prix unitaire (FCFA/Kg) <span style="color: red;">*</span></label>
+                  <input pInputText type="number" step="0.01" formControlName="prixUnitaire"
+                    class="w-full" style="height: 45px;" />
+                </div>
+
+                <div class="col-6">
+                  <label class="block mb-2 text-sm font-semibold">Sous-total</label>
+                  <div class="w-full p-3 text-center font-bold" 
+                    style="background: #F3F4F6; border-radius: 6px; color: #374151;">
+                    {{ getSousTotal(i, 'achat') | number:'1.2-2' }} FCFA
+                  </div>
+                </div>
+              </div>
+
+              <!-- Mode d'alimentation -->
+              <div class="mb-3">
+                <label class="block mb-2 text-sm font-semibold">Mode d'alimentation</label>
+                <div class="flex gap-2 mb-3">
+                  <button type="button" pButton label="Individuel"
+                    [class]="control.value.modeAlimentation === 'individuel' ? 'p-button-success flex-1' : 'p-button-outlined flex-1'"
+                    [style.background]="control.value.modeAlimentation === 'individuel' ? '#2E7D32' : 'transparent'"
+                    [style.border-color]="'#2E7D32'"
+                    [style.color]="control.value.modeAlimentation === 'individuel' ? 'white' : '#2E7D32'"
+                    style="height: 40px; border-radius: 6px;"
+                    (click)="control.patchValue({modeAlimentation: 'individuel', typeAnimalId: null})">
+                  </button>
+
+                  <button type="button" pButton label="Lot"
+                    [class]="control.value.modeAlimentation === 'lot' ? 'p-button-success flex-1' : 'p-button-outlined flex-1'"
+                    [style.background]="control.value.modeAlimentation === 'lot' ? '#2E7D32' : 'transparent'"
+                    [style.border-color]="'#2E7D32'"
+                    [style.color]="control.value.modeAlimentation === 'lot' ? 'white' : '#2E7D32'"
+                    style="height: 40px; border-radius: 6px;"
+                    (click)="control.patchValue({modeAlimentation: 'lot', animalId: null})">
+                  </button>
+                </div>
+
+                <!-- Dropdown pour type d'animal si mode Lot -->
+                <div *ngIf="control.value.modeAlimentation === 'lot'">
+                  <p-dropdown formControlName="typeAnimalId" [options]="typeAnimaux" 
+                    optionLabel="nom" optionValue="id" placeholder="Sélectionner le type d'animal"
+                    [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
+                  </p-dropdown>
+                </div>
+
+                <!-- Dropdown pour animal si mode Individuel -->
+                <div *ngIf="control.value.modeAlimentation === 'individuel'">
+                  <p-dropdown formControlName="animalId" [options]="animaux" 
+                    optionLabel="codeAnimal" optionValue="id" placeholder="Sélectionner un animal"
+                    [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
+                  </p-dropdown>
+                </div>
+              </div>
+
+              <!-- Bouton supprimer -->
+              <div class="text-right" *ngIf="ingredientsAchatArray.length > 1">
+                <button type="button" pButton icon="pi pi-trash" 
+                  class="p-button-text p-button-danger"
+                  (click)="supprimerIngredientAchat(i)">
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bouton Ajouter un ingrédient -->
+        <button type="button" pButton label="Ajouter un ingrédient" 
+          icon="pi pi-plus" class="p-button-text w-full"
+          style="color: #2E7D32; border: 1px dashed #2E7D32; height: 42px;"
+          (click)="ajouterIngredientAchat()">
         </button>
-
-        <button type="button" pButton label="Alimentation par lot"
-          [class]="modeAlimentation === 'lot' ? 'p-button-success' : 'p-button-outlined'"
-          class="flex-1" style="height: 42px; font-size: 14px;"
-          [style.background]="modeAlimentation === 'lot' ? '#2E7D32' : 'transparent'"
-          [style.border-color]="'#2E7D32'"
-          [style.color]="modeAlimentation === 'lot' ? 'white' : '#2E7D32'"
-          (click)="switchMode('lot')">
-        </button>
-      </div>
-    </div>
-
-    <!-- Animal individuel -->
-    <div *ngIf="modeAlimentation === 'individuel'" class="field mb-4">
-      <label class="block font-semibold mb-2" style="font-size: 14px;">
-        Code Animal
-      </label>
-      <p-dropdown formControlName="animalId" [options]="animaux" optionLabel="codeAnimal" 
-        optionValue="id" placeholder="Sélectionner un animal" [filter]="true"
-        styleClass="w-full" [style]="{'height': '45px'}">
-      </p-dropdown>
-    </div>
-
-    <!-- Lot -->
-    <div *ngIf="modeAlimentation === 'lot'" class="field mb-4">
-      <label class="block font-semibold mb-2" style="font-size: 14px;">
-        Type d'animal (Lot)
-      </label>
-      <p-dropdown formControlName="typeAnimalId" [options]="typeAnimaux" optionLabel="nom" 
-        optionValue="id" placeholder="Sélectionner un type" [filter]="true"
-        styleClass="w-full" [style]="{'height': '45px'}">
-      </p-dropdown>
-    </div>
-
-    <!-- Quantité et Prix -->
-    <div class="grid mb-4">
-      <div class="col-6">
-        <label class="block font-semibold mb-2" style="font-size: 14px;">
-          Quantité (Kg) <span style="color: red;">*</span>
-        </label>
-        <input pInputText type="number" step="0.01" formControlName="quantiteKg"
-          class="w-full" style="height: 45px; font-size: 14px;" />
       </div>
 
-      <div class="col-6">
-        <label class="block font-semibold mb-2" style="font-size: 14px;">
-          Prix unitaire (FCFA/Kg) <span style="color: red;">*</span>
-        </label>
-        <input pInputText type="number" step="0.01" formControlName="prixUnitaire"
-          class="w-full" style="height: 45px; font-size: 14px;" />
-      </div>
     </div>
+    
+    <!-- ===================== MODE FABRICATION ===================== -->
+    <div *ngIf="modeGestion === 'fabrication'">
+      
+      <!-- Date de fabrication -->
+      <div class="grid mb-4">
+        <div class="col-12">
+          <label class="block font-semibold mb-2" style="font-size: 14px;">
+            <i class="pi pi-calendar mr-1"></i> Date de fabrication <span style="color: red;">*</span>
+          </label>
+          <p-calendar formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true" 
+            inputId="dateFabrication" styleClass="w-full" [inputStyle]="{'height': '45px'}">
+          </p-calendar>
+        </div>
+      </div>
 
-    <!-- Fournisseur -->
-    <div class="field mb-4">
-      <label class="block font-semibold mb-2" style="font-size: 14px;">
-        Fournisseur
-      </label>
-      <p-dropdown formControlName="fournisseurId" [options]="fournisseurs" optionLabel="nom" 
-        optionValue="id" placeholder="Sélectionner un fournisseur (optionnel)" 
-        [filter]="true" [showClear]="true" styleClass="w-full" [style]="{'height': '45px'}">
-      </p-dropdown>
+      <!-- 🔥 CIBLAGE GLOBAL POUR FABRICATION -->
+      <div class="mb-4 p-3" style="background: #FFF9E6; border-radius: 8px; border: 2px solid #FFB800;">
+        <h6 class="font-semibold mb-3" style="color: #8B6914;">
+          <i class="pi pi-users mr-2"></i>CIBLAGE DE LA FABRICATION (pour les 4 ingrédients)
+        </h6>
+        
+        <div class="flex gap-2 mb-3">
+          <button type="button" pButton label="Individuel"
+            [class]="form.value.modeAlimentationGlobal === 'individuel' ? 'p-button-success flex-1' : 'p-button-outlined flex-1'"
+            [style.background]="form.value.modeAlimentationGlobal === 'individuel' ? '#2E7D32' : 'transparent'"
+            [style.border-color]="'#2E7D32'"
+            [style.color]="form.value.modeAlimentationGlobal === 'individuel' ? 'white' : '#2E7D32'"
+            style="height: 48px; font-weight: 600;"
+            (click)="setModeGlobal('individuel')">
+          </button>
+
+          <button type="button" pButton label="Lot"
+            [class]="form.value.modeAlimentationGlobal === 'lot' ? 'p-button-success flex-1' : 'p-button-outlined flex-1'"
+            [style.background]="form.value.modeAlimentationGlobal === 'lot' ? '#2E7D32' : 'transparent'"
+            [style.border-color]="'#2E7D32'"
+            [style.color]="form.value.modeAlimentationGlobal === 'lot' ? 'white' : '#2E7D32'"
+            style="height: 48px; font-weight: 600;"
+            (click)="setModeGlobal('lot')">
+          </button>
+        </div>
+
+        <!-- Dropdown Type d'animal (mode LOT) -->
+        <div *ngIf="form.value.modeAlimentationGlobal === 'lot'">
+          <label class="block mb-2 text-sm font-semibold">Type d'animal cible <span style="color: red;">*</span></label>
+          <p-dropdown formControlName="typeAnimalIdGlobal" [options]="typeAnimaux" 
+            optionLabel="nom" optionValue="id" placeholder="Sélectionner le type d'animal"
+            [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
+          </p-dropdown>
+        </div>
+
+        <!-- Dropdown Animal individuel (mode INDIVIDUEL) -->
+        <div *ngIf="form.value.modeAlimentationGlobal === 'individuel'">
+          <label class="block mb-2 text-sm font-semibold">Animal cible <span style="color: red;">*</span></label>
+          <p-dropdown formControlName="animalIdGlobal" [options]="animaux" 
+            optionLabel="codeAnimal" optionValue="id" placeholder="Sélectionner un animal"
+            [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
+          </p-dropdown>
+        </div>
+      </div>
+
+      <!-- Section: Composition de l'aliment -->
+      <div class="mb-4 p-3" style="background: #F9FAFB; border-radius: 8px; border: 1px solid #E5E7EB;">
+        <h6 class="font-semibold mb-3" style="color: #374151;">COMPOSITION DE L'ALIMENT (4 ingrédients)</h6>
+
+        <!-- Liste des ingrédients par catégorie -->
+        <div formArrayName="ingredientsFabrication">
+          <div *ngFor="let control of ingredientsFabricationArray.controls; let i = index" 
+               [formGroupName]="i" class="mb-3">
+            <div class="p-3" style="background: white; border-radius: 6px; border: 1px solid #E5E7EB;">
+              
+              <!-- En-tête de catégorie -->
+              <div class="flex align-items-center justify-content-between mb-3">
+                <span class="font-semibold" style="color: #2E7D32;">
+                  {{ control.value.categorie }}
+                </span>
+              </div>
+
+              <!-- Nom, Quantité, Prix, Sous-total -->
+              <div class="grid mb-3">
+                <div class="col-4">
+                  <label class="block mb-2 text-sm font-semibold">
+                    Ingrédient <span style="color: red;">*</span>
+                  </label>
+                  <p-dropdown formControlName="ingredientId" 
+                    [options]="getIngredientsByCategorie(control.value.categorie)" 
+                    optionLabel="nom" optionValue="id" placeholder="Choisir l'ingrédient"
+                    [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
+                  </p-dropdown>
+                </div>
+
+                <div class="col-2">
+                  <label class="block mb-2 text-sm font-semibold">
+                    Quantité (Kg) <span style="color: red;">*</span>
+                  </label>
+                  <input pInputText type="number" step="0.01" formControlName="quantiteKg"
+                    class="w-full" style="height: 45px;" />
+                </div>
+
+                <div class="col-3">
+                  <label class="block mb-2 text-sm font-semibold">
+                    Prix (FCFA/kg) <span style="color: red;">*</span>
+                  </label>
+                  <input pInputText type="number" step="0.01" formControlName="prixUnitaire"
+                    class="w-full" style="height: 45px;" />
+                </div>
+
+                <div class="col-3">
+                  <label class="block mb-2 text-sm font-semibold">Sous-total</label>
+                  <div class="w-full p-3 text-center font-bold" 
+                    style="background: #F3F4F6; border-radius: 6px; color: #374151; font-size: 13px;">
+                    {{ getSousTotal(i, 'fabrication') | number:'1.0-0' }} FCFA
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <!-- Coût total -->
-    <div class="field mb-3">
-      <label class="block font-semibold mb-2" style="font-size: 14px;">
-        Coût total
-      </label>
-      <div class="w-full p-3 text-center font-bold" 
-        style="background: #e5e7eb; border-radius: 6px; font-size: 20px; padding: 12px;">
-        {{ coutTotal | number:'1.2-2' }} FCFA
+    <div class="p-4 mb-3" style="background: #3A8D5B; border-radius: 8px; color: white;">
+      <div class="flex justify-content-between align-items-center">
+        <div>
+          <div class="text-sm mb-1" style="opacity: 0.9;">
+            {{ modeGestion === 'achat' ? 'Coût total achat' : 'Coût total fabrication' }}
+          </div>
+          <div class="text-3xl font-bold">
+            {{ coutTotal | number:'1.2-2' }} FCFA
+          </div>
+        </div>
+        <button pButton type="submit" label="Enregistrer" 
+          class="p-button-lg" [loading]="processing" [disabled]="!form.valid"
+          style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 12px 32px;">
+        </button>
       </div>
     </div>
 
   </form>
 
   <ng-template pTemplate="footer">
-    <div class="flex gap-3 w-full">
-      <button pButton class="p-button-success flex-1" form="alimentationForm" type="submit" 
-        [loading]="processing" [disabled]="!form.valid" label="Enregistrer"
-        style="background:#2E7D32; border-color:#2E7D32; height: 45px; font-size: 14px; font-weight: 500;">
-      </button>
-
-      <button pButton class="p-button-outlined" label="Annuler"
-        style="color:#8B5E3C; border-color:#8B5E3C; height: 45px; font-size: 14px; font-weight: 500; min-width: 140px;"
-        (click)="showForm = false">
+    <div class="flex justify-content-end">
+      <button pButton class="p-button-text" label="Annuler"
+        style="color:#6B7280;" (click)="showForm = false">
       </button>
     </div>
   </ng-template>
 </p-dialog>
+`

@@ -31,6 +31,10 @@ export const intervenantsRoutes: Routes = [
   loadComponent:() => import ("./fournisseur/fournisseur.component").then(value =>value.FournisseurComponent)
 },
 {
+  path:'ingredients',
+  loadComponent:() => import("./ingredients/ingredients.component").then(value => value.IngredientsComponent)
+},
+{
   path:'traitement',
   loadComponent:() => import ("./traitement/traitement.component").then(value =>value.TraitementComponent)
 },
