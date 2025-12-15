@@ -103,7 +103,7 @@ export class DashboardGlobalComponent implements OnInit {
         this.loadingCards[0] = false;
         
         // Calculer volume semaine (Card 7)
-        this.volumeSemaine = data.total || 0;
+        this.volumeSemaine = (data.total_prices || 0) + (this.statsAliments?.total || 0);
         this.loadingCards[6] = false;
 
         // Période données (Card 8)
@@ -127,6 +127,7 @@ export class DashboardGlobalComponent implements OnInit {
     this.predictionService.getAlimentStats().subscribe({
       next: (data) => {
         this.statsAliments = data;
+        this.volumeSemaine = (this.statsAnimaux?.total_prices || 0) + (data.total || 0);
         this.loadingCards[1] = false;
         this.checkLoadingComplete();
       },
