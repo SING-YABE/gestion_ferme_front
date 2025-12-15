@@ -61,7 +61,7 @@ export class PredictionsComponent implements OnInit {
     this.predictionService.getStats().subscribe({
       next: (data) => {
         // Si on a des stats, le modèle existe probablement
-        this.animalModelTrained = data.total > 0;
+        this.animalModelTrained = data.total_prices > 0;
       },
       error: () => {
         this.animalModelTrained = false;
