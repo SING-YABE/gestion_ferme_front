@@ -107,7 +107,8 @@ export class MenuService {
         { title: 'Fournisseur', icon: faTruck, routerLink: '/fournisseurs' },
         { title: 'Ingredient', icon: faCarrot, routerLink: '/ingredients' },
         { title: 'Traitement', icon: faCapsules, routerLink: '/traitement' },
-        { title: 'Type de dépense', icon: faDollarSign, routerLink: '/typeDepense' }
+        { title: 'Type de dépense', icon: faDollarSign, routerLink: '/typeDepense' },
+        { title: 'Type de vente', icon: faDollarSign, routerLink: '/typeVente' },
       ]
     },
   ];

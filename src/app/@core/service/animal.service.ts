@@ -37,6 +37,7 @@ export interface AnimalResponseDTO {
   etatSante: EtatSanteInfo;
   batiment: BatimentInfo;
   observations?: string;
+  vendu: boolean;  
 }
 
 @Injectable({

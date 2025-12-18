@@ -1,36 +1,68 @@
 <button *ngIf="mode === 'create'" pButton label="Ajouter état de santé" icon="pi pi-plus" (click)="handleShow()"
   class="p-button-success p-button-rounded" style="background-color:#4CAF50; border-color:#4CAF50;">
 </button>
-
 <button *ngIf="mode === 'edit'" pButton icon="pi pi-pencil" class="p-button-rounded p-button-warning"
-  (click)="handleShow()" style="background:#16A34A ; border-color: #16A34A ;color:white;">
+(click)="handleShow()" style="background:#16A34A ; border-color: #16A34A ;color:white;">
 </button>
 
-<p-dialog header="{{ mode === 'create' ? 'Nouveau état de santé' : 'Modifier état de santé' }}" appendTo="body"
-  [modal]="true" [style]="{width: '500px'}" [(visible)]="showForm">
-
+<p-dialog 
+  header="{{ mode === 'create' ? 'Nouveau état de santé' : 'Modifier état de santé' }}" 
+  appendTo="body"
+  [modal]="true" 
+  [style]="{width: '650px'}" 
+  [(visible)]="showForm"
+  styleClass="farm-dialog"
+>
   <form [formGroup]="form">
     <div class="field mb-3">
-      <label for="typeAnimalId">Type d'animal <span style="color:red">*</span></label>
-      <p-dropdown id="typeAnimalId" formControlName="typeAnimalId" [options]="typesAnimaux" optionLabel="nom"
-        optionValue="id" placeholder="Sélectionnez un type" styleClass="w-full">
+      <label for="typeAnimalId" class="block mb-2 font-medium" style="color: #1f2937; font-size: 1rem;">
+        Type d'animal <span style="color:red">*</span>
+      </label>
+      <p-dropdown 
+        id="typeAnimalId" 
+        formControlName="typeAnimalId" 
+        [options]="typesAnimaux" 
+        optionLabel="nom"
+        optionValue="id" 
+        placeholder="Sélectionnez un type" 
+        styleClass="w-full"
+        [style]="{width: '100%', height: '50px'}"
+        [panelStyle]="{fontSize: '1rem'}"
+      >
       </p-dropdown>
     </div>
 
     <div class="field mb-3">
-      <label for="description">Description <span style="color:red">*</span></label>
-      <input id="description" type="text" formControlName="description" pInputText placeholder="Ex: En croissance" />
+      <label for="description" class="block mb-2 font-medium" style="color: #1f2937; font-size: 1rem;">
+        Nom <span style="color:red">*</span>
+      </label>
+      <input 
+        id="description" 
+        type="text" 
+        formControlName="description" 
+        pInputText 
+        placeholder="Ex: En croissance"
+        style="width: 100%; height: 50px; font-size: 1rem; padding: 0.875rem;"
+      />
     </div>
   </form>
 
   <ng-template pTemplate="footer">
-    <button pButton type="button" class="p-button-outlined p-button-danger mr-2"
-      style="border-color:#FF5722; color:#FF5722;" (click)="showForm=false">
+    <button 
+      pButton 
+      type="button" 
+      class="p-button-outlined p-button-danger mr-2"
+      style="border-color:#FF5722; color:#FF5722; padding: 0.75rem 1.5rem; font-size: 0.95rem;" 
+      (click)="showForm=false">
       Annuler
     </button>
-
-    <button pButton class="p-button-success" style="background-color:#4CAF50; border-color:#4CAF50;"
-      [disabled]="form.invalid" [loading]="processing" (click)="handleSubmit()">
+    <button 
+      pButton 
+      class="p-button-success" 
+      style="background-color:#4CAF50; border-color:#4CAF50; padding: 0.75rem 1.5rem; font-size: 0.95rem;"
+      [disabled]="form.invalid" 
+      [loading]="processing" 
+      (click)="handleSubmit()">
       Enregistrer
     </button>
   </ng-template>

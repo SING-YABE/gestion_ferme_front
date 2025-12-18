@@ -1,5 +1,5 @@
 <div class="odyssey-shadow-low border-round" style="background:#F5F0E6; border:1px solid #D9D2C2;">
-    
+
     <div class="px-4 py-2 flex gap-3 align-items-center"
         style="background:#16A34A; color:white; border-radius:8px 8px 0 0;">
         <div class="flex-1">
@@ -12,54 +12,81 @@
 
     <div>
         <p-table [value]="ventes" [loading]="loading" [rows]="pageSize" [rowsPerPageOptions]="[5,10,20]"
-            [paginator]="ventes.length > pageSize">
+            [paginator]="ventes.length > pageSize" [expandedRowKeys]="expandedRows">
 
             <ng-template pTemplate="header">
                 <tr style="background:#DCFCE7;">
+                    <th style="width: 3rem"></th>
                     <th>Date</th>
-                    <th>Type</th>
-                    <th>Quantité</th>
-                    <th>Poids Total (kg)</th>
-                    <th>Prix Unitaire</th>
-                    <th>Montant Total</th>
                     <th>Client</th>
+                    <th>Nb animaux</th>
+                    <th>Poids Total (kg)</th>
+                    <th>Montant Total</th>
                     <th style="text-align:center; width:150px;">Actions</th>
                 </tr>
             </ng-template>
 
-            <ng-template pTemplate="body" let-v>
+            <ng-template pTemplate="body" let-v let-expanded="expanded">
                 <tr>
+                    <td>
+                        <button type="button" pButton pRipple [pRowToggler]="v"
+                            class="p-button-text p-button-rounded p-button-plain"
+                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
+                        </button>
+                    </td>
                     <td>{{ v.dateVente }}</td>
-                    <td>{{ v.type }}</td>
-                    <td>{{ v.quantite }}</td>
-                    <td>{{ v.poidsTotal }}</td>
-                    <td>{{ v.prixUnitaire }}</td>
-                    <td>{{ v.montantTotal }}</td>
                     <td>{{ v.client }}</td>
-
+                    <td>{{ v.animaux.length }}</td>
+                    <td><strong>{{ v.poidsTotal | number:'1.1-1' }} kg</strong></td>
+                    <td><strong>{{ v.montantTotal | number:'1.0-0' }} FCFA</strong></td>
                     <td class="text-center">
-                        <div class="flex gap-2 justify-content-center">
-                            <app-ventes-form [target]="v" mode="edit" (onUpdate)="loadData()"></app-ventes-form>
-
-                            <button pButton class="p-button-rounded"
-                                icon="pi pi-trash"
-                                style="background:#B91C1C; border-color:#B91C1C;"
-                                (click)="confirmDelete(v)">
-                            </button>
-                        </div>
+                        <button pButton class="p-button-rounded p-button-danger" icon="pi pi-trash"
+                            (click)="confirmDelete(v)">
+                        </button>
                     </td>
                 </tr>
             </ng-template>
 
-            <ng-template pTemplate="emptymessage">
+            <!-- Détails des animaux -->
+            <ng-template pTemplate="rowexpansion" let-v>
                 <tr>
-                    <td colspan="8" class="text-center py-4">
-                        <i class="pi pi-inbox mr-2"></i> Aucune vente trouvée
-                    </td>
+                    <td colspan="6">
+                        <div class="p-3">
+                            <h6 class="mb-3">Détails des animaux vendus</h6>
+                            <p-table [value]="v.animaux" styleClass="p-datatable-sm">
+                                <ng-template pTemplate="header">
+                <tr style="background: #f5f5f5;">
+                    <th>Code Animal</th>
+                    <th>Type Vente</th>
+                    <th>Poids (kg)</th>
+                    <th>Prix Unitaire</th>
+                    <th>Montant</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-animal>
+                <tr>
+                    <td><strong>{{ animal.animalCode }}</strong></td>
+                    <td>{{ animal.typeVenteNom }}</td>
+                    <td>{{ animal.poidsVente }}</td>
+                    <td>{{ animal.prixUnitaire | number:'1.0-0' }}</td>
+                    <td><strong>{{ animal.montantTotal | number:'1.0-0' }} FCFA</strong></td>
                 </tr>
             </ng-template>
         </p-table>
     </div>
+    </td>
+    </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="6" class="text-center py-4">
+                <i class="pi pi-inbox mr-2"></i> Aucune vente trouvée
+            </td>
+        </tr>
+    </ng-template>
+    </p-table>
+</div>
 </div>
 
 <p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>

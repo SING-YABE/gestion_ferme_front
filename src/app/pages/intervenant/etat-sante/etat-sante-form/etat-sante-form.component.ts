@@ -49,12 +49,12 @@ ngOnInit(): void {
     error: (err) => console.error('Erreur', err)
   });
 }
-
+  
 ngOnChanges(): void {
   if (this.mode === 'edit' && this.target) {
     this.form.patchValue({ 
       description: this.target.description,
-      typeAnimalId: this.target.typeAnimal.id  
+      typeAnimalId: this.target.typeAnimal.id  // ← AJOUT
     });
   }
 }

@@ -14,16 +14,17 @@
    
 <ng-template pTemplate="header">
   <tr style="background:#DCFCE7;">
-    <th>Type d'animal</th>
-    <th>Description</th>
+    <th>Nom</th>
+    <th>Type animal</th>
     <th style="width:150px; text-align:center;">Actions</th>
   </tr>
 </ng-template>
 
 <ng-template pTemplate="body" let-etat>
   <tr>
-    <td><span class="font-semibold">{{ etat.typeAnimal.nom }}</span></td>
-    <td>{{ etat.description }}</td>
+    <td>{{ etat.description }}</td> 
+    <td>{{ etat.typeAnimal?.nom }}</td>
+
     <td>
       <div class="flex gap-2 justify-content-center">
         <app-etat-sante-form [target]="etat" mode="edit" (onUpdate)="loadData()"></app-etat-sante-form>

@@ -4,7 +4,7 @@ import { TableModule } from 'primeng/table';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { ToastrService } from 'ngx-toastr';
-import { Vente, VenteService } from '../../@core/service/vente.service';
+import { VenteService, VenteDetailResponseDTO } from '../../@core/service/vente.service';
 import { VentesFormComponent } from './ventes-form/ventes-form.component';
 
 @Component({
@@ -17,9 +17,10 @@ import { VentesFormComponent } from './ventes-form/ventes-form.component';
 })
 export class VentesComponent {
 
-  ventes: Vente[] = [];
+  ventes: VenteDetailResponseDTO[] = [];
   loading = false;
   pageSize = 5;
+  expandedRows: any = {};
 
   constructor(
     private venteService: VenteService,
@@ -45,21 +46,21 @@ export class VentesComponent {
     });
   }
 
-  confirmDelete(vente: Vente) {
+  confirmDelete(vente: VenteDetailResponseDTO) {
     this.cs.confirm({
       header: 'Confirmation',
-      message: 'Voulez-vous vraiment supprimer cette vente ?',
+      message: `Supprimer la vente du ${vente.dateVente} (${vente.animaux.length} animaux) ?`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Oui',
       rejectLabel: 'Non',
-      accept: () => this.deleteVente(vente.id!)
+      accept: () => this.deleteVente(vente.id)
     });
   }
 
   deleteVente(id: number) {
     this.venteService.delete(id).subscribe({
       next: () => {
-        this.toastr.success('Vente supprimée');
+        this.toastr.success('Vente supprimée (animaux remis en vente)');
         this.loadData();
       },
       error: () => {

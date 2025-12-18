@@ -1,7 +1,130 @@
 .field {
   margin-bottom: 1.5rem;
 }
+::ng-deep .farm-dialog {
+  .p-dialog-header {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+  }
 
+  .p-dialog-content {
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+  }
+
+  .p-dialog-footer {
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+  }
+}
+
+/* Style pour les inputs */
+::ng-deep .p-inputtext,
+::ng-deep .p-dropdown,
+::ng-deep .p-calendar input {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  color: #374151;
+  
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  &:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+  }
+}
+
+/* Style pour textarea */
+::ng-deep .p-inputtextarea {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  color: #374151;
+  
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  &:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+  }
+}
+
+::ng-deep .p-button-outlined {
+  &.p-button-sm {
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #f3f4f6 !important;
+      border-color: #d1d5db !important;
+      color: #374151 !important;
+    }
+  }
+}
+
+::ng-deep .p-button-success {
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #047857 !important;
+    border-color: #047857 !important;
+  }
+}
+
+.field label i {
+  font-size: 1rem;
+  vertical-align: middle;
+}
+
+::ng-deep .p-dropdown {
+  width: 100%;
+
+  .p-dropdown-label {
+    padding: 0.75rem;
+  }
+
+  .p-dropdown-trigger {
+    width: 3rem;
+  }
+}
+
+/* Style pour le calendrier */
+::ng-deep .p-calendar {
+  width: 100%;
+
+  .p-inputtext {
+    width: 100%;
+  }
+
+  .p-datepicker-trigger {
+    color: #6b7280;
+  }
+}
+
+@media (max-width: 768px) {
+  ::ng-deep .farm-dialog {
+    .p-dialog {
+      width: 95vw !important;
+      max-width: 95vw !important;
+    }
+  }
+
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+}
 .field label {
   color: #424242;
   font-weight: 600;

@@ -10,6 +10,7 @@ import { TypeDepenseService } from '../../../@core/service/type-depense.service'
 import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+
 @Component({
   selector: 'app-chargesdiverses-form',
   standalone: true,
@@ -38,9 +39,15 @@ export class ChargesdiversesFormComponent implements OnInit, OnChanges {
   processing = false;
 
   typeDepenses: any[] = [];
+  montantPresets = [2000, 5000, 6000, 10000, 25000 ];
 
-  montantPresets = [1000, 2000, 5000, 10000, 25000, 50000];
-
+  modesPaiement = [
+    { label: 'Espèces', value: 'especes' },
+    { label: 'Mobile Money', value: 'mobile_money' },
+    { label: 'Virement bancaire', value: 'virement' },
+    { label: 'Chèque', value: 'cheque' },
+    { label: 'Carte bancaire', value: 'carte' }
+  ];
   constructor(
     private fb: FormBuilder,
     private service: ChargesDiversesService,

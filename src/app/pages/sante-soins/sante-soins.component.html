@@ -15,9 +15,11 @@
                 <th>Date</th>
                 <th>Code Animal</th>
                 <th>Motif</th>
-                <th>Traitement</th>
-                <th>Coût</th>
                 <th>Vétérinaire</th>
+                <th>Traitement</th>
+                <th>Coût prestation</th>
+                <th>Coût medicament</th>
+                <th>Total</th>
                 <th style="text-align:center; width:150px">Actions</th>
             </tr>
         </ng-template>
@@ -26,18 +28,33 @@
             <tr>
                 <td>{{ row.dateSoin }}</td>
                 <td>
-                    <span *ngIf="!row.soinCollectif && row.animal?.codeAnimal" class="font-semibold">
-                        {{ row.animal.codeAnimal }}
+                    <!-- Soin individuel -->
+                    <span *ngIf="!row.soinCollectif">
+                        {{ row.animalCode }}
                     </span>
-                    <span *ngIf="row.soinCollectif || !row.animal" style="color:#F59E0B; font-weight:600;">
+
+                    <!-- Soin collectif : tous -->
+                    <span *ngIf="row.soinCollectif && row.applyToAll" style="color:#F59E0B; font-weight:600;">
                         TOUS
+                    </span>
+
+                    <!-- collectif selection -->
+                    <span *ngIf="row.soinCollectif && !row.applyToAll && row.animalCodes?.length">
+                        {{ row.animalCodes.join(', ') }}
+                    </span>
+
+                    <span *ngIf="row.soinCollectif && !row.applyToAll && !row.animalCodes">
+                        {{ row.animalCode }}
                     </span>
                 </td>
 
                 <td>{{ row.motif }}</td>
-                <td>{{ row.traitement }}</td>
-                <td><strong>{{ row.cout }} FCFA</strong></td>
                 <td>{{ row.veterinaire }}</td>
+                <td>{{ row.traitement }}</td>
+
+                <td><strong>{{ row.cout }} FCFA</strong></td>
+                <td><strong>{{ row.coutMedicament }} FCFA</strong></td>
+                <td><strong>{{ row.totalPrestation }} FCFA</strong></td>
                 <td>
                     <div class="flex justify-content-center gap-2">
 
@@ -45,7 +62,7 @@
 
                         <button pButton icon="pi pi-trash" class="p-button-rounded"
                             style="background:#B91C1C; border-color:#B91C1C;" (click)="confirmDelete(row)">
-                        </button> 
+                        </button>
                     </div>
                 </td>
             </tr>

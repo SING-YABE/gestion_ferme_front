@@ -47,8 +47,8 @@
     <div *ngIf="isIndividuel" class="mb-4">
       <label class="block font-semibold mb-2" style="font-size: 15px;">Sélection de l'animal</label>
       <p-dropdown formControlName="codeAnimal" [options]="animals" optionLabel="label" optionValue="value"
-        placeholder="Choisir un animal..." [filter]="true" filterBy="label" [showClear]="true" 
-        styleClass="w-full" [style]="{'height': '45px'}">
+        placeholder="Choisir un animal..." [filter]="true" filterBy="label" [showClear]="true" styleClass="w-full"
+        [style]="{'height': '45px'}">
       </p-dropdown>
     </div>
 
@@ -73,20 +73,15 @@
     <div class="grid mb-4">
       <div class="col-6">
         <label class="block mb-2 font-semibold" style="font-size: 14px;">Date du soin *</label>
-        <p-calendar formControlName="dateSoin" dateFormat="dd/mm/yy" [showIcon]="true" 
-          styleClass="w-full" [inputStyle]="{'height': '45px'}">
+        <p-calendar formControlName="dateSoin" dateFormat="dd/mm/yy" [showIcon]="true" styleClass="w-full"
+          [inputStyle]="{'height': '45px'}">
         </p-calendar>
       </div>
 
       <div class="col-6">
         <label class="block mb-2 font-semibold" style="font-size: 14px;">Vétérinaire</label>
-        <p-dropdown formControlName="veterinaire" [options]="[
-            {label: 'Dr. Dupont', value: 'Dr. Dupont'},
-            {label: 'Dr. Martin', value: 'Dr. Martin'},
-            {label: 'Dr. Bernard', value: 'Dr. Bernard'}
-          ]" optionLabel="label" optionValue="value" placeholder="Dr. Dupont" [editable]="true" [showClear]="true"
-          styleClass="w-full" [style]="{'height': '45px'}">
-        </p-dropdown>
+        <textarea pInputTextarea formControlName="veterinaire" rows="2" placeholder="Dr KABORE" class="w-full"
+          style="font-size: 10px; padding: 10px;"></textarea>
       </div>
     </div>
 
@@ -101,15 +96,15 @@
     <div class="field mb-4">
       <label class="block mb-2 font-semibold" style="font-size: 14px;">Traitement *</label>
       <p-dropdown formControlName="traitement" [options]="traitements" optionLabel="nom" optionValue="nom"
-        placeholder="Choisir un traitement..." [filter]="true" [showClear]="true" 
-        styleClass="w-full" [style]="{'height': '45px'}">
+        placeholder="Choisir un traitement..." [filter]="true" [showClear]="true" styleClass="w-full"
+        [style]="{'height': '45px'}">
       </p-dropdown>
     </div>
 
     <!-- Coûts -->
     <div class="grid mb-4">
       <div class="col-6">
-        <label class="block mb-2 font-semibold" style="font-size: 14px;">Coût prestation (FCFA)</label>
+        <label class="block mb-2 font-semibold" style="font-size: 19px;">Coût prestation (FCFA)</label>
         <p-inputNumber formControlName="cout" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0"
           placeholder="0.00" styleClass="w-full" [inputStyle]="{'height': '45px'}">
         </p-inputNumber>
@@ -126,7 +121,7 @@
     <!-- Total -->
     <div class="field mb-4">
       <label class="block mb-2 font-semibold" style="font-size: 14px;">Total (FCFA)</label>
-      <div class="w-full p-3 text-center font-bold" 
+      <div class="w-full p-3 text-center font-bold"
         style="background: #e5e7eb; border-radius: 6px; font-size: 20px; padding: 12px;">
         {{ (form.get('cout')?.value || 0) + (form.get('coutMedicament')?.value || 0) | number:'1.2-2' }} FCFA
       </div>
@@ -143,14 +138,13 @@
 
   <ng-template pTemplate="footer">
     <div class="flex gap-3 w-full">
-      <button pButton label="Enregistrer le soin" class="flex-1" 
+      <button pButton label="Enregistrer le soin" class="flex-1"
         style="background: #1e293b; border-color: #1e293b; height: 45px; font-size: 14px; font-weight: 500;"
         [disabled]="processing || !form.valid" [loading]="processing" (click)="handleSubmit()">
       </button>
 
-      <button pButton label="Réinitialiser" class="p-button-outlined" 
-        style="height: 45px; font-size: 14px; font-weight: 500; min-width: 140px;"
-        (click)="resetForm()">
+      <button pButton label="Réinitialiser" class="p-button-outlined"
+        style="height: 45px; font-size: 14px; font-weight: 500; min-width: 140px;" (click)="resetForm()">
       </button>
     </div>
   </ng-template>

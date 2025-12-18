@@ -21,103 +21,178 @@
   [(visible)]="showForm" 
   [modal]="true"
   appendTo="body"
-  header="Charge Diverse"
-  [style]="{width: '650px'}"
+  header="Nouvelle Dépense"
+  [style]="{width: '1000px'}"
   styleClass="farm-dialog"
 >
+  <p class="text-gray-500 mb-4" style="margin-top: -10px;">
+    Enregistrez une dépense liée à l'exploitation de votre ferme
+  </p>
+
   <form [formGroup]="form" id="chargesForm" (ngSubmit)="handleSubmit()">
-
-      <div class="field">
-          <label for="date" class="block mb-2 font-semibold">
-            <i class="pi pi-calendar mr-1"></i>
-            Date <span class="text-red-500">*</span>
-          </label>
-          <p-calendar
-            id="date"
-            formControlName="date"
-            [showIcon]="true"
-            dateFormat="dd/mm/yy"
-            [showButtonBar]="true"
-            [monthNavigator]="true"
-            [yearNavigator]="true"
-            yearRange="2020:2030"
-            placeholder="Sélectionner une date"
-            styleClass="w-full"
-            inputStyleClass="w-full"
-          ></p-calendar>
-        </div>
     
+    <!-- Row 1: Date et Type de dépense -->
+    <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+      
+      <!-- Date de la dépense -->
+      <div class="field" style="margin: 0;">
+        <label for="date" class="block mb-2 font-medium" style="color: #1f2937; font-size: 0.95rem;">
+          <i class="pi pi-calendar mr-2" style="color: #059669;"></i>
+          Date de la dépense
+        </label>
+        <p-calendar
+          id="date"
+          formControlName="date"
+          [showIcon]="true"
+          dateFormat="dd/mm/yy"
+          [showButtonBar]="true"
+          [monthNavigator]="true"
+          [yearNavigator]="true"
+          yearRange="2020:2030"
+          placeholder="17 décembre 2025"
+          styleClass="w-full calendar-large"
+          inputStyleClass="w-full"
+          [style]="{width: '100%'}"
+          [inputStyle]="{height: '45px', fontSize: '1rem'}"
+        ></p-calendar>
+      </div>
 
-    <div class="field">
-      <label>Type Dépense</label>
-      <p-dropdown 
-        formControlName="typeDepenseId"
-        [options]="typeDepenses"
-        optionLabel="nom"
-        optionValue="id"
-        placeholder="Sélectionner un type"
-      ></p-dropdown>
-    </div>
-
-    <div class="field">
-      <label>Description</label>
-      <input pInputText formControlName="description">
-    </div>
-
-    <div class="field">
-      <label>Montant (FCFA)</label>
-      <input
-        pInputText
-        type="number"
-        formControlName="montant"
-        (input)="formatMontant()"
-      />
-
-      <div class="mt-2 flex gap-2">
-        <button 
-          *ngFor="let m of montantPresets"
-          pButton 
-          class="p-button-outlined p-button-sm"
-          style="border-color:#2E7D32; color:#2E7D32;"
-          (click)="applyMontant(m)">
-          {{ m | number }} FCFA
-        </button>
+      <!-- Type de dépense -->
+      <div class="field" style="margin: 0;">
+        <label class="block mb-2 font-medium" style="color: #1f2937; font-size: 0.95rem;">
+          <i class="pi pi-tag mr-2" style="color: #059669;"></i>
+          Type de dépense
+        </label>
+        <p-dropdown 
+          formControlName="typeDepenseId"
+          [options]="typeDepenses"
+          optionLabel="nom"
+          optionValue="id"
+          placeholder="Choisir un type"
+          styleClass="w-full dropdown-large"
+          [style]="{width: '100%', height: '45px'}"
+          [panelStyle]="{fontSize: '1rem'}"
+        ></p-dropdown>
       </div>
     </div>
 
-    <div class="field">
-      <label>Mode de paiement</label>
-      <input pInputText formControlName="modePaiement">
+    <!-- Row 2: Description -->
+    <div class="field" style="margin-bottom: 1.5rem;">
+      <label class="block mb-2 font-medium" style="color: #1f2937; font-size: 0.95rem;">
+        <i class="pi pi-file-edit mr-2" style="color: #059669;"></i>
+        Description
+      </label>
+      <input 
+        pInputText 
+        formControlName="description"
+        placeholder="Sables pour bâtiment"
+        style="width: 100%; height: 45px; font-size: 1rem;"
+      />
     </div>
 
-    <div class="field">
-      <label>Observations</label>
-      <textarea pInputTextarea rows="3" formControlName="observations"></textarea>
+    <!-- Row 3: Montant et Mode de paiement -->
+    <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+      
+      <!-- Montant (FCFA) -->
+  <!-- Montant (FCFA) -->
+<div class="field" style="margin: 0;">
+  <label class="block mb-2 font-medium" style="color: #1f2937; font-size: 0.95rem;">
+    <i class="pi pi-dollar mr-2" style="color: #059669;"></i>
+    Montant (FCFA)
+  </label>
+
+  <input
+    pInputText
+    type="number"
+    formControlName="montant"
+    placeholder="0"
+    (input)="formatMontant()"
+    style="width: 100%; height: 48px; font-size: 1.05rem;"
+  />
+
+  <!-- CADRE propositions -->
+  <div
+    style="
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1.5px dashed #d1d5db;
+      border-radius: 10px;
+      background: #f9fafb;
+    "
+  >
+    <div style="font-size: 0.9rem; color: #6b7280; margin-bottom: 0.75rem;">
+      💡 Montants suggérés
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+      <button 
+        *ngFor="let m of montantPresets"
+        pButton
+        type="button"
+        class="p-button-outlined"
+        style="
+          font-size: 1rem;
+          padding: 0.6rem 1.3rem;
+          border-radius: 999px;
+          border-color: #059669;
+          color: #059669;
+          background: #ecfdf5;
+        "
+        (click)="applyMontant(m)"
+      >
+        {{ m | number }} FCFA
+      </button>
+    </div>
+  </div>
+</div>
+
+
+      <!-- Mode de paiement -->
+      <div class="field" style="margin: 0;">
+        <label class="block mb-2 font-medium" style="color: #1f2937; font-size: 0.95rem;">
+          <i class="pi pi-credit-card mr-2" style="color: #059669;"></i>
+          Mode de paiement
+        </label>
+        <p-dropdown 
+          formControlName="modePaiement"
+          [options]="modesPaiement"
+          placeholder="Choisir un mode"
+          styleClass="w-full dropdown-large"
+          [style]="{width: '100%', height: '45px'}"
+          [panelStyle]="{fontSize: '1rem'}"
+        ></p-dropdown>
+      </div>
+    </div>
+
+    <!-- Row 4: Observations -->
+    <div class="field" style="margin-bottom: 0;">
+      <label class="block mb-2 font-medium" style="color: #1f2937; font-size: 0.95rem;">
+        <i class="pi pi-file mr-2" style="color: #059669;"></i>
+        Observations <span style="color: #9ca3af; font-weight: normal;">(optionnel)</span>
+      </label>
+      <textarea 
+        pInputTextarea 
+        rows="4" 
+        formControlName="observations"
+        placeholder="Notes supplémentaires..."
+        style="width: 100%; resize: vertical;"
+      ></textarea>
     </div>
 
   </form>
 
   <ng-template pTemplate="footer">
-
-    <button 
-      pButton 
-      class="p-button-outlined mr-2"
-      style="color:#2E7D32; border-color:#2E7D32;" 
-      (click)="showForm = false">
-      Annuler
-    </button>
-
-    <button 
-      pButton 
-      class="p-button-success"
-      form="chargesForm"
-      type="submit"
-      [loading]="processing"
-      style="background:#1B5E20; border-color:#1B5E20;">
-      Enregistrer
-    </button>
-
+    <div style="display: flex; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+      <button 
+        pButton 
+        label="Enregistrer la dépense"
+        icon="pi pi-check"
+        class="p-button-success"
+        form="chargesForm"
+        type="submit"
+        [loading]="processing"
+        style="background:#059669; border-color:#059669; padding: 0.75rem 2rem;">
+      </button>
+    </div>
   </ng-template>
-
 </p-dialog>
-

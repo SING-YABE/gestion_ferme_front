@@ -1,52 +1,148 @@
 <button pButton class="p-button-success" icon="pi pi-plus"
-  label="Ajouter vente" *ngIf="mode === 'create'" (click)="handleShow()">
+  label="Nouvelle vente" (click)="handleShow()">
 </button>
 
-<p-dialog header="Enregistrer une vente" [(visible)]="showForm" [modal]="true" [style]="{width:'600px'}" appendTo="body">
+<p-dialog header="Enregistrer une vente" [(visible)]="showForm" [modal]="true" 
+  [style]="{width:'800px'}" appendTo="body">
 
-    <form [formGroup]="form">
-        
+  <form [formGroup]="form">
+    
+    <!-- Date et Client -->
+    <div class="grid">
+      <div class="col-6">
         <div class="field">
-            <label>Date Vente</label>
-            <p-calendar formControlName="dateVente" dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
+          <label>Date de vente <span class="text-red-500">*</span></label>
+          <p-calendar formControlName="dateVente" dateFormat="dd/mm/yy" 
+            [showIcon]="true" styleClass="w-full"></p-calendar>
         </div>
+      </div>
 
+      <div class="col-6">
         <div class="field">
-            <label>Type</label>
-            <input pInputText formControlName="type" placeholder="Ex : Pour consommation">
+          <label>Client <span class="text-red-500">*</span></label>
+          <input pInputText formControlName="client" placeholder="Nom du client" 
+            class="w-full">
         </div>
+      </div>
+    </div>
 
-        <div class="field">
-            <label>Quantité</label>
-            <input pInputText formControlName="quantite" type="number">
-        </div>
-
-        <div class="field">
-            <label>Poids Total (kg)</label>
-            <input pInputText formControlName="poidsTotal" type="number">
-        </div>
-
-        <div class="field">
-            <label>Prix Unitaire</label>
-            <input pInputText formControlName="prixUnitaire" type="number">
-        </div>
-
-        <div class="field">
-            <label>Client</label>
-            <input pInputText formControlName="client">
-        </div>
-
-    </form>
-
-    <ng-template pTemplate="footer">
-        <button pButton class="p-button-outlined mr-2" label="Annuler" (click)="showForm=false"></button>
-
-        <button pButton class="p-button-success"
-            label="Enregistrer"
-            [loading]="processing"
-            [disabled]="form.invalid"
-            (click)="handleSubmit()">
+    <!-- Liste des animaux -->
+    <div class="field">
+      <div class="flex justify-content-between align-items-center mb-2">
+        <label class="font-bold">Animaux à vendre</label>
+        <button pButton type="button" icon="pi pi-plus" 
+          label="Ajouter un animal" 
+          class="p-button-sm p-button-outlined"
+          (click)="ajouterAnimal()">
         </button>
-    </ng-template>
+      </div>
+
+      <!-- Tableau des animaux -->
+      <div formArrayName="animaux" class="border-1 border-300 border-round p-3" 
+        style="background: #f9f9f9;">
+        
+        <div *ngIf="animaux.length === 0" class="text-center py-4 text-500">
+          <i class="pi pi-info-circle mr-2"></i>
+          Cliquez sur "Ajouter un animal" pour commencer
+        </div>
+
+        <div *ngFor="let animal of animaux.controls; let i = index" 
+          [formGroupName]="i" 
+          class="grid mb-3 p-3 border-round" 
+          style="background: white; border: 1px solid #dee2e6;">
+
+          <div class="col-12 mb-2">
+            <div class="flex justify-content-between">
+              <strong>Animal #{{ i + 1 }}</strong>
+              <button pButton type="button" 
+                icon="pi pi-times" 
+                class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                (click)="supprimerAnimal(i)">
+              </button>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <label class="block mb-2">Code Animal <span class="text-red-500">*</span></label>
+            <p-dropdown formControlName="codeAnimal" 
+              [options]="animauxDisponibles" 
+              optionLabel="codeAnimal" 
+              optionValue="codeAnimal"
+              placeholder="Sélectionner" 
+              styleClass="w-full"
+              [filter]="true">
+              <ng-template let-item pTemplate="item">
+                <div>
+                  <strong>{{ item.codeAnimal }}</strong>
+                  <span class="ml-2 text-sm text-500">
+                    ({{ item.typeAnimal.nom }} - {{ item.poidsInitial }} kg)
+                  </span>
+                </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+
+          <div class="col-6">
+            <label class="block mb-2">Type de vente <span class="text-red-500">*</span></label>
+            <p-dropdown formControlName="typeVenteId" 
+              [options]="typesVente" 
+              optionLabel="nom" 
+              optionValue="id"
+              placeholder="Sélectionner" 
+              styleClass="w-full">
+            </p-dropdown>
+          </div>
+
+          <div class="col-4">
+            <label class="block mb-2">Poids (kg) <span class="text-red-500">*</span></label>
+            <input pInputText formControlName="poidsVente" 
+              type="number" 
+              step="0.1" 
+              class="w-full">
+          </div>
+
+          <div class="col-4">
+            <label class="block mb-2">Prix unitaire <span class="text-red-500">*</span></label>
+            <input pInputText formControlName="prixUnitaire" 
+              type="number" 
+              class="w-full">
+          </div>
+
+          <div class="col-4">
+            <label class="block mb-2">Montant</label>
+            <div class="p-3 border-round" style="background: #e3f2fd;">
+              <strong>{{ calculerMontantAnimal(i) | number:'1.0-0' }} FCFA</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Montant total -->
+    <div class="field mt-4 p-3 border-round" style="background: #c8e6c9;">
+      <div class="flex justify-content-between align-items-center">
+        <strong style="font-size: 1.1rem;">MONTANT TOTAL</strong>
+        <strong style="font-size: 1.3rem; color: #2e7d32;">
+          {{ calculerMontantTotal() | number:'1.0-0' }} FCFA
+        </strong>
+      </div>
+    </div>
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button pButton class="p-button-outlined mr-2" 
+      label="Annuler" 
+      (click)="showForm=false">
+    </button>
+
+    <button pButton class="p-button-success"
+      label="Enregistrer la vente"
+      icon="pi pi-check"
+      [loading]="processing"
+      [disabled]="form.invalid || animaux.length === 0"
+      (click)="handleSubmit()">
+    </button>
+  </ng-template>
 
 </p-dialog>

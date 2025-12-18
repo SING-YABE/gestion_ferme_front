@@ -1,50 +1,56 @@
-<p-dialog 
-  header="{{ mode === 'create' ? 'Nouveau traitement' : 'Modifier traitement' }}" 
-  appendTo="body" 
-  [modal]="true" 
-  [style]="{width: '600px'}" 
+<p-dialog
+  header="{{ mode === 'create' ? '🧪 Nouveau traitement' : '✏️ Modifier traitement' }}"
   [(visible)]="showForm"
+  [modal]="true"
   [baseZIndex]="9000"
-  styleClass="farm-dialog"
+  [style]="{ width: '900px' }"
+  styleClass="ultra-dialog"
+  appendTo="body"
   (onHide)="closeDialog()"
 >
-  <form [formGroup]="traitementForm" (ngSubmit)="handleSubmit()">
+
+  <form [formGroup]="traitementForm" (ngSubmit)="handleSubmit()" class="form-grid">
+
     <div class="field">
-      <label for="nom">Nom du traitement</label>
-      <input 
-        id="nom"
-        placeholder="ex: Vaccination, Antibiotiques..." 
-        formControlName="nom" 
+      <label>Nom du traitement</label>
+      <input
         pInputText
+        formControlName="nom"
+        placeholder="Vaccination, Antibiothérapie..."
       />
     </div>
 
     <div class="field">
-      <label for="description">Description</label>
-      <input 
-        id="description"
-        placeholder="Description détaillée" 
-        formControlName="description" 
-        pInputText
-      />
+      <label>Description</label>
+      <textarea
+        pInputTextarea
+        rows="5"
+        formControlName="description"
+        placeholder="Detail du traitement"
+      ></textarea>
     </div>
 
-    <ng-template pTemplate="footer">
-      <button 
-        (click)="closeDialog()" 
-        pButton 
-        class="p-button-outlined mr-2" 
-        style="color:#8B5E3C; border-color:#8B5E3C;">
-        Annuler
-      </button>
-
-      <button 
-        type="submit" 
-        [disabled]="traitementForm.invalid || processing" 
-        pButton 
-        class="p-button-success">
-        Enregistrer
-      </button>
-    </ng-template>
   </form>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <button
+        pButton
+        type="button"
+        label="Annuler"
+        class="p-button-outlined"
+        (click)="closeDialog()"
+      ></button>
+
+      <button
+        pButton
+        type="submit"
+        label="Enregistrer"
+        class="p-button-success"
+        [disabled]="traitementForm.invalid || processing"
+        (click)="handleSubmit()"
+      ></button>
+    </div>
+  </ng-template>
+
 </p-dialog>

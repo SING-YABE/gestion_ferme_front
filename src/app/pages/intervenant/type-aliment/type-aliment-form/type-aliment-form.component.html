@@ -7,8 +7,14 @@
         class="p-button-rounded p-button-warning" (click)="handleShow()"    style="background:#16A34A ; border-color: #16A34A ;color:white;"
         (click)="handleShow()">
 </button>
-<p-dialog header="{{ mode === 'create' ? 'Nouveau type d’aliment' : 'Modifier type d’aliment' }}"
-          [(visible)]="showForm" [modal]="true" [style]="{width:'500px'}">
+
+<p-dialog
+  header="{{ mode === 'create' ? 'Nouveau type d’aliment' : 'Modifier type d’aliment' }}"
+  [(visible)]="showForm"
+  [modal]="true"
+  [style]="{ width: '800px' }"
+  styleClass="large-dialog"
+>
 
   <form [formGroup]="form" (ngSubmit)="handleSubmit()">
     <div class="field mb-3">

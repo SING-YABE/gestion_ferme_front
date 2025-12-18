@@ -1,0 +1,29 @@
+.ultra-dialog .p-dialog-content {
+  padding: 2.5rem;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.field label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 1rem;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  font-size: 1rem;
+  padding: 0.75rem;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}

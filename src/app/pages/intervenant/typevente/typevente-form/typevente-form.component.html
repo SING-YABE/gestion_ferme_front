@@ -1,0 +1,50 @@
+<!-- Bouton Ajouter ou Modifier -->
+<button *ngIf="mode === 'create'" 
+        pButton label="Ajouter type vente" 
+        icon="pi pi-plus" 
+        class="p-button-success" 
+        (click)="handleShow()">
+</button>
+
+<button *ngIf="mode === 'edit'" 
+        pButton 
+        icon="pi pi-pencil"
+        class="p-button-rounded"
+        style="background:#16A34A ; border-color: #16A34A ;color:white;"
+        (click)="handleShow()">
+</button>
+
+<p-dialog 
+    header="{{ mode === 'create' ? 'Nouveau type de vente' : 'Modifier type de vente' }}" 
+    [(visible)]="showForm" 
+    [modal]="true" 
+    [style]="{width: '500px'}">
+
+    <!-- FORMULAIRE -->
+    <form [formGroup]="form">
+      <div class="field">
+        <label for="nom">Nom</label>
+        <input id="nom" type="text" formControlName="nom" pInputText placeholder="Ex: Pour consommation" />
+      </div>
+
+    </form>
+
+    <!-- FOOTER DOIT ÊTRE DIRECTEMENT SOUS <p-dialog> -->
+    <ng-template pTemplate="footer">
+      <button type="button" 
+              pButton 
+              class="p-button-outlined p-button-danger mr-2" 
+              (click)="showForm=false">
+        Annuler
+      </button>
+
+      <button pButton 
+              class="p-button-success"
+              [disabled]="form.invalid"
+              [loading]="processing"
+              (click)="handleSubmit()">
+        {{ mode === 'create' ? 'Enregistrer' : 'Mettre à jour' }}
+      </button>
+    </ng-template>
+
+</p-dialog>

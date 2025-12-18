@@ -8,7 +8,11 @@
 </button>
 
 <p-dialog header="{{ mode === 'create' ? 'Nouveau fournisseur' : 'Modifier fournisseur' }}"
-          [(visible)]="showForm" [modal]="true" [style]="{width:'500px'}">
+  [(visible)]="showForm"
+  [modal]="true"
+  [style]="{ width: '800px' }"
+  styleClass="large-dialog"
+>
 
   <form [formGroup]="form">
     <div class="field mb-3">
