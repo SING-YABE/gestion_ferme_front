@@ -64,6 +64,8 @@ ngOnInit(): void {
       nbSevres: this.target.nbSevres,
       observations: this.target.observations
     });
+        // Bloquer certains champs si mise bas save
+    this.handlePostMiseBasState();
   }
 
   if (this.mode === 'create') {
@@ -73,6 +75,25 @@ ngOnInit(): void {
     this.form.get('nbMortsNes')?.disable();
     this.form.get('nbSevres')?.disable();
   }
+}
+private handlePostMiseBasState() {
+  const dateMiseBasReelle = this.target?.dateMiseBasReelle;
+
+  if (dateMiseBasReelle) {
+    // Post-mise bas : bloquer certains champs
+    this.form.get('dateMiseBasReelle')?.disable();
+    this.form.get('nbNesVivants')?.disable();
+    this.form.get('nbMortsNes')?.disable();
+    this.form.get('dateMiseBasPrevue')?.disable();
+    // Les champs autorisés restent éditables
+    this.form.get('nbSevres')?.enable();
+    this.form.get('observations')?.enable();
+  }
+}
+
+
+isPostMiseBas(): boolean {
+  return !!this.target?.dateMiseBasReelle;
 }
 
 

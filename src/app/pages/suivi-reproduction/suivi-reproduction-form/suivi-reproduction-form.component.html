@@ -38,6 +38,18 @@
       </p-calendar>
     </div>
 
+    <div class="field mb-4">
+  <label class="block font-semibold mb-2" style="font-size: 14px;">
+    Date Saillie <span style="color: red;">*</span>
+  </label>
+  <p-calendar formControlName="dateSaillie" dateFormat="dd/mm/yy" [showIcon]="true"
+    appendTo="body" inputId="dateSaillie" styleClass="w-full"
+    [inputStyle]="{'height': '45px'}"
+    [disabled]="mode==='edit' || isPostMiseBas()">
+  </p-calendar>
+</div>
+
+
     <div class="field mb-4" *ngIf="mode==='create'">
       <label class="block font-semibold mb-2" style="font-size: 14px;">
         Observations
@@ -55,7 +67,8 @@
       </label>
       <p-calendar formControlName="dateMiseBasPrevue" dateFormat="dd/mm/yy" 
         [showIcon]="true" appendTo="body" styleClass="w-full" [disabled]="true"
-        [inputStyle]="{'height': '45px'}">
+        [inputStyle]="{'height': '45px'}"
+        [disabled]="isPostMiseBas()">
       </p-calendar>
     </div>
 
@@ -65,29 +78,34 @@
       </label>
       <p-calendar formControlName="dateMiseBasReelle" dateFormat="dd/mm/yy" 
         [showIcon]="true" appendTo="body" styleClass="w-full"
-        [inputStyle]="{'height': '45px'}">
+        [inputStyle]="{'height': '45px'}"
+          [disabled]="isPostMiseBas()">
       </p-calendar>
     </div>
 
-    <div class="field mb-4" *ngIf="mode==='edit'">
-      <label class="block font-semibold mb-2" style="font-size: 14px;">
-        Nb Nés Vivants
-      </label>
-      <div class="flex gap-2 align-items-center">
-        <input pInputText formControlName="nbNesVivants" type="number" 
-          class="flex-1" style="height: 45px; font-size: 14px;">
-        <button pButton type="button" icon="pi pi-minus" 
-          class="p-button-rounded p-button-danger p-button-sm"
-          style="width: 35px; height: 35px;"
-          (click)="decrement('nbNesVivants')">
-        </button>
-        <button pButton type="button" icon="pi pi-plus" 
-          class="p-button-rounded p-button-success p-button-sm"
-          style="width: 35px; height: 35px;"
-          (click)="increment('nbNesVivants')">
-        </button>
-      </div>
-    </div>
+  <div class="field mb-4" *ngIf="mode==='edit'">
+  <label class="block font-semibold mb-2" style="font-size: 14px;">
+    Nb Nés Vivants
+  </label>
+  <div class="flex gap-2 align-items-center">
+    <input pInputText formControlName="nbNesVivants" type="number" 
+      class="flex-1" style="height: 45px; font-size: 14px;"
+      [disabled]="isPostMiseBas()">
+    <button pButton type="button" icon="pi pi-minus" 
+      class="p-button-rounded p-button-danger p-button-sm"
+      style="width: 35px; height: 35px;"
+      (click)="decrement('nbNesVivants')"
+      [disabled]="isPostMiseBas()">
+    </button>
+    <button pButton type="button" icon="pi pi-plus" 
+      class="p-button-rounded p-button-success p-button-sm"
+      style="width: 35px; height: 35px;"
+      (click)="increment('nbNesVivants')"
+      [disabled]="isPostMiseBas()">
+    </button>
+  </div>
+</div>
+
 
     <div class="field mb-4" *ngIf="mode==='edit'">
       <label class="block font-semibold mb-2" style="font-size: 14px;">
@@ -99,12 +117,14 @@
         <button pButton type="button" icon="pi pi-minus" 
           class="p-button-rounded p-button-danger p-button-sm"
           style="width: 35px; height: 35px;"
-          (click)="decrement('nbMortsNes')">
+          (click)="decrement('nbMortsNes')"
+        [disabled]="isPostMiseBas()">
         </button>
         <button pButton type="button" icon="pi pi-plus" 
           class="p-button-rounded p-button-success p-button-sm"
           style="width: 35px; height: 35px;"
-          (click)="increment('nbMortsNes')">
+          (click)="increment('nbMortsNes')"
+        [disabled]="isPostMiseBas()">
         </button>
       </div>
     </div>
