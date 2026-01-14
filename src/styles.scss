@@ -1,4 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+/*style css You can add global styles to this file, and also import other style files */
 // @import "jsoneditor/dist/jsoneditor.min.css";
 @import 'ngx-toastr/toastr';
 
@@ -16,6 +16,14 @@
 @import "../node_modules/boosted/scss/utilities/api";
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+#app-menu a {
+  font-size: 18px;
+}
+
+#app-menu a .side-title {
+  font-size: 14px;
+  font-weight: 600;
+}
 
 /* Icône calendrier en vert ferme */
 .p-calendar .p-datepicker-trigger .p-icon,
@@ -50,7 +58,6 @@ $primary-dark: #1B5E20;
   --primary-lighter-color: #{$primary-light};
   --primary-darker-color: #{$primary-dark};
 }
-// ==================-------------<<<<<<<<<<<<<<<<END<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 .circle-progress {
   width: 110px;
@@ -176,9 +183,7 @@ mat-icon{
   color: #19191a !important;
 }
 
-.side-title{
-  font-size: 0.8rem !important;
-}
+
 #main-wrapper{
   height: 100%;
   display: flex;
@@ -876,4 +881,34 @@ label{
 .milestone:focus, .milestone:active, .milestone:hover {
   text-decoration: none !important;
 }
+
+app-accordion-menu .p-accordion-header-text {
+  font-size: 18px !important;
+  font-weight: 600;
+  line-height: 1.4;
+}
+/* Indicateur visuel pour l'item actif */
+#app-menu a.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 3px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 0 2px 2px 0;
+}
+
+
+
+/* ADMINISTRATION - TEXTE */
+app-accordion-menu .side-title {
+  color: #ffffff !important;
+  font-size: 40px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.6px;
+}
+
+
+
 

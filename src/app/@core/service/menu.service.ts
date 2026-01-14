@@ -111,7 +111,7 @@ export class MenuService {
         { title: 'Type de vente', icon: faDollarSign, routerLink: '/typeVente' },
       ]
     },
-  ];
+  ]; 
 
   constructor() { }
 }

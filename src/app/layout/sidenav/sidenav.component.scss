@@ -1,215 +1,297 @@
-.side-title {
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.1px;
+// sidenacss
+:root {
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.85);
+  --accent-primary: #2E7D32;
+  --accent-glow: #43A047;
 }
 
-/* Cacher la scrollbar mais garder le scroll */
-.scroll-hidden {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.scroll-hidden::-webkit-scrollbar {
-  display: none;
-}
-
-/* Conteneur général */
-#app-menu {
-  padding: 6px 10px;
-  margin: 0;
-}
-
-#app-menu li {
-  list-style: none;
-  margin-bottom: 3px;
-}
-
-/* Style des liens du menu - Design premium */
-#app-menu a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #374151;
-  text-decoration: none;
-  border-radius: 10px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  background: transparent;
-  border: 2px solid transparent;
-}
-
-/* Icônes */
-#app-menu a fa-icon {
-  font-size: 16px;
-  opacity: 0.8;
-  transition: all 0.3s ease;
-  min-width: 18px;
-}
-
-/* Hover effect - Très élégant */
-#app-menu a:hover {
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  color: #047857;
-  transform: translateX(4px);
-  border-left: 2px solid #2E7D32;
-  box-shadow: 
-    0 3px 10px rgba(46, 125, 50, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-}
-
-#app-menu a:hover fa-icon {
-  opacity: 1;
-  transform: scale(1.1) rotate(5deg);
-  color: #2E7D32;
-}
-
-/* Active state - Superbe effet */
-#app-menu a.active {
-  background: linear-gradient(135deg, #2E7D32 0%, #1b5e20 100%) !important;
-  color: #fff !important;
-  font-weight: 600;
-  border: 2px solid transparent;
-  box-shadow: 
-    0 5px 16px rgba(46, 125, 50, 0.35),
-    0 2px 6px rgba(46, 125, 50, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transform: translateX(3px);
-}
-
-#app-menu a.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 60%;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 0 3px 3px 0;
-}
-
-#app-menu a.active fa-icon {
-  color: white !important;
-  opacity: 1;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
-}
-
-/* Bouton utilisateur - Design premium */
-.custom-user-btn {
-  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%) !important;
-  color: #2E7D32 !important;
-  border: 2px solid #2E7D32 !important;
-  border-radius: 12px !important;
-  font-weight: 600;
-  padding: 11px !important;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-shadow: 
-    0 3px 10px rgba(46, 125, 50, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  position: relative;
-  overflow: hidden;
-}
-
-.custom-user-btn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(46, 125, 50, 0.1);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.custom-user-btn:hover::before {
-  width: 300px;
-  height: 300px;
-}
-
-.custom-user-btn:hover {
-  background: linear-gradient(135deg, #2E7D32 0%, #1b5e20 100%) !important;
-  color: white !important;
-  border: 2px solid #1b5e20 !important;
-  transform: translateY(-2px);
-  box-shadow: 
-    0 6px 20px rgba(46, 125, 50, 0.3),
-    0 3px 10px rgba(46, 125, 50, 0.2);
-}
-
-/* Badge version - Style moderne */
-.version-badge {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 16px;
-  box-shadow: 
-    0 2px 8px rgba(239, 68, 68, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  letter-spacing: 0.6px;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-}
-
-/* Header élégant */
-.sidebar-header {
-  height: 60px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fdf9 100%);
-  border-bottom: 2px solid #e5e7eb;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-}
-
-/* Logo avec dégradé */
-.app-logo {
-  background: linear-gradient(135deg, #2E7D32 0%, #1b5e20 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-size: 1.15rem;
-  letter-spacing: 1.2px;
-  font-weight: 800;
-  filter: drop-shadow(0 2px 3px rgba(46, 125, 50, 0.1));
-}
-
-/* Conteneur sidebar - Design premium */
-.sidebar-container {
-  background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
-  border-right: 2px solid #e5e7eb;
-  box-shadow: 
-    2px 0 16px rgba(0, 0, 0, 0.06),
-    1px 0 3px rgba(0, 0, 0, 0.03);
-  position: relative;
-}
-
-.sidebar-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 1px;
+// Container principal
+mat-drawer {
   height: 100%;
-  background: linear-gradient(180deg, 
-    transparent 0%, 
-    rgba(46, 125, 50, 0.1) 50%, 
-    transparent 100%);
+  min-width: 280px;
+  border: none !important;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden !important;
 }
 
-/* Animation d'entrée pour les items du menu */
-#app-menu li {
-  animation: slideIn 0.3s ease-out backwards;
+.sidebar-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+  overflow: hidden !important;
 }
 
-#app-menu li:nth-child(1) { animation-delay: 0.05s; }
-#app-menu li:nth-child(2) { animation-delay: 0.1s; }
-#app-menu li:nth-child(3) { animation-delay: 0.15s; }
-#app-menu li:nth-child(4) { animation-delay: 0.2s; }
-#app-menu li:nth-child(5) { animation-delay: 0.25s; }
+// Header
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 10;
+}
+
+.app-logo {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+.version-badge {
+  position: absolute;
+  top: 24px;
+  left: 95px;
+  background: linear-gradient(135deg, #2E7D32, #43A047);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.4);
+}
+
+// Zone de menu
+.h-full {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+}
+
+.overflow-y-auto {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 12px 0;
+  flex: 1;
+  
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(46, 125, 50, 0.4);
+    border-radius: 10px;
+    
+    &:hover {
+      background: rgba(46, 125, 50, 0.6);
+    }
+  }
+  
+  scrollbar-width: thin;
+  scrollbar-color: rgba(46, 125, 50, 0.4) rgba(0, 0, 0, 0.2);
+}
+
+// Menu items normaux
+#app-menu {
+  list-style: none;
+  margin: 0;
+  padding: 8px 12px;
+  
+  > li {
+    margin-bottom: 2px;
+    
+    > a {
+      color: rgba(255, 255, 255, 0.85);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 16px;
+      text-decoration: none;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 14.5px;
+      font-weight: 500;
+      border-radius: 10px;
+      letter-spacing: 0.3px;
+      
+      fa-icon {
+        font-size: 18px;
+        width: 20px;
+        text-align: center;
+        opacity: 0.9;
+        transition: all 0.3s ease;
+      }
+      
+      .side-title {
+        font-size: 14.5px;
+        font-weight: 500;
+      }
+      
+      &:hover {
+        background: rgba(46, 125, 50, 0.12);
+        color: #ffffff;
+        transform: translateX(4px);
+        
+        fa-icon {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+      }
+      
+      &.active {
+        background: linear-gradient(90deg, rgba(46, 125, 50, 0.25), rgba(46, 125, 50, 0.15));
+        color: #ffffff;
+        font-weight: 600;
+        box-shadow: inset 3px 0 0 #2E7D32;
+        
+        fa-icon {
+          color: #43A047;
+          opacity: 1;
+        }
+        
+        &:hover {
+          background: linear-gradient(90deg, rgba(46, 125, 50, 0.3), rgba(46, 125, 50, 0.2));
+          transform: translateX(0);
+        }
+        
+        &::before {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// ACCORDÉON - CIBLAGE UNIVERSEL
+// ============================================
+
+app-accordion-menu {
+  display: block !important;
+  width: 100%;
+  margin-bottom: 2px;
+  border: none !important; // ENLEVER LE ROUGE
+  
+  * {
+    color: #ffffff !important; // FORCER BLANC
+  }
+}
+// ACCORDÉON ADMINISTRATION - FIX COMPLET
+app-accordion-menu {
+  .p-accordion-header-link,
+  .p-accordion-header-action,
+  button,
+  a {
+    color: #ffffff !important;
+    
+    * {
+      color: #ffffff !important;
+    }
+  }
+  
+  .p-accordion-header-text {
+    color: #ffffff !important;
+  }
+  
+  span {
+    color: #ffffff !important;
+  }
+}
+// Style du header Administration
+#app-menu app-accordion-menu {
+  > * {
+    color: #ffffff !important;
+    display: flex !important;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 16px !important;
+    background: transparent;
+    border: none !important;
+    border-radius: 10px;
+    cursor: pointer;
+    
+    &:hover {
+      background: rgba(46, 125, 50, 0.12) !important;
+      transform: translateX(4px);
+    }
+  }
+}
+
+// Sous-menus
+app-accordion-menu {
+  ul li a {
+    color: rgba(255, 255, 255, 0.7) !important;
+    display: flex !important;
+    padding: 10px 16px 10px 32px !important;
+    border-radius: 8px;
+    
+    &:hover {
+      background: rgba(46, 125, 50, 0.1) !important;
+      color: #ffffff !important;
+    }
+    
+    &.active {
+      background: rgba(46, 125, 50, 0.15) !important;
+      color: #ffffff !important;
+      font-weight: 600 !important;
+    }
+  }
+}
+
+
+
+// Forcer l'affichage si classe spécifique
+.p-accordion-tab-active,
+.accordion-open,
+[aria-expanded="true"] {
+  + * {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
+
+// Bouton utilisateur
+.px-4.py-3 {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  
+  .user-menu-btn {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)) !important;
+    border: 1.5px solid rgba(46, 125, 50, 0.5) !important;
+    color: #ffffff !important;
+    padding: 12px 20px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    
+    &:hover {
+      background: linear-gradient(135deg, #2E7D32, #43A047) !important;
+      border-color: #43A047 !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.4);
+    }
+    
+    .pi {
+      font-size: 16px;
+    }
+  }
+}
+
+// Animations
+#app-menu > li,
+#app-menu > app-accordion-menu {
+  animation: slideIn 0.4s ease-out backwards;
+  
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.03}s;
+    }
+  }
+}
 
 @keyframes slideIn {
   from {
@@ -222,23 +304,16 @@
   }
 }
 
-#app-menu app-accordion-menu a {
-  color: #374151 !important;
+// DEBUG - À supprimer après test
+app-accordion-menu {
+  border: 1px solid red !important; // Pour voir si le composant existe
+  min-height: 50px !important;
 }
-.app-logo {
-  font-size: 1.4rem;
-  font-weight: 700;
+:host ::ng-deep #app-menu app-accordion-menu
+.p-accordion-header-text {
+  color: #ffffff !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.6px;
 }
 
-.version-badge {
-  margin-left: 10px;
-  padding: 2px 8px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 6px;
-  background-color: #E8F5E9;
-  color: #2E7D32;
-  border: 1px solid #2E7D32;
-  margin-top: 20px;
-  margin-bottom: 12px;
-}
