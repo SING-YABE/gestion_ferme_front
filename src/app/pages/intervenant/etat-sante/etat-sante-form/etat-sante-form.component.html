@@ -1,4 +1,4 @@
-<button *ngIf="mode === 'create'" pButton label="Ajouter état de santé" icon="pi pi-plus" (click)="handleShow()"
+<button *ngIf="mode === 'create'" pButton label="Ajouter une stade" icon="pi pi-plus" (click)="handleShow()"
   class="p-button-success p-button-rounded" style="background-color:#4CAF50; border-color:#4CAF50;">
 </button>
 <button *ngIf="mode === 'edit'" pButton icon="pi pi-pencil" class="p-button-rounded p-button-warning"
@@ -6,7 +6,7 @@
 </button>
 
 <p-dialog 
-  header="{{ mode === 'create' ? 'Nouveau état de santé' : 'Modifier état de santé' }}" 
+  header="{{ mode === 'create' ? 'Nouvelle stade' : 'Modifier stade' }}" 
   appendTo="body"
   [modal]="true" 
   [style]="{width: '650px'}" 

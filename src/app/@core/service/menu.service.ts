@@ -102,7 +102,7 @@ export class MenuService {
       children: [
         { title: 'Type Animaux', icon: faCow, routerLink: '/typeAnimaux' },
         { title: 'Bâtiment', icon: faWarehouse, routerLink: '/batiments' },
-        { title: 'État de santé', icon: faHeartPulse, routerLink: '/etatSante' },
+        { title: 'Stade', icon: faHeartPulse, routerLink: '/etatSante' },
         { title: 'Type Aliment', icon: faWheatAwn, routerLink: '/typeAliment' },
         { title: 'Fournisseur', icon: faTruck, routerLink: '/fournisseurs' },
         { title: 'Ingredient', icon: faCarrot, routerLink: '/ingredients' },

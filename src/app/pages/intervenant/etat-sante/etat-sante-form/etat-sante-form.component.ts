@@ -74,7 +74,7 @@ ngOnChanges(): void {
     if (this.mode === 'create') {
       this.service.create(dto).subscribe({
         next: () => {
-          this.toastr.success("État de santé ajouté");
+          this.toastr.success("Stade ajouté");
           this.onUpdate.emit();
           this.showForm = false;
           this.form.reset();
@@ -89,7 +89,7 @@ ngOnChanges(): void {
     } else if (this.mode === 'edit' && this.target) {
       this.service.update(this.target.id, dto).subscribe({
         next: () => {
-          this.toastr.success("État de santé mis à jour");
+          this.toastr.success("Stade mis à jour");
           this.onUpdate.emit();
           this.showForm = false;
           this.processing = false;
