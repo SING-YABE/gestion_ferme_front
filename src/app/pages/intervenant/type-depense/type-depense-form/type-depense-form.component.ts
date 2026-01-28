@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { TypeDepenseService } from '../../../../@core/service/type-depense.service';
+
 interface TypeDepenseDTO {
   id?: number;
   nom: string;
@@ -42,21 +43,8 @@ export class TypeDepenseFormComponent implements OnChanges {
 
   handleSubmit() {
     if (!this.typeDepenseForm.valid) return;
-
-    this.processing = true;
-    const dto: TypeDepenseDTO = this.typeDepenseForm.value;
-
-    if (this.mode === 'create') {
-      this.service.create(dto).subscribe({
-        next: () => this.afterSubmit(),
-        error: () => this.processing = false
-      });
-    } else if (this.mode === 'edit' && this.target?.id) {
-      this.service.update(this.target.id, dto).subscribe({
-        next: () => this.afterSubmit(),
-        error: () => this.processing = false
-      });
-    }
+    console.warn('Les types de dépenses ne peuvent pas être modifiés depuis l\'interface');
+    this.afterSubmit();
   }
 
   private afterSubmit() {

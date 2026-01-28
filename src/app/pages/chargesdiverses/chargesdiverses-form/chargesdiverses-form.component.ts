@@ -4,9 +4,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
-import { ChargesDiversesService } from '../../../@core/service/charges-diverses-service.service';
-import { ChargesDiversesDTO } from '../../../@core/service/charges-diverses-service.service';
-import { TypeDepenseService } from '../../../@core/service/type-depense.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { ChargesDiversesService, ChargesDiversesDTO } from '../../../@core/service/charges-diverses-service.service';
+import { TypeDepenseService, TypeDepenseDTO } from '../../../@core/service/type-depense.service';
 import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -22,9 +22,11 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     DropdownModule,
     CalendarModule,
     InputNumberModule,
-    InputTextareaModule
+    InputTextareaModule,
+    InputTextModule
   ],
-  templateUrl: './chargesdiverses-form.component.html'
+  templateUrl: './chargesdiverses-form.component.html',
+  styleUrls: ['./chargesdiverses-form.component.scss']
 })
 export class ChargesdiversesFormComponent implements OnInit, OnChanges {
 
@@ -38,72 +40,125 @@ export class ChargesdiversesFormComponent implements OnInit, OnChanges {
   form!: FormGroup;
   processing = false;
 
-  typeDepenses: any[] = [];
-  montantPresets = [2000, 5000, 6000, 10000, 25000 ];
+  typeDepenses: TypeDepenseDTO[] = [];
+  montantPresets = [2000, 5000, 6000, 10000, 25000];
 
   modesPaiement = [
-    { label: 'Espèces', value: 'especes' },
-    { label: 'Mobile Money', value: 'mobile_money' },
-    { label: 'Virement bancaire', value: 'virement' },
-    { label: 'Chèque', value: 'cheque' },
-    { label: 'Carte bancaire', value: 'carte' }
+    'Espèces',
+    'Mobile Money',
+    'Virement bancaire',
+    'Chèque',
+    'Dépôt'
   ];
+
   constructor(
     private fb: FormBuilder,
     private service: ChargesDiversesService,
     private typeService: TypeDepenseService
   ) {
     this.form = this.fb.group({
-      date: ['', Validators.required],
-      typeDepenseId: ['', Validators.required],
+      date: [new Date(), Validators.required],
+      typeDepenseId: [null, Validators.required],
       description: ['', Validators.required],
-      montant: [0, Validators.required],
+      montant: [0, [Validators.required, Validators.min(1)]],
       modePaiement: ['', Validators.required],
       observations: ['']
     });
   }
 
   ngOnInit(): void {
-    this.typeService.getAll().subscribe((res) => {
-      this.typeDepenses = res;
+    this.typeService.getAll().subscribe({
+      next: (res) => {
+        this.typeDepenses = res;
+      },
+      error: (err) => console.error('Erreur chargement types dépenses:', err)
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.target) this.form.patchValue(this.target);
+    if (this.target && changes['target']) {
+      const dateValue = this.target.date ? new Date(this.target.date) : new Date();
+      
+      this.form.patchValue({
+        date: dateValue,
+        typeDepenseId: this.target.typeDepenseId,
+        description: this.target.description,
+        montant: this.target.montant,
+        modePaiement: this.target.modePaiement,
+        observations: this.target.observations || ''
+      });
+    }
   }
 
-  /** Remplir le montant en cliquant */
   applyMontant(m: number) {
     this.form.patchValue({ montant: m });
   }
 
-  /** Beautifier montant */
   formatMontant() {
     let val = this.form.value.montant;
-    if (val < 0) this.form.patchValue({ montant: 0 });
+    if (val < 0) {
+      this.form.patchValue({ montant: 0 });
+    }
   }
 
   handleShow() {
     this.showForm = true;
     this.showFormChange.emit(true);
+    
+    if (this.mode === 'create') {
+      this.form.reset({
+        date: new Date(),
+        typeDepenseId: null,
+        description: '',
+        montant: 0,
+        modePaiement: '',
+        observations: ''
+      });
+    }
   }
 
   handleSubmit() {
-    if (!this.form.valid) return;
+    if (!this.form.valid) {
+      console.error('Formulaire invalide:', this.form.errors);
+      Object.keys(this.form.controls).forEach(key => {
+        const control = this.form.get(key);
+        if (control?.invalid) {
+          console.error(`${key} invalide:`, control.errors);
+        }
+      });
+      return;
+    }
 
     this.processing = true;
-    const dto: ChargesDiversesDTO = this.form.value;
+
+    const formValue = this.form.value;
+    const dateObj: Date = formValue.date;
+    const dateStr = dateObj.toISOString().split('T')[0];
+
+    const dto: ChargesDiversesDTO = {
+      date: dateStr,
+      typeDepenseId: formValue.typeDepenseId,
+      description: formValue.description,
+      montant: formValue.montant,
+      modePaiement: formValue.modePaiement,
+      observations: formValue.observations || undefined
+    };
 
     if (this.mode === 'create') {
       this.service.create(dto).subscribe({
         next: () => this.afterSubmit(),
-        error: () => (this.processing = false)
+        error: (err) => {
+          console.error('Erreur création:', err);
+          this.processing = false;
+        }
       });
     } else {
       this.service.update(this.target!.id!, dto).subscribe({
         next: () => this.afterSubmit(),
-        error: () => (this.processing = false)
+        error: (err) => {
+          console.error('Erreur mise à jour:', err);
+          this.processing = false;
+        }
       });
     }
   }
@@ -112,6 +167,14 @@ export class ChargesdiversesFormComponent implements OnInit, OnChanges {
     this.processing = false;
     this.showForm = false;
     this.showFormChange.emit(false);
+    this.form.reset({
+      date: new Date(),
+      typeDepenseId: null,
+      description: '',
+      montant: 0,
+      modePaiement: '',
+      observations: ''
+    });
     this.onUpdate.emit();
   }
 }

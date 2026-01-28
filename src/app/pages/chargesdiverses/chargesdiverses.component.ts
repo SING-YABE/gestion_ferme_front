@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 import { ChargesdiversesFormComponent } from './chargesdiverses-form/chargesdiverses-form.component';
-import { ChargesDiversesDTO } from '../../@core/service/charges-diverses-service.service';
-import { ChargesDiversesService } from '../../@core/service/charges-diverses-service.service';
+import { ChargesDiversesDTO, ChargesDiversesService } from '../../@core/service/charges-diverses-service.service';
+
 @Component({
   selector: 'app-chargesdiverses',
   standalone: true,
@@ -15,9 +16,10 @@ import { ChargesDiversesService } from '../../@core/service/charges-diverses-ser
     TableModule,
     ButtonModule,
     ConfirmDialogModule,
+    ToastModule,
     ChargesdiversesFormComponent
   ],
-  providers: [ConfirmationService],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './chargesdiverses.component.html',
 })
 export class ChargesdiversesComponent implements OnInit {
@@ -28,7 +30,8 @@ export class ChargesdiversesComponent implements OnInit {
 
   constructor(
     private service: ChargesDiversesService,
-    private confirm: ConfirmationService
+    private confirm: ConfirmationService,
+    private message: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -43,16 +46,44 @@ export class ChargesdiversesComponent implements OnInit {
         this.data = res;
         this.loading = false;
       },
-      error: () => (this.loading = false)
+      error: (err) => {
+        console.error('Erreur chargement données:', err);
+        this.loading = false;
+        this.message.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Impossible de charger les dépenses'
+        });
+      }
     });
   }
 
   confirmDelete(item: ChargesDiversesDTO) {
     this.confirm.confirm({
-      message: 'Supprimer cette charge ?',
+      message: `Supprimer la dépense "${item.description}" ?`,
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Oui',
+      rejectLabel: 'Non',
+      acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.service.delete(item.id!).subscribe(() => {
-          this.loadData();
+        this.service.delete(item.id!).subscribe({
+          next: () => {
+            this.message.add({
+              severity: 'success',
+              summary: 'Succès',
+              detail: 'Dépense supprimée'
+            });
+            this.loadData();
+          },
+          error: (err) => {
+            console.error('Erreur suppression:', err);
+            this.message.add({
+              severity: 'error',
+              summary: 'Erreur',
+              detail: 'Impossible de supprimer la dépense'
+            });
+          }
         });
       }
     });

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
-import { TypeDepenseFormComponent } from './type-depense-form/type-depense-form.component';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TypeDepenseService } from '../../../@core/service/type-depense.service';
+import { TypeDepenseFormComponent } from './type-depense-form/type-depense-form.component';
 
 interface TypeDepenseDTO {
   id?: number;
@@ -16,50 +15,60 @@ interface TypeDepenseDTO {
 @Component({
   selector: 'app-type-depense',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule, ConfirmDialogModule, TypeDepenseFormComponent, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    TableModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    TypeDepenseFormComponent
+  ],
+  providers: [ConfirmationService],
   templateUrl: './type-depense.component.html',
-  styleUrls: ['./type-depense.component.scss'],
-  providers: [ConfirmationService]
 })
 export class TypeDepenseComponent implements OnInit {
 
-  typeDepenses: TypeDepenseDTO[] = [];
   loading = false;
+  typeDepenses: TypeDepenseDTO[] = [];
   pageSize = 10;
+  
   showForm = false;
   mode: 'create' | 'edit' = 'create';
   selectedTypeDepense?: TypeDepenseDTO;
 
   constructor(
     private service: TypeDepenseService,
-    private confirmationService: ConfirmationService
+    private confirm: ConfirmationService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadData();
   }
 
   loadData() {
     this.loading = true;
+
     this.service.getAll().subscribe({
-      next: data => {
-        this.typeDepenses = data;
+      next: (res) => {
+        this.typeDepenses = res;
         this.loading = false;
       },
-      error: () => this.loading = false
+      error: () => (this.loading = false)
     });
   }
 
-  handleShow(mode: 'create' | 'edit', target?: TypeDepenseDTO) {
+  handleShow(mode: 'create' | 'edit', typeDepense?: TypeDepenseDTO) {
     this.mode = mode;
-    this.selectedTypeDepense = target;
+    this.selectedTypeDepense = typeDepense;
     this.showForm = true;
   }
 
   confirmDelete(item: TypeDepenseDTO) {
-    this.confirmationService.confirm({
-      message: `Voulez-vous supprimer ${item.nom} ?`,
-      accept: () => this.service.delete(item.id!).subscribe(() => this.loadData())
+    this.confirm.confirm({
+      message: 'Les types de dépenses sont en lecture seule et ne peuvent pas être supprimés.',
+      header: 'Information',
+      icon: 'pi pi-info-circle',
+      rejectVisible: false,
+      acceptLabel: 'OK'
     });
   }
 }
