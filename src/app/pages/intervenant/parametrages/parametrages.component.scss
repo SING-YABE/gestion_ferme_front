@@ -1,0 +1,174 @@
+.settings-container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.header {
+  margin-bottom: 28px;
+}
+
+.header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+input[type="text"],
+input[type="email"] {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus {
+  outline: none;
+  border-color: #10b981;
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 12px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+.primary-btn:hover {
+  background: #059669;
+}
+
+.divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 32px 0;
+}
+
+.logo-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+}
+
+.logo-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.logo-preview img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+}
+
+.file-upload-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.file-upload-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.file-upload-label:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.file-upload-label svg {
+  flex-shrink: 0;
+  color: #10b981;
+}
+
+.file-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upload-btn {
+  padding: 11px 20px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.upload-btn:hover:not(:disabled) {
+  background: #059669;
+}
+
+.upload-btn:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+.hint {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 10px 0 0 0;
+}
+
+@media (max-width: 640px) {
+  .settings-container {
+    margin: 20px;
+    padding: 24px;
+  }
+  
+  .file-upload-wrapper {
+    flex-direction: column;
+  }
+  
+  .upload-btn {
+    width: 100%;
+  }
+}

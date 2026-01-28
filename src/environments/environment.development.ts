@@ -1,8 +1,9 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4200',
-  appName: ' FARM PRO',
+  apiUrl: 'http://localhost:8080',
+  appName: ' SAHEL PRO',
   appVersion: 'SOFT-FORGE',
   jwtKey: "ShamsyJwt",
   sessionKey: "ShamsySession",
 };
+ 

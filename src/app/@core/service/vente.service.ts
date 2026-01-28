@@ -12,6 +12,8 @@ export interface AnimalVenteDTO {
 
 export interface VenteCreateDTO {
   dateVente: string;  // format dd/MM/yyyy
+    dateEnlevement?: string | null;
+        dateEnlevementAuPlusTard?: string | null;
   client: string;
   animaux: AnimalVenteDTO[];
 }
@@ -58,4 +60,10 @@ export class VenteService {
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  getFacturePdf(id: number): Observable<Blob> {
+  return this.http.get(`${this.apiUrl}/${id}/facture`, { 
+    responseType: 'blob' 
+  });
+}
 }

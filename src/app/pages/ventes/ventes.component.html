@@ -11,8 +11,13 @@
     </div>
 
     <div>
-        <p-table [value]="ventes" [loading]="loading" [rows]="pageSize" [rowsPerPageOptions]="[5,10,20]"
-            [paginator]="ventes.length > pageSize" [expandedRowKeys]="expandedRows">
+        <p-table 
+            [value]="ventes" 
+            [loading]="loading" 
+            [rows]="pageSize" 
+            [rowsPerPageOptions]="[5,10,20]"
+            [paginator]="ventes.length > pageSize" 
+            [expandedRowKeys]="expandedRows">
 
             <ng-template pTemplate="header">
                 <tr style="background:#DCFCE7;">
@@ -22,14 +27,18 @@
                     <th>Nb animaux</th>
                     <th>Poids Total (kg)</th>
                     <th>Montant Total</th>
-                    <th style="text-align:center; width:150px;">Actions</th>
+                    <th style="text-align:center; width:180px;">Actions</th>
                 </tr>
             </ng-template>
 
             <ng-template pTemplate="body" let-v let-expanded="expanded">
                 <tr>
                     <td>
-                        <button type="button" pButton pRipple [pRowToggler]="v"
+                        <button 
+                            type="button" 
+                            pButton 
+                            pRipple 
+                            [pRowToggler]="v"
                             class="p-button-text p-button-rounded p-button-plain"
                             [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
                         </button>
@@ -40,7 +49,23 @@
                     <td><strong>{{ v.poidsTotal | number:'1.1-1' }} kg</strong></td>
                     <td><strong>{{ v.montantTotal | number:'1.0-0' }} FCFA</strong></td>
                     <td class="text-center">
-                        <button pButton class="p-button-rounded p-button-danger" icon="pi pi-trash"
+                        <!-- 🆕 Bouton Imprimer Facture -->
+                        <button 
+                            pButton 
+                            class="p-button-rounded p-button-warning mr-2" 
+                            icon="pi pi-file-pdf"
+                            pTooltip="Imprimer facture"
+                            tooltipPosition="top"
+                            (click)="imprimerFacture(v.id)">
+                        </button>
+                        
+                        <!-- Bouton Supprimer -->
+                        <button 
+                            pButton 
+                            class="p-button-rounded p-button-danger" 
+                            icon="pi pi-trash"
+                            pTooltip="Supprimer"
+                            tooltipPosition="top"
                             (click)="confirmDelete(v)">
                         </button>
                     </td>
@@ -50,43 +75,43 @@
             <!-- Détails des animaux -->
             <ng-template pTemplate="rowexpansion" let-v>
                 <tr>
-                    <td colspan="6">
+                    <td colspan="7">
                         <div class="p-3">
                             <h6 class="mb-3">Détails des animaux vendus</h6>
                             <p-table [value]="v.animaux" styleClass="p-datatable-sm">
                                 <ng-template pTemplate="header">
-                <tr style="background: #f5f5f5;">
-                    <th>Code Animal</th>
-                    <th>Type Vente</th>
-                    <th>Poids (kg)</th>
-                    <th>Prix Unitaire</th>
-                    <th>Montant</th>
+                                    <tr style="background: #f5f5f5;">
+                                        <th>Code Animal</th>
+                                        <th>Type Vente</th>
+                                        <th>Poids (kg)</th>
+                                        <th>Prix Unitaire</th>
+                                        <th>Montant</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-animal>
+                                    <tr>
+                                        <td><strong>{{ animal.animalCode }}</strong></td>
+                                        <td>{{ animal.typeVenteNom }}</td>
+                                        <td>{{ animal.poidsVente }}</td>
+                                        <td>{{ animal.prixUnitaire | number:'1.0-0' }}</td>
+                                        <td><strong>{{ animal.montantTotal | number:'1.0-0' }} FCFA</strong></td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </td>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-animal>
+
+            <ng-template pTemplate="emptymessage">
                 <tr>
-                    <td><strong>{{ animal.animalCode }}</strong></td>
-                    <td>{{ animal.typeVenteNom }}</td>
-                    <td>{{ animal.poidsVente }}</td>
-                    <td>{{ animal.prixUnitaire | number:'1.0-0' }}</td>
-                    <td><strong>{{ animal.montantTotal | number:'1.0-0' }} FCFA</strong></td>
+                    <td colspan="7" class="text-center py-4">
+                        <i class="pi pi-inbox mr-2"></i> Aucune vente trouvée
+                    </td>
                 </tr>
             </ng-template>
         </p-table>
     </div>
-    </td>
-    </tr>
-    </ng-template>
-
-    <ng-template pTemplate="emptymessage">
-        <tr>
-            <td colspan="6" class="text-center py-4">
-                <i class="pi pi-inbox mr-2"></i> Aucune vente trouvée
-            </td>
-        </tr>
-    </ng-template>
-    </p-table>
-</div>
 </div>
 
 <p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>

@@ -99,20 +99,29 @@ loadEtatsSanteByType(typeAnimalId: number): void {
     error: (err) => console.error('Erreur états santé', err)
   });
 }
+
+
 handleShow(): void {
   this.showForm = true;
 
   if (this.mode === 'edit' && this.target) {
-    // Charger les états santé du type avant de patcher
-    this.loadEtatsSanteByType(this.target.typeAnimal.id);
-    
-    this.animalForm.patchValue({
-      typeAnimalId: this.target.typeAnimal.id,
-      dateEntree: this.target.dateEntree,
-      poidsInitial: this.target.poidsInitial,
-      etatSanteId: this.target.etatSante.id,
-      batimentId: this.target.batiment.id,
-      observations: this.target.observations || ''
+    // Charger les états santé PUIS patcher
+    this.etatSanteService.getByTypeAnimal(this.target.typeAnimal.id).subscribe({
+      next: (data) => {
+        this.etatsSante = data;
+        console.log('États santé chargés:', data);
+        
+        // Patcher APRÈS le chargement
+        this.animalForm.patchValue({
+          typeAnimalId: this.target!.typeAnimal.id,
+          dateEntree: this.target!.dateEntree,
+          poidsInitial: this.target!.poidsInitial,
+          etatSanteId: this.target!.etatSante.id,
+          batimentId: this.target!.batiment.id,
+          observations: this.target!.observations || ''
+        });
+      },
+      error: (err) => console.error('Erreur états santé', err)
     });
   } else {
     this.animalForm.reset({

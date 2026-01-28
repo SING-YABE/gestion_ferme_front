@@ -5,22 +5,23 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
-import { NgIf, NgFor , DecimalPipe} from '@angular/common';
+import { NgIf, NgFor, DecimalPipe } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { VenteService, VenteCreateDTO, AnimalVenteDTO } from '../../../@core/service/vente.service';
 import { TypeventeService, TypeVenteResponseDTO } from '../../../@core/service/typevente.service';
 import { AnimalService, AnimalResponseDTO } from '../../../@core/service/animal.service';
+
 @Component({
   selector: 'app-ventes-form',
   standalone: true,
   imports: [
-    DialogModule, 
-    ReactiveFormsModule, 
-    InputTextModule, 
-    ButtonModule, 
-    CalendarModule, 
+    DialogModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    ButtonModule,
+    CalendarModule,
     DropdownModule,
-    NgIf, 
+    NgIf,
     NgFor,
     DecimalPipe
   ],
@@ -47,6 +48,8 @@ export class VentesFormComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       dateVente: ['', Validators.required],
+      dateEnlevement: [''],
+      dateEnlevementAuPlusTard: [''],
       client: ['', Validators.required],
       animaux: this.fb.array([])
     });
@@ -71,7 +74,6 @@ export class VentesFormComponent implements OnInit {
   loadAnimaux(): void {
     this.animalService.getAll().subscribe({
       next: (data) => {
-        // Filtrer uniquement les animaux non vendus
         this.animauxDisponibles = data.filter(a => !a.vendu);
       },
       error: () => this.toastr.error('Erreur chargement animaux')
@@ -94,7 +96,6 @@ export class VentesFormComponent implements OnInit {
 
   handleShow(): void {
     this.showForm = true;
-    // Ajouter au moins un animal par défaut
     if (this.animaux.length === 0) {
       this.ajouterAnimal();
     }
@@ -108,14 +109,25 @@ export class VentesFormComponent implements OnInit {
 
     this.processing = true;
 
-    // Convertir la date au format dd/MM/yyyy
-    const dateValue = this.form.value.dateVente;
-    const dateStr = dateValue instanceof Date 
-      ? this.formatDate(dateValue) 
-      : dateValue;
+    const dateVenteValue = this.form.value.dateVente;
+    const dateEnlevementValue = this.form.value.dateEnlevement;
+    const dateEnlevementAuPlusTardValue = this.form.value.dateEnlevementAuPlusTard;
+
+    const dateVenteStr = dateVenteValue instanceof Date
+      ? this.formatDate(dateVenteValue)
+      : dateVenteValue;
+
+    const dateEnlevementStr = dateEnlevementValue instanceof Date
+      ? this.formatDate(dateEnlevementValue)
+      : null;
+    const dateEnlevementAuPlusTardStr = dateEnlevementAuPlusTardValue instanceof Date
+      ? this.formatDate(dateEnlevementValue)
+      : null;
 
     const data: VenteCreateDTO = {
-      dateVente: dateStr,
+      dateVente: dateVenteStr,
+      dateEnlevement: dateEnlevementStr,
+      dateEnlevementAuPlusTard: dateEnlevementAuPlusTardStr,
       client: this.form.value.client,
       animaux: this.form.value.animaux
     };
@@ -124,15 +136,47 @@ export class VentesFormComponent implements OnInit {
       next: (res) => {
         this.toastr.success('Vente enregistrée avec succès');
         this.onUpdate.emit(res);
+        
+        // 🆕 Proposer d'imprimer la facture
+        this.proposerImpressionFacture(res.id);
+        
         this.showForm = false;
         this.form.reset();
         this.animaux.clear();
       },
       error: (err) => {
-        const message = err.error?.message || 'Erreur lors de la création';
-        this.toastr.error(message);
+        this.toastr.error(err.error?.message || 'Erreur lors de la création');
       },
       complete: () => (this.processing = false)
+    });
+  }
+
+  // 🆕 Méthode pour proposer l'impression
+  private proposerImpressionFacture(venteId: number): void {
+    setTimeout(() => {
+      if (confirm('Vente enregistrée ! Voulez-vous imprimer la facture ?')) {
+        this.imprimerFacture(venteId);
+      }
+    }, 500);
+  }
+
+  // 🆕 Méthode pour imprimer la facture
+  private imprimerFacture(venteId: number): void {
+    this.venteService.getFacturePdf(venteId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        
+        // Alternative: Télécharger directement
+        // const link = document.createElement('a');
+        // link.href = url;
+        // link.download = `facture_${venteId}.pdf`;
+        // link.click();
+        // window.URL.revokeObjectURL(url);
+      },
+      error: () => {
+        this.toastr.error('Erreur lors de la génération de la facture');
+      }
     });
   }
 

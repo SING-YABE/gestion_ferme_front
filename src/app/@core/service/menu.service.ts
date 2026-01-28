@@ -102,11 +102,13 @@ export class MenuService {
       children: [
         { title: 'Type Animaux', icon: faCow, routerLink: '/typeAnimaux' },
         { title: 'Bâtiment', icon: faWarehouse, routerLink: '/batiments' },
-        { title: 'Stade', icon: faHeartPulse, routerLink: '/etatSante' },
+        { title: 'Etat de santé', icon: faHeartPulse, routerLink: '/etatSante' },
+        { title: 'Stade', icon: faHeartPulse, routerLink: '/stade' },
         { title: 'Type Aliment', icon: faWheatAwn, routerLink: '/typeAliment' },
         { title: 'Fournisseur', icon: faTruck, routerLink: '/fournisseurs' },
         { title: 'Ingredient', icon: faCarrot, routerLink: '/ingredients' },
         { title: 'Traitement', icon: faCapsules, routerLink: '/traitement' },
+        { title: 'Parametrage', icon: faCapsules, routerLink: '/parametrage' },
         { title: 'Type de dépense', icon: faDollarSign, routerLink: '/typeDepense' },
         { title: 'Type de vente', icon: faDollarSign, routerLink: '/typeVente' },
       ]

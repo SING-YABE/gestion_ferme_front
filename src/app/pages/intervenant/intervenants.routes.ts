@@ -26,6 +26,10 @@ export const intervenantsRoutes: Routes = [
     loadComponent: () => import("./etat-sante/etat-sante.component").then(value => value.EtatSanteComponent)
   },
   {
+    path: 'stade',
+    loadComponent: () => import("./stade/stade.component").then(value => value.StadeComponent)
+  },
+  {
     path: 'typeAliment',
     loadComponent: () => import("./type-aliment/type-aliment.component").then(value => value.TypeAlimentComponent)
 
@@ -42,6 +46,11 @@ export const intervenantsRoutes: Routes = [
     path: 'traitement',
     loadComponent: () => import("./traitement/traitement.component").then(value => value.TraitementComponent)
   },
+    {
+    path: 'parametrage',
+    loadComponent:() => import("./parametrages/parametrages.component").then(value => value.ParametragesComponent)
+  },
+
   {
     path: 'typeDepense',
     loadComponent: () => import("./type-depense/type-depense.component").then(value => value.TypeDepenseComponent)
