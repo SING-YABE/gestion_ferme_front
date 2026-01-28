@@ -71,14 +71,15 @@ export class VentesFormComponent implements OnInit {
     });
   }
 
-  loadAnimaux(): void {
-    this.animalService.getAll().subscribe({
-      next: (data) => {
-        this.animauxDisponibles = data.filter(a => !a.vendu);
-      },
-      error: () => this.toastr.error('Erreur chargement animaux')
-    });
-  }
+loadAnimaux(): void {
+  this.animalService.getAll().subscribe({
+    next: (data) => {
+      this.animauxDisponibles = data; 
+    },
+    error: () => this.toastr.error('Erreur chargement animaux')
+  });
+}
+
 
   ajouterAnimal(): void {
     const animalGroup = this.fb.group({
@@ -121,7 +122,7 @@ export class VentesFormComponent implements OnInit {
       ? this.formatDate(dateEnlevementValue)
       : null;
     const dateEnlevementAuPlusTardStr = dateEnlevementAuPlusTardValue instanceof Date
-      ? this.formatDate(dateEnlevementValue)
+      ? this.formatDate(dateEnlevementAuPlusTardValue)
       : null;
 
     const data: VenteCreateDTO = {
