@@ -1,0 +1,9 @@
+::ng-deep .dropdown-custom .p-dropdown {
+  height: 50px !important;
+  border-radius: 10px !important;
+  
+  .p-dropdown-label {
+    padding-top: 0.85rem !important;
+    font-size: 1rem !important;
+  }
+}

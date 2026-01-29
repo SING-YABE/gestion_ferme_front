@@ -23,7 +23,9 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     CalendarModule,
     InputNumberModule,
     InputTextareaModule,
-    InputTextModule
+    InputTextModule,
+    DropdownModule
+  
   ],
   templateUrl: './chargesdiverses-form.component.html',
   styleUrls: ['./chargesdiverses-form.component.scss']
