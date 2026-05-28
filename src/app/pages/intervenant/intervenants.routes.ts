@@ -17,6 +17,11 @@ export const intervenantsRoutes: Routes = [
     path: 'batiments',
     loadComponent: () => import("./batiment/batiment.component").then(value => value.BatimentComponent)
   },
+
+    {
+    path: 'box',
+    loadComponent: () => import("./box/box.component").then(value => value.BoxComponent)
+  },
   {
     path: 'typeVente',
     loadComponent: () => import("./typevente/typevente.component").then(value => value.TypeventeComponent)

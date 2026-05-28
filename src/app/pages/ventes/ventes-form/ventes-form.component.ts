@@ -1,13 +1,17 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  FormBuilder, FormGroup, Validators,
+  ReactiveFormsModule, FormArray, AbstractControl
+} from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import { NgIf, NgFor, DecimalPipe } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { VenteService, VenteCreateDTO, AnimalVenteDTO } from '../../../@core/service/vente.service';
+import { VenteService, VenteCreateDTO, ModeVente } from '../../../@core/service/vente.service';
 import { TypeventeService, TypeVenteResponseDTO } from '../../../@core/service/typevente.service';
 import { AnimalService, AnimalResponseDTO } from '../../../@core/service/animal.service';
 
@@ -15,15 +19,9 @@ import { AnimalService, AnimalResponseDTO } from '../../../@core/service/animal.
   selector: 'app-ventes-form',
   standalone: true,
   imports: [
-    DialogModule,
-    ReactiveFormsModule,
-    InputTextModule,
-    ButtonModule,
-    CalendarModule,
-    DropdownModule,
-    NgIf,
-    NgFor,
-    DecimalPipe
+    DialogModule, ReactiveFormsModule, InputTextModule,
+    ButtonModule, CalendarModule, DropdownModule,
+    SelectButtonModule, NgIf, NgFor, DecimalPipe
   ],
   templateUrl: './ventes-form.component.html',
   styleUrls: ['./ventes-form.component.scss']
@@ -38,6 +36,12 @@ export class VentesFormComponent implements OnInit {
   form: FormGroup;
   typesVente: TypeVenteResponseDTO[] = [];
   animauxDisponibles: AnimalResponseDTO[] = [];
+
+  // Options pour le SelectButton PrimeNG
+  modesVente = [
+    { label: '⚖️ Au poids', value: 'AU_POIDS' },
+    { label: '🤝 Sans pesée', value: 'SANS_PESEE' }
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -71,28 +75,71 @@ export class VentesFormComponent implements OnInit {
     });
   }
 
-loadAnimaux(): void {
-  this.animalService.getAll().subscribe({
-    next: (data) => {
-      this.animauxDisponibles = data; 
-    },
-    error: () => this.toastr.error('Erreur chargement animaux')
+  loadAnimaux(): void {
+    this.animalService.getAll().subscribe({
+      next: (data) => this.animauxDisponibles = data,
+      error: () => this.toastr.error('Erreur chargement animaux')
+    });
+  }
+
+ajouterAnimal(): void {
+  const animalGroup = this.fb.group({
+    codeAnimal:  ['', Validators.required],
+    typeVenteId: ['', Validators.required],
+    modeVente:   ['AU_POIDS' as ModeVente, Validators.required], // valeur par défaut
+    poidsVente:  ['', [Validators.min(0.1)]],
+    prixUnitaire:['', [Validators.min(1)]],
+    prixNegocie: ['', [Validators.min(1)]]
   });
+
+  // Mise à jour dynamique des validateurs à chaque changement de mode
+  animalGroup.get('modeVente')!.valueChanges.subscribe((mode) => {
+    this.mettreAJourValidateurs(animalGroup, mode as ModeVente);
+  });
+
+  // Appliquer les validateurs initiaux selon le mode par défaut
+  this.mettreAJourValidateurs(animalGroup, 'AU_POIDS');
+
+  this.animaux.push(animalGroup);
 }
 
+private mettreAJourValidateurs(group: AbstractControl, mode: ModeVente): void {
+  const fg = group as FormGroup;
+  const poidsCtrl    = fg.get('poidsVente')!;
+  const prixUnitCtrl = fg.get('prixUnitaire')!;
+  const prixNegCtrl  = fg.get('prixNegocie')!;
 
-  ajouterAnimal(): void {
-    const animalGroup = this.fb.group({
-      codeAnimal: ['', Validators.required],
-      typeVenteId: ['', Validators.required],
-      poidsVente: ['', [Validators.required, Validators.min(0.1)]],
-      prixUnitaire: ['', [Validators.required, Validators.min(1)]]
-    });
-    this.animaux.push(animalGroup);
+  if (mode === 'AU_POIDS') {
+    // Au poids → poids et prix unitaire requis
+    poidsCtrl.setValidators([Validators.required, Validators.min(0.1)]);
+    prixUnitCtrl.setValidators([Validators.required, Validators.min(1)]);
+
+    // Prix négocié non utilisé
+    prixNegCtrl.clearValidators();
+    prixNegCtrl.setValue(null);
+  } else {
+    // Sans pesée → prix négocié requis
+    prixNegCtrl.setValidators([Validators.required, Validators.min(1)]);
+
+    // Champs poids et prix unitaire non utilisés
+    poidsCtrl.clearValidators();
+    prixUnitCtrl.clearValidators();
+    poidsCtrl.setValue(null);
+    prixUnitCtrl.setValue(null);
   }
+
+  // Actualiser l'état du formulaire pour refléter les validators
+  poidsCtrl.updateValueAndValidity();
+  prixUnitCtrl.updateValueAndValidity();
+  prixNegCtrl.updateValueAndValidity();
+}
 
   supprimerAnimal(index: number): void {
     this.animaux.removeAt(index);
+  }
+
+  getModeVente(index: number): ModeVente {
+    return this.animaux.at(index).get('modeVente')?.value as ModeVente;
   }
 
   handleShow(): void {
@@ -103,100 +150,81 @@ loadAnimaux(): void {
   }
 
   handleSubmit(): void {
-    if (this.form.invalid) {
-      this.toastr.warning('Veuillez remplir tous les champs');
+    if (this.form.invalid || this.animaux.length === 0) {
+      this.toastr.warning('Veuillez remplir tous les champs obligatoires');
       return;
     }
 
     this.processing = true;
 
-    const dateVenteValue = this.form.value.dateVente;
-    const dateEnlevementValue = this.form.value.dateEnlevement;
-    const dateEnlevementAuPlusTardValue = this.form.value.dateEnlevementAuPlusTard;
-
-    const dateVenteStr = dateVenteValue instanceof Date
-      ? this.formatDate(dateVenteValue)
-      : dateVenteValue;
-
-    const dateEnlevementStr = dateEnlevementValue instanceof Date
-      ? this.formatDate(dateEnlevementValue)
-      : null;
-    const dateEnlevementAuPlusTardStr = dateEnlevementAuPlusTardValue instanceof Date
-      ? this.formatDate(dateEnlevementAuPlusTardValue)
-      : null;
+    const formatDate = (val: any): string | null => {
+      if (!val) return null;
+      if (val instanceof Date) {
+        const d = String(val.getDate()).padStart(2, '0');
+        const m = String(val.getMonth() + 1).padStart(2, '0');
+        return `${d}/${m}/${val.getFullYear()}`;
+      }
+      return val;
+    };
 
     const data: VenteCreateDTO = {
-      dateVente: dateVenteStr,
-      dateEnlevement: dateEnlevementStr,
-      dateEnlevementAuPlusTard: dateEnlevementAuPlusTardStr,
+      dateVente: formatDate(this.form.value.dateVente)!,
+      dateEnlevement: formatDate(this.form.value.dateEnlevement),
+      dateEnlevementAuPlusTard: formatDate(this.form.value.dateEnlevementAuPlusTard),
       client: this.form.value.client,
-      animaux: this.form.value.animaux
+      animaux: this.form.value.animaux.map((a: any) => ({
+        codeAnimal: a.codeAnimal,
+        typeVenteId: a.typeVenteId,
+        modeVente: a.modeVente,
+        poidsVente: a.modeVente === 'AU_POIDS' ? a.poidsVente : null,
+        prixUnitaire: a.modeVente === 'AU_POIDS' ? a.prixUnitaire : null,
+        prixNegocie: a.modeVente === 'SANS_PESEE' ? a.prixNegocie : null
+      }))
     };
 
     this.venteService.create(data).subscribe({
       next: (res) => {
         this.toastr.success('Vente enregistrée avec succès');
         this.onUpdate.emit(res);
-        
-        // 🆕 Proposer d'imprimer la facture
         this.proposerImpressionFacture(res.id);
-        
         this.showForm = false;
         this.form.reset();
         this.animaux.clear();
       },
       error: (err) => {
         this.toastr.error(err.error?.message || 'Erreur lors de la création');
+        this.processing = false;
       },
       complete: () => (this.processing = false)
     });
   }
 
-  // 🆕 Méthode pour proposer l'impression
   private proposerImpressionFacture(venteId: number): void {
     setTimeout(() => {
       if (confirm('Vente enregistrée ! Voulez-vous imprimer la facture ?')) {
-        this.imprimerFacture(venteId);
+        this.venteService.getFacturePdf(venteId).subscribe({
+          next: (blob) => {
+            const url = window.URL.createObjectURL(blob);
+            window.open(url, '_blank');
+          },
+          error: () => this.toastr.error('Erreur génération facture')
+        });
       }
     }, 500);
   }
 
-  // 🆕 Méthode pour imprimer la facture
-  private imprimerFacture(venteId: number): void {
-    this.venteService.getFacturePdf(venteId).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        window.open(url, '_blank');
-        
-        // Alternative: Télécharger directement
-        // const link = document.createElement('a');
-        // link.href = url;
-        // link.download = `facture_${venteId}.pdf`;
-        // link.click();
-        // window.URL.revokeObjectURL(url);
-      },
-      error: () => {
-        this.toastr.error('Erreur lors de la génération de la facture');
-      }
-    });
-  }
-
-  private formatDate(date: Date): string {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  }
-
+  // Calcul montant pour affichage live
   calculerMontantAnimal(index: number): number {
-    const animal = this.animaux.at(index).value;
-    return (animal.poidsVente || 0) * (animal.prixUnitaire || 0);
+    const a = this.animaux.at(index).value;
+    if (a.modeVente === 'AU_POIDS') {
+      return (a.poidsVente || 0) * (a.prixUnitaire || 0);
+    }
+    return a.prixNegocie || 0;
   }
 
   calculerMontantTotal(): number {
-    return this.animaux.controls.reduce((total, control) => {
-      const animal = control.value;
-      return total + ((animal.poidsVente || 0) * (animal.prixUnitaire || 0));
+    return this.animaux.controls.reduce((total, _, i) => {
+      return total + this.calculerMontantAnimal(i);
     }, 0);
   }
 }

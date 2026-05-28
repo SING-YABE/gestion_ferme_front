@@ -6,24 +6,22 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { CalendarModule } from 'primeng/calendar';
+import { NgIf } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { AnimalService, AnimalDTO, AnimalResponseDTO } from '../../../@core/service/animal.service';
 import { TypeAnimalService, TypeAnimalResponseDTO } from '../../../@core/service/type-animal.service';
 import { EtatSanteService, EtatSanteResponseDTO } from '../../../@core/service/etat-sante.service';
 import { BatimentService, BatimentResponseDTO } from '../../../@core/service/batiment.service';
-import { CalendarModule } from 'primeng/calendar';
+import { BoxService, BoxResponseDTO } from '../../../@core/service/box.service';
+import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-fichesanimaux-form',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    ButtonModule,
-    DialogModule,
-    InputTextModule,
-    DropdownModule,
-    InputTextareaModule,
-    CalendarModule
+    CommonModule, NgIf, ReactiveFormsModule,
+    ButtonModule, DialogModule, InputTextModule,
+    DropdownModule, InputTextareaModule, CalendarModule
   ],
   templateUrl: './fichesanimaux-form.component.html',
   styleUrl: './fichesanimaux-form.component.scss'
@@ -33,157 +31,220 @@ export class FichesanimauxFormComponent implements OnInit {
   @Input() mode: 'create' | 'edit' = 'create';
   @Output() onUpdate = new EventEmitter<void>();
 
-  showForm: boolean = false;
-  processing: boolean = false;
+  showForm = false;
+  processing = false;
   animalForm!: FormGroup;
 
   typesAnimaux: TypeAnimalResponseDTO[] = [];
   etatsSante: EtatSanteResponseDTO[] = [];
   batiments: BatimentResponseDTO[] = [];
-
+  boxesDisponibles: BoxResponseDTO[] = [];
+selectedPhoto: File | null = null;
+photoPreviewUrl: string | null = null;
+private isPrefilling = false;
   constructor(
     private fb: FormBuilder,
     private animalService: AnimalService,
     private typeAnimalService: TypeAnimalService,
     private etatSanteService: EtatSanteService,
     private batimentService: BatimentService,
+    private boxService: BoxService,
     private messageService: MessageService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
-    // chg type animal
-    this.animalForm.get('typeAnimalId')?.valueChanges.subscribe(typeId => {
-      if (typeId && typeId > 0) {
-        this.loadEtatsSanteByType(typeId);
-        this.animalForm.patchValue({ etatSanteId: 0 });
-      }
-    });
     this.loadReferenceData();
+
+    // Reload états santé quand type change
+    this.animalForm.get('typeAnimalId')?.valueChanges.subscribe(typeId => {
+  if (this.isPrefilling) return; // ← bloque pendant le patch
+  if (typeId && typeId > 0) {
+    this.etatSanteService.getByTypeAnimal(typeId).subscribe(data => {
+      this.etatsSante = data;
+      this.animalForm.patchValue({ etatSanteId: 0 });
+    });
+  }
+});
+    
   }
 
-  // Ajouter cette méthode helper
-  private formatDateToYMD(date: Date): string {
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+onPhotoSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files?.length) {
+    this.selectedPhoto = input.files[0];
+    // Aperçu local immédiat
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.photoPreviewUrl = e.target?.result as string;
+    };
+    reader.readAsDataURL(this.selectedPhoto);
   }
+}
 
   initForm(): void {
     this.animalForm = this.fb.group({
       typeAnimalId: [0, [Validators.required, Validators.min(1)]],
-      dateEntree: ['', Validators.required],
+      dateEntree:   ['', Validators.required],
       poidsInitial: [0, [Validators.required, Validators.min(0.1)]],
-      etatSanteId: [0, [Validators.required, Validators.min(1)]],
-      batimentId: [0, [Validators.required, Validators.min(1)]],
+      etatSanteId:  [0, [Validators.required, Validators.min(1)]],
+      batimentId:   [0, [Validators.required, Validators.min(1)]], // helper local, pas envoyé au backend
+      boxId:        [0, [Validators.required, Validators.min(1)]],
       observations: ['']
     });
   }
 
-loadReferenceData(): void {
-  this.typeAnimalService.getAll().subscribe({
-    next: (data) => this.typesAnimaux = data,
-    error: (err) => console.error('Erreur', err)
-  });
+  loadReferenceData(): void {
+    this.typeAnimalService.getAll().subscribe(data => this.typesAnimaux = data);
+    this.batimentService.getAll().subscribe(data => this.batiments = data);
+  }
 
-  this.batimentService.getAll().subscribe({
-    next: (data) => this.batiments = data,
-    error: (err) => console.error('Erreur', err)
-  });
-}
-
-loadEtatsSanteByType(typeAnimalId: number): void {
-  this.etatSanteService.getByTypeAnimal(typeAnimalId).subscribe({
-    next: (data) => this.etatsSante = data,
-    error: (err) => console.error('Erreur états santé', err)
-  });
-}
-
+  // ✅ Cascade : bâtiment sélectionné → charger ses boxes
+  onBatimentChange(batimentId: number): void {
+    this.animalForm.patchValue({ boxId: 0 });
+    this.boxesDisponibles = [];
+    if (batimentId) {
+      this.boxService.getByBatiment(batimentId).subscribe({
+        next: data => this.boxesDisponibles = data,
+        error: () => this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur chargement boxes' })
+      });
+    }
+  }
 
 handleShow(): void {
   this.showForm = true;
 
   if (this.mode === 'edit' && this.target) {
-    // Charger les états santé PUIS patcher
-    this.etatSanteService.getByTypeAnimal(this.target.typeAnimal.id).subscribe({
-      next: (data) => {
-        this.etatsSante = data;
-        console.log('États santé chargés:', data);
-        
-        // Patcher APRÈS le chargement
-        this.animalForm.patchValue({
-          typeAnimalId: this.target!.typeAnimal.id,
-          dateEntree: this.target!.dateEntree,
-          poidsInitial: this.target!.poidsInitial,
-          etatSanteId: this.target!.etatSante.id,
-          batimentId: this.target!.batiment.id,
-          observations: this.target!.observations || ''
+    this.selectedPhoto   = null;
+    this.photoPreviewUrl = null;
+const typeId = this.target.typeAnimalId ?? 0;
+const etatId = this.target.etatSanteId  ?? 0;
+    // Trouver le bâtiment par nom
+    const batiment = this.batiments.find(b => b.nom === this.target!.batimentNom);
+
+    if (batiment) {
+      // Charger boxes du bâtiment EN PARALLÈLE avec les états de santé
+      forkJoin({
+        boxes: this.boxService.getByBatiment(batiment.id),
+        etats: this.etatSanteService.getByTypeAnimal(typeId)
+      }).subscribe({
+        next: ({ boxes, etats }) => {
+          this.boxesDisponibles = boxes;
+          this.etatsSante = etats;
+this.isPrefilling = true;
+          this.animalForm.patchValue({
+            typeAnimalId: typeId,
+            dateEntree:   this.target!.dateEntree ? new Date(this.target!.dateEntree) : '',
+            poidsInitial: this.target!.poidsInitial || 0,
+            etatSanteId:  etatId,
+            batimentId:   batiment.id,
+            boxId:        this.target!.boxId || 0,
+            observations: this.target!.observations || ''
+          });
+          this.isPrefilling = false;
+        },
+        error: () => this.messageService.add({
+          severity: 'error', summary: 'Erreur',
+          detail: 'Erreur chargement des données'
+        })
+      });
+
+    } else {
+      // Bâtiment introuvable — charger quand même les états de santé
+      if (typeId) {
+        this.etatSanteService.getByTypeAnimal(typeId).subscribe({
+          next: etats => {
+            this.etatsSante = etats;
+            this.animalForm.patchValue({
+              typeAnimalId: typeId,
+              dateEntree:   this.target!.dateEntree ? new Date(this.target!.dateEntree) : '',
+              poidsInitial: this.target!.poidsInitial || 0,
+              etatSanteId:  etatId,
+              boxId:        this.target!.boxId || 0,
+              observations: this.target!.observations || ''
+            });
+          },
+          error: () => this.messageService.add({
+            severity: 'error', summary: 'Erreur',
+            detail: 'Erreur chargement états de santé'
+          })
         });
-      },
-      error: (err) => console.error('Erreur états santé', err)
-    });
+      }
+    }
+
   } else {
+    // Mode création : reset complet
     this.animalForm.reset({
       typeAnimalId: 0,
-      dateEntree: '',
+      dateEntree:   '',
       poidsInitial: 0,
-      etatSanteId: 0,
-      batimentId: 0,
+      etatSanteId:  0,
+      batimentId:   0,
+      boxId:        0,
       observations: ''
     });
-    this.etatsSante = []; 
+    this.etatsSante      = [];
+    this.boxesDisponibles = [];
+    this.selectedPhoto    = null;
+    this.photoPreviewUrl  = null;
   }
 }
+
   handleSubmit(): void {
     if (this.animalForm.invalid) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Attention',
-        detail: 'Veuillez remplir tous les champs obligatoires'
-      });
+      this.messageService.add({ severity: 'warn', summary: 'Attention', detail: 'Veuillez remplir tous les champs' });
       return;
     }
 
     this.processing = true;
-    const formData: any = { ...this.animalForm.value };
+    const formData = this.animalForm.value;
 
-    // Conversion date en jj/mm/yyyy
-    formData.dateEntree = this.formatDateToYMD(formData.dateEntree);
+    // Conversion date
+    if (formData.dateEntree instanceof Date) {
+      const d = formData.dateEntree;
+      formData.dateEntree = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+    }
 
-    const request$ = this.mode === 'create'
-      ? this.animalService.create(formData)
-      : this.animalService.update(this.target!.id, formData);
+    const dto: AnimalDTO = {
+      typeAnimalId: formData.typeAnimalId,
+      dateEntree:   formData.dateEntree,
+      poidsInitial: formData.poidsInitial,
+      etatSanteId:  formData.etatSanteId,
+      boxId:        formData.boxId,
+      observations: formData.observations
+    };
 
-    request$.subscribe({
+    const req$ = this.mode === 'create'
+      ? this.animalService.create(dto)
+      : this.animalService.update(this.target!.id, dto);
+
+    req$.subscribe({
+    next: (res) => {
+  // Upload photo si une photo a été sélectionnée
+  if (this.selectedPhoto) {
+    this.animalService.uploadPhoto(res.id, this.selectedPhoto).subscribe({
       next: () => {
-        this.processing = false;
-
-        // Afficher message de succès
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Succès',
-          detail: this.mode === 'create' ? "Animal ajouté avec succès" : "Animal modifié avec succès"
-        });
-
-        this.showForm = false;
-
-        this.onUpdate.emit();
-      },
+        this.selectedPhoto = null;
+        this.photoPreviewUrl = null;
+      }
+    });
+  }
+  this.messageService.add({
+    severity: 'success', summary: 'Succès',
+    detail: 'Animal modifié'
+  });
+  this.processing = false;
+  this.showForm = false;
+  this.onUpdate.emit();
+},
       error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: err.error?.message || 'Erreur serveur' });
         this.processing = false;
-        console.error(err);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erreur',
-          detail: 'Une erreur est survenue lors de l’enregistrement.'
-        });
       }
     });
   }
 
-
   get dialogHeader(): string {
-    return this.mode === 'edit' ? 'Modifier l\'animal' : 'Nouvel animal';
+    return this.mode === 'edit' ? "Modifier l'animal" : 'Nouvel animal';
   }
 }

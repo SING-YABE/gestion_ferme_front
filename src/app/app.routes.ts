@@ -49,6 +49,13 @@ export const routes: Routes = [
             path:'fiches-animaux',
             loadComponent: () => import('./pages/fiches-animaux/fiches-animaux.component').then(m => m.FichesAnimauxComponent)
           },
+
+           {
+            title:'Déplacements',
+            path:'deplacements',
+            loadComponent: () => import('./pages/deplacement/deplacement.component').then(m => m.DeplacementComponent)
+          },
+          
             {
             title:'suivi-reproduction',
             path:'suivi-reproduction',

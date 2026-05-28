@@ -1,0 +1,177 @@
+<!-- Bouton déplacer -->
+<button pButton type="button"
+        icon="pi pi-arrow-right-arrow-left"
+        class="p-button-rounded"
+        pTooltip="Déplacer" tooltipPosition="top"
+        style="background:#d97706; border-color:#d97706;"
+        (click)="ouvrirDeplacement()">
+</button>
+
+<!-- Bouton historique déplacements -->
+<button pButton type="button"
+        icon="pi pi-history"
+        class="p-button-rounded"
+        pTooltip="Historique déplacements" tooltipPosition="top"
+        style="background:#0369a1; border-color:#0369a1; margin-left:4px;"
+        (click)="ouvrirHistorique()">
+</button>
+
+<!-- DIALOG DÉPLACEMENT -->
+<p-dialog
+  [header]="'🚚 Déplacer — ' + animal?.codeAnimal"
+  [(visible)]="showDeplacement"
+  [modal]="true"
+  [style]="{width:'480px'}"
+  appendTo="body"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div style="background:#fef3c7; border-radius:10px; padding:0.875rem;
+              margin-bottom:1.25rem; border-left:3px solid #f59e0b;">
+    <div style="font-size:0.8rem; color:#92400e; font-weight:600;
+                text-transform:uppercase; margin-bottom:0.25rem;">
+      Position actuelle
+    </div>
+    <div style="display:flex; gap:1rem; align-items:center;">
+      <span style="font-weight:700;">{{ animal?.codeAnimal }}</span>
+      <span style="color:#6b7280;">→</span>
+      <span style="background:#fde68a; padding:2px 10px;
+                   border-radius:20px; font-size:0.85rem; font-weight:600;">
+        {{ animal?.boxCode }}
+      </span>
+      <span style="color:#6b7280; font-size:0.85rem;">{{ animal?.batimentNom }}</span>
+    </div>
+  </div>
+
+  <form [formGroup]="form">
+
+    <div style="margin-bottom:1.25rem;">
+      <label style="display:block; margin-bottom:0.5rem;
+                    color:#374151; font-weight:500; font-size:0.9rem;">
+        🏠 Bâtiment destination <span style="color:#ef4444;">*</span>
+      </label>
+      <p-dropdown formControlName="batimentId"
+                  [options]="batiments" optionLabel="nom" optionValue="id"
+                  placeholder="Sélectionnez un bâtiment"
+                  styleClass="w-full" [style]="{width:'100%', height:'45px'}">
+      </p-dropdown>
+    </div>
+
+    <div style="margin-bottom:1.25rem;">
+      <label style="display:block; margin-bottom:0.5rem;
+                    color:#374151; font-weight:500; font-size:0.9rem;">
+        📦 Box destination <span style="color:#ef4444;">*</span>
+      </label>
+      <p-dropdown formControlName="nouvelleBoxId"
+                  [options]="boxesDisponibles" optionLabel="code" optionValue="id"
+                  placeholder="Sélectionnez une box"
+                  [disabled]="boxesDisponibles.length === 0"
+                  styleClass="w-full" [style]="{width:'100%', height:'45px'}">
+        <ng-template let-box pTemplate="item">
+          <div style="display:flex; justify-content:space-between;">
+            <strong>{{ box.code }}</strong>
+            <span [style]="box.occupationActuelle >= box.capaciteMax
+              ? 'color:#b91c1c;' : 'color:#15803d;'">
+              {{ box.occupationActuelle }}/{{ box.capaciteMax }}
+              {{ box.occupationActuelle >= box.capaciteMax ? '🔴' : '🟢' }}
+            </span>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <small *ngIf="boxesDisponibles.length === 0 && form.get('batimentId')?.value"
+             style="color:#ef4444;">Aucune box disponible</small>
+    </div>
+
+    <div>
+      <label style="display:block; margin-bottom:0.5rem;
+                    color:#6b7280; font-weight:500; font-size:0.9rem;">
+        📝 Motif (optionnel)
+      </label>
+      <textarea pInputTextarea formControlName="motif" rows="3"
+                placeholder="Raison du déplacement..."
+                style="width:100%; border-radius:10px; resize:vertical;">
+      </textarea>
+    </div>
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div style="display:flex; gap:0.75rem;">
+      <button pButton type="button" label="Annuler"
+              class="p-button-text" style="flex:1; color:#6b7280;"
+              (click)="showDeplacement=false">
+      </button>
+      <button pButton type="button" label="Confirmer le déplacement"
+              icon="pi pi-check"
+              [disabled]="form.invalid" [loading]="processing"
+              style="flex:2; background:#d97706; border-color:#d97706; border-radius:10px;"
+              (click)="handleSubmit()">
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- DIALOG HISTORIQUE DÉPLACEMENTS -->
+<p-dialog
+  [header]="'📋 Historique déplacements — ' + animal?.codeAnimal"
+  [(visible)]="showHistorique"
+  [modal]="true"
+  [style]="{width:'600px'}"
+  appendTo="body"
+  [draggable]="false"
+  [resizable]="false">
+
+  <p-table [value]="historique"
+           [loading]="loadingHistorique"
+           [rows]="5"
+           [paginator]="historique.length > 5"
+           styleClass="p-datatable-sm">
+
+    <ng-template pTemplate="header">
+      <tr style="background:#fef3c7;">
+        <th>Date</th>
+        <th>Ancienne Box</th>
+        <th>Nouvelle Box</th>
+        <th>Motif</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-dep>
+      <tr>
+        <td style="font-size:0.85rem; white-space:nowrap;">
+          {{ formatDate(dep.dateDeplacement) }}
+        </td>
+        <td>
+          <span style="background:#fee2e2; color:#b91c1c; padding:2px 8px;
+                       border-radius:20px; font-size:0.82rem; font-weight:600;">
+            {{ dep.ancienneBoxCode }}
+          </span>
+        </td>
+        <td>
+          <span style="background:#dcfce7; color:#15803d; padding:2px 8px;
+                       border-radius:20px; font-size:0.82rem; font-weight:600;">
+            {{ dep.nouvelleBoxCode }}
+          </span>
+        </td>
+        <td style="font-size:0.85rem; color:#6b7280;">{{ dep.motif || '-' }}</td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4" style="text-align:center; padding:2rem; color:#9ca3af;">
+          <i class="pi pi-inbox" style="margin-right:0.5rem;"></i>
+          Aucun déplacement enregistré
+        </td>
+      </tr>
+    </ng-template>
+
+  </p-table>
+
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Fermer"
+            class="p-button-text" style="color:#6b7280;"
+            (click)="showHistorique=false">
+    </button>
+  </ng-template>
+</p-dialog>

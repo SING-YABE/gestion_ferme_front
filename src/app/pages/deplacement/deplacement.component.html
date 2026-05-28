@@ -1,0 +1,128 @@
+<div class="odyssey-shadow-low border-round"
+     style="background:#F5F0E6; border:1px solid #D9D2C2;">
+
+  <!-- HEADER -->
+  <div class="px-4 py-2 flex gap-3 align-items-center"
+       style="background:#2E7D32; color:white; border-radius:8px 8px 0 0;">
+    <div class="flex-1">
+      <h5 class="m-0">Historique des déplacements</h5>
+    </div>
+    <div>
+      <app-deplacement-form (onUpdate)="loadData()"></app-deplacement-form>
+    </div>
+  </div>
+
+  <!-- FILTRE PAR ANIMAL -->
+  <div class="px-4 pt-3 pb-2">
+    <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-weight:600; font-size:0.9rem;">Filtrer par animal :</label>
+        <p-dropdown
+          [options]="animaux"
+          [(ngModel)]="filtreAnimalId"
+          optionLabel="codeAnimal"
+          optionValue="id"
+          placeholder="Tous les animaux"
+          [showClear]="true"
+          [filter]="true"
+          [style]="{width:'220px'}"
+          (onChange)="onFiltreChange()">
+        </p-dropdown>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-weight:600; font-size:0.9rem;">Recherche motif :</label>
+        <input pInputText type="text"
+               [(ngModel)]="rechercheMotif"
+               (ngModelChange)="onFiltreChange()"
+               placeholder="Ex: Transfert..."
+               style="height:40px; width:220px; border-radius:8px;" />
+      </div>
+
+      <button pButton label="Réinitialiser" icon="pi pi-refresh"
+              class="p-button-outlined p-button-secondary"
+              style="align-self:flex-end; height:40px;"
+              (click)="resetFiltres()">
+      </button>
+
+    </div>
+  </div>
+
+  <!-- TABLEAU -->
+  <div class="px-4 pb-4">
+    <p-table
+      [value]="historiqueFiltre"
+      [loading]="loading"
+      [rows]="pageSize"
+      [rowsPerPageOptions]="[5,10,20]"
+      [paginator]="historiqueFiltre.length > pageSize"
+      styleClass="p-datatable-sm"
+      [sortField]="'dateDeplacement'"
+      [sortOrder]="-1">
+
+      <ng-template pTemplate="header">
+        <tr style="background:#DCFCE7;">
+          <th pSortableColumn="dateDeplacement">
+            Date <p-sortIcon field="dateDeplacement"></p-sortIcon>
+          </th>
+          <th>Animal</th>
+          <th>Ancienne box</th>
+          <th></th>
+          <th>Nouvelle box</th>
+          <th>Motif</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-h>
+        <tr>
+          <td>{{ h.dateDeplacement | date:'dd/MM/yyyy HH:mm' }}</td>
+
+          <td>
+            <span style="background:#dbeafe; color:#1d4ed8;
+                         padding:2px 10px; border-radius:20px;
+                         font-size:0.85rem; font-weight:600;">
+              {{ h.codeAnimal }}
+            </span>
+          </td>
+
+          <td>
+            <span *ngIf="h.ancienneBoxCode"
+                  style="background:#fee2e2; color:#b91c1c;
+                         padding:2px 10px; border-radius:20px;
+                         font-size:0.85rem;">
+              {{ h.ancienneBoxCode }}
+            </span>
+            <span *ngIf="!h.ancienneBoxCode" style="color:#9ca3af;">—</span>
+          </td>
+
+          <!-- Flèche -->
+          <td style="text-align:center;">
+            <i class="pi pi-arrow-right" style="color:#059669; font-weight:bold;"></i>
+          </td>
+
+          <td>
+            <span style="background:#dcfce7; color:#15803d;
+                         padding:2px 10px; border-radius:20px;
+                         font-size:0.85rem; font-weight:600;">
+              {{ h.nouvelleBoxCode }}
+            </span>
+          </td>
+
+          <td style="color:#6b7280; font-size:0.9rem;">
+            {{ h.motif || '—' }}
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center py-4">
+            <i class="pi pi-inbox mr-2"></i>Aucun déplacement trouvé
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+</div>

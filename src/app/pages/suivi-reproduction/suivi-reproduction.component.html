@@ -30,8 +30,49 @@
 
             <ng-template pTemplate="body" let-suivi>
                 <tr>
-                    <td>{{ suivi.truie.codeAnimal }} ({{ suivi.truie.typeAnimal.nom }})</td>
+                    <!-- <td>{{ suivi.truie.codeAnimal }} ({{ suivi.truie.typeAnimal.nom }})</td>
                     <td>{{ suivi.verrat.codeAnimal }} ({{ suivi.verrat.typeAnimal.nom }})</td>
+                     -->
+                    <!-- Colonne Truie -->
+<!-- Colonne Truie -->
+<td>
+  <div style="display:flex; align-items:center; gap:0.75rem;">
+    <img *ngIf="suivi.truie?.photoUrl"
+         [src]="'http://localhost:8080' + suivi.truie!.photoUrl"
+         style="width:64px; height:64px; border-radius:50%;
+                object-fit:cover; border:2px solid #059669; flex-shrink:0;">
+    <div *ngIf="!suivi.truie?.photoUrl"
+         style="width:64px; height:64px; border-radius:50%; background:#DCFCE7;
+                display:flex; align-items:center; justify-content:center;
+                font-size:1.6rem; border:2px solid #059669; flex-shrink:0;">
+      🐷
+    </div>
+    <div>
+      <div style="font-weight:600; font-size:0.9rem;">{{ suivi.truie?.codeAnimal }}</div>
+      <div style="color:#6b7280; font-size:0.8rem;">{{ suivi.truie?.typeAnimalNom }}</div>
+    </div>
+  </div>
+</td>
+
+<!-- Colonne Verrat -->
+<td>
+  <div style="display:flex; align-items:center; gap:0.75rem;">
+    <img *ngIf="suivi.verrat?.photoUrl"
+         [src]="'http://localhost:8080' + suivi.verrat!.photoUrl"
+         style="width:64px; height:64px; border-radius:50%;
+                object-fit:cover; border:2px solid #1d4ed8; flex-shrink:0;">
+    <div *ngIf="!suivi.verrat?.photoUrl"
+         style="width:64px; height:64px; border-radius:50%; background:#dbeafe;
+                display:flex; align-items:center; justify-content:center;
+                font-size:1.6rem; border:2px solid #1d4ed8; flex-shrink:0;">
+      
+    </div>
+    <div>
+      <div style="font-weight:600; font-size:0.9rem;">{{ suivi.verrat?.codeAnimal }}</div>
+      <div style="color:#6b7280; font-size:0.8rem;">{{ suivi.verrat?.typeAnimalNom }}</div>
+    </div>
+  </div>
+</td>
                     <td>{{ suivi.dateSaillie }}</td>
                     <td>{{ suivi.dateMiseBasPrevue }}</td>
                     <td>{{ suivi.nbNesVivants || '-' }}</td>

@@ -13,36 +13,25 @@ export interface BatimentResponseDTO {
   localisation: string;
 }
 
-interface ApiResponse<T> {
-  successful: boolean;
-  message: string;
-  technicalMessage: string | null;
-  data: T;
-  code: number;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class BatimentService {
-  private apiUrl = 'http://localhost:8080/api/batiments';
+  private apiUrl = '/api/batiments';
 
   constructor(private http: HttpClient) {}
 
- getAll(): Observable<BatimentResponseDTO[]> {
-  return this.http.get<BatimentResponseDTO[]>(this.apiUrl);
-}
+  getAll(): Observable<BatimentResponseDTO[]> {
+    return this.http.get<BatimentResponseDTO[]>(this.apiUrl);
+  }
 
-create(dto: BatimentDTO): Observable<BatimentResponseDTO> {
-  return this.http.post<BatimentResponseDTO>(this.apiUrl, dto);
-}
+  create(dto: BatimentDTO): Observable<BatimentResponseDTO> {
+    return this.http.post<BatimentResponseDTO>(this.apiUrl, dto);
+  }
 
-update(id: number, dto: BatimentDTO): Observable<BatimentResponseDTO> {
-  return this.http.put<BatimentResponseDTO>(`${this.apiUrl}/${id}`, dto);
-}
+  update(id: number, dto: BatimentDTO): Observable<BatimentResponseDTO> {
+    return this.http.put<BatimentResponseDTO>(`${this.apiUrl}/${id}`, dto);
+  }
 
-deleteById(id: number): Observable<void> {
-  return this.http.delete<void>(`${this.apiUrl}/${id}`);
-}
-
+  deleteById(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

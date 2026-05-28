@@ -1,3 +1,196 @@
+.advisor-section {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+
+  .advisor-header {
+    margin-bottom: 1rem;
+
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 10px;
+
+      svg { color: #6b7280; }
+
+      .badge-count {
+        font-size: 12px;
+        font-weight: 500;
+        padding: 2px 10px;
+        border-radius: 999px;
+        background: #f3f4f6;
+        color: #6b7280;
+        border: 1px solid #e5e7eb;
+      }
+    }
+  }
+
+  .summary-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    .summary-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid transparent;
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+
+      &.critical {
+        background: #fef2f2;
+        color: #991b1b;
+        border-color: #fecaca;
+        .dot { background: #ef4444; }
+      }
+      &.warning {
+        background: #fffbeb;
+        color: #92400e;
+        border-color: #fde68a;
+        .dot { background: #f59e0b; }
+      }
+    }
+  }
+
+  .group-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9ca3af;
+    margin: 18px 0 8px;
+  }
+
+  .alert-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border-left-width: 3px;
+    border-left-style: solid;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    &.critical {
+      background: #fef2f2;
+      border-color: #fecaca;
+      border-left-color: #ef4444;
+    }
+    &.warning {
+      background: #fffbeb;
+      border-color: #fde68a;
+      border-left-color: #f59e0b;
+    }
+    &.info {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      border-left-color: #3b82f6;
+    }
+
+    .alert-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      svg { width: 16px; height: 16px; }
+
+      &.critical { background: #fecaca; color: #991b1b; }
+      &.warning  { background: #fde68a; color: #92400e; }
+      &.info     { background: #bfdbfe; color: #1d4ed8; }
+    }
+
+    .alert-body {
+      flex: 1;
+
+      .alert-header-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+
+      .alert-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #111827;
+      }
+
+      .badge {
+        font-size: 11px;
+        font-weight: 500;
+        padding: 1px 8px;
+        border-radius: 999px;
+
+        &.badge-critical { background: #fecaca; color: #991b1b; }
+        &.badge-warning  { background: #fde68a; color: #92400e; }
+        &.badge-info     { background: #bfdbfe; color: #1d4ed8; }
+      }
+
+      .alert-msg {
+        font-size: 12px;
+        color: #6b7280;
+        line-height: 1.5;
+      }
+
+      .alert-meta {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+
+        .chip {
+          font-size: 11px;
+          padding: 2px 8px;
+          border-radius: 999px;
+          border: 1px solid #e5e7eb;
+          color: #6b7280;
+          background: white;
+        }
+      }
+    }
+  }
+
+  .advisor-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    color: #991b1b;
+    font-size: 13px;
+  }
+
+  .no-alerts {
+    padding: 16px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    color: #166534;
+    font-size: 13px;
+  }
+}
+
 .charts-row {
   display: flex;
   gap: 20px;

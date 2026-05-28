@@ -2,256 +2,160 @@
   pButton 
   class="p-button-success" 
   icon="pi pi-plus" 
-  label="Ajouter reproduction" 
+  label="Ajouter reproduction"
   style="background:#2E7D32; border-color:#2E7D32;"
-  (click)="handleShow()"
+  (click)="handleShow()" 
   *ngIf="mode==='create'">
 </button>
 
 <p-dialog 
-  [header]="mode === 'create' ? '🐷 Nouvelle Reproduction' : '📝 Suivi Reproduction'" 
-  [(visible)]="showForm" 
-  [modal]="true" 
-  [style]="{width: '95%', maxWidth: '650px'}"
+  [header]="mode === 'create' ? '🐷 Nouvelle Reproduction' : '📝 Suivi Reproduction'"
+  [(visible)]="showForm"
+  [modal]="true"
+  [style]="{width: '95%', maxWidth: '700px'}"
   [breakpoints]="{'960px': '95vw', '640px': '98vw'}"
-  appendTo="body" 
-  [draggable]="false" 
+  appendTo="body"
+  [draggable]="false"
   [resizable]="false"
-  [contentStyle]="{padding: '1.25rem'}">
+  [contentStyle]="{padding: '1.5rem'}">
 
-  <p style="color: #6b7280; margin: -0.5rem 0 1.5rem; font-size: 0.95rem;">
-    {{ mode === 'create' ? 'Enregistrez une nouvelle saillie' : 'Mettez à jour les informations de mise bas' }}
+  <p class="dialog-subtitle">
+    {{ mode === 'create' 
+        ? 'Enregistrez une nouvelle saillie' 
+        : 'Mettez à jour les informations de mise bas' }}
   </p>
 
-  <form [formGroup]="form" (ngSubmit)="handleSubmit()">
-    
-    <!-- MODE CRÉATION -->
-    <div *ngIf="mode==='create'">
-      
-      <!-- Truie -->
-      <div style="margin-bottom: 1.25rem;">
-        <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-          🐖 Truie <span style="color: #ef4444;">*</span>
-        </label>
+  <form [formGroup]="form">
+
+    <!-- ================= CREATE ================= -->
+    <div *ngIf="mode==='create'" class="form-section">
+
+      <div class="form-field">
+        <label>🐖 Truie *</label>
         <p-dropdown 
-          [options]="truies" 
-          formControlName="truieCode" 
-          placeholder="Sélectionnez une truie" 
-          styleClass="w-full dropdown-custom"
-          [style]="{width: '100%'}">
+          [options]="truies"
+          formControlName="truieCode"
+          placeholder="Sélectionnez une truie"
+          class="full-width">
         </p-dropdown>
       </div>
 
-      <!-- Verrat -->
-      <div style="margin-bottom: 1.25rem;">
-        <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-          🐗 Verrat <span style="color: #ef4444;">*</span>
-        </label>
+      <div class="form-field">
+        <label>🐗 Verrat *</label>
         <p-dropdown 
-          [options]="verrats" 
-          formControlName="verratCode" 
-          placeholder="Sélectionnez un verrat" 
-          styleClass="w-full dropdown-custom"
-          [style]="{width: '100%'}">
+          [options]="verrats"
+          formControlName="verratCode"
+          placeholder="Sélectionnez un verrat"
+          class="full-width">
         </p-dropdown>
       </div>
 
-      <!-- Date Saillie -->
-      <div style="margin-bottom: 1.25rem;">
-        <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-          📅 Date Saillie <span style="color: #ef4444;">*</span>
-        </label>
+      <div class="form-field">
+        <label>📅 Date Saillie *</label>
         <p-calendar 
-          formControlName="dateSaillie" 
-          dateFormat="dd/mm/yy" 
+          formControlName="dateSaillie"
+          dateFormat="dd/mm/yy"
           [showIcon]="true"
-          appendTo="body" 
-          inputId="dateSaillie" 
-          styleClass="w-full"
-          placeholder="Sélectionner la date"
-          [style]="{width: '100%'}"
-          [inputStyle]="{height: '50px', fontSize: '1rem', borderRadius: '10px'}"
-          [disabled]="isPostMiseBas()">
+          appendTo="body"
+          class="full-width">
         </p-calendar>
       </div>
 
-      <!-- Observations -->
-      <div style="margin-bottom: 0;">
-        <label style="display: block; margin-bottom: 0.5rem; color: #6b7280; font-weight: 500; font-size: 0.9rem;">
-          📝 Observations <span style="font-weight: 400;">(optionnel)</span>
-        </label>
+      <div class="form-field">
+        <label>📝 Observations</label>
         <textarea 
-          pInputTextarea 
-          formControlName="observations" 
-          rows="3" 
-          placeholder="Notes additionnelles..."
-          style="width: 100%; font-size: 0.95rem; border-radius: 10px; resize: vertical;">
+          pInputTextarea
+          formControlName="observations"
+          rows="3"
+          class="full-width">
         </textarea>
       </div>
 
     </div>
 
-    <!-- MODE ÉDITION -->
-    <div *ngIf="mode==='edit'">
 
-      <!-- Dates de mise bas -->
-      <div style="background: #f0fdf4; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border-left: 3px solid #059669;">
-        
-        <!-- Date Mise Bas Prévue -->
-        <div style="margin-bottom: 1rem;">
-          <label style="display: block; margin-bottom: 0.5rem; color: #047857; font-weight: 500; font-size: 0.9rem;">
-            🗓️ Date Mise Bas Prévue
-          </label>
-          <p-calendar 
-            formControlName="dateMiseBasPrevue" 
-            dateFormat="dd/mm/yy" 
-            [showIcon]="true" 
-            appendTo="body" 
-            styleClass="w-full"
-            [style]="{width: '100%'}"
-            [inputStyle]="{height: '48px', fontSize: '1rem', borderRadius: '8px'}"
-            [disabled]="true">
-          </p-calendar>
-        </div>
+    <!-- ================= EDIT ================= -->
+    <div *ngIf="mode==='edit'" class="form-section">
 
-        <!-- Date Mise Bas Réelle -->
-        <div style="margin-bottom: 0;">
-          <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-            ✅ Date Mise Bas Réelle
-          </label>
-          <p-calendar 
-            formControlName="dateMiseBasReelle" 
-            dateFormat="dd/mm/yy" 
-            [showIcon]="true" 
-            appendTo="body" 
-            styleClass="w-full"
-            placeholder="Date effective"
-            [style]="{width: '100%'}"
-            [inputStyle]="{height: '48px', fontSize: '1rem', borderRadius: '8px'}"
-            [disabled]="isPostMiseBas()">
-          </p-calendar>
-        </div>
+      <!-- Photos -->
+      <div class="animals-container">
 
-      </div>
-
-      <!-- Statistiques des porcelets -->
-      <div style="background: #fef3c7; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border-left: 3px solid #f59e0b;">
-        <div style="color: #92400e; font-weight: 600; margin-bottom: 1rem; font-size: 0.95rem;">
-          👶 Statistiques des Porcelets
-        </div>
-
-        <!-- Nb Nés Vivants -->
-        <div style="margin-bottom: 1rem;">
-          <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-            💚 Nés Vivants
-          </label>
-          <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <input 
-              pInputText 
-              formControlName="nbNesVivants" 
-              type="number" 
-              placeholder="0"
-              style="flex: 1; height: 50px; font-size: 1.1rem; text-align: center; font-weight: 600; border-radius: 10px;"
-              [disabled]="isPostMiseBas()">
-            <button 
-              pButton 
-              type="button" 
-              icon="pi pi-minus" 
-              class="p-button-rounded p-button-danger"
-              style="width: 45px; height: 45px; flex-shrink: 0;"
-              (click)="decrement('nbNesVivants')"
-              [disabled]="isPostMiseBas()">
-            </button>
-            <button 
-              pButton 
-              type="button" 
-              icon="pi pi-plus" 
-              class="p-button-rounded p-button-success"
-              style="width: 45px; height: 45px; flex-shrink: 0; background: #059669; border-color: #059669;"
-              (click)="increment('nbNesVivants')"
-              [disabled]="isPostMiseBas()">
-            </button>
+        <div class="animal-photo">
+          <img *ngIf="target?.truie?.photoUrl"
+               [src]="'http://localhost:8080' + target!.truie!.photoUrl" />
+          <div *ngIf="!target?.truie?.photoUrl" class="no-photo">🐖</div>
+          <div class="animal-label">
+            {{ target?.truie?.codeAnimal }} - Box {{ target?.truie?.boxCode }}
           </div>
         </div>
 
-        <!-- Nb Morts Nés -->
-        <div style="margin-bottom: 1rem;">
-          <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-            💔 Morts Nés
-          </label>
-          <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <input 
-              pInputText 
-              formControlName="nbMortsNes" 
-              type="number"
-              placeholder="0"
-              style="flex: 1; height: 50px; font-size: 1.1rem; text-align: center; font-weight: 600; border-radius: 10px;"
-              [disabled]="isPostMiseBas()">
-            <button 
-              pButton 
-              type="button" 
-              icon="pi pi-minus" 
-              class="p-button-rounded p-button-danger"
-              style="width: 45px; height: 45px; flex-shrink: 0;"
-              (click)="decrement('nbMortsNes')"
-              [disabled]="isPostMiseBas()">
-            </button>
-            <button 
-              pButton 
-              type="button" 
-              icon="pi pi-plus" 
-              class="p-button-rounded p-button-success"
-              style="width: 45px; height: 45px; flex-shrink: 0; background: #059669; border-color: #059669;"
-              (click)="increment('nbMortsNes')"
-              [disabled]="isPostMiseBas()">
-            </button>
-          </div>
-        </div>
-
-        <!-- Nb Sevrés -->
-        <div style="margin-bottom: 0;">
-          <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-            🎯 Sevrés
-          </label>
-          <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <input 
-              pInputText 
-              formControlName="nbSevres" 
-              type="number"
-              placeholder="0"
-              style="flex: 1; height: 50px; font-size: 1.1rem; text-align: center; font-weight: 600; border-radius: 10px;">
-            <button 
-              pButton 
-              type="button" 
-              icon="pi pi-minus" 
-              class="p-button-rounded p-button-danger"
-              style="width: 45px; height: 45px; flex-shrink: 0;"
-              (click)="decrement('nbSevres')">
-            </button>
-            <button 
-              pButton 
-              type="button" 
-              icon="pi pi-plus" 
-              class="p-button-rounded p-button-success"
-              style="width: 45px; height: 45px; flex-shrink: 0; background: #059669; border-color: #059669;"
-              (click)="increment('nbSevres')">
-            </button>
+        <div class="animal-photo">
+          <img *ngIf="target?.verrat?.photoUrl"
+               [src]="'http://localhost:8080' + target!.verrat!.photoUrl" />
+          <div *ngIf="!target?.verrat?.photoUrl" class="no-photo"></div>
+          <div class="animal-label">
+            {{ target?.verrat?.codeAnimal }} - Box {{ target?.verrat?.boxCode }}
           </div>
         </div>
 
       </div>
 
-      <!-- Observations mode édition -->
-      <div style="margin-bottom: 0;">
-        <label style="display: block; margin-bottom: 0.5rem; color: #6b7280; font-weight: 500; font-size: 0.9rem;">
-          📝 Observations <span style="font-weight: 400;">(optionnel)</span>
-        </label>
+      <!-- Dates en grille -->
+      <div class="grid-2">
+
+        <div class="form-field">
+          <label>📅 Date Saillie</label>
+          <p-calendar 
+            formControlName="dateSaillie"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+            appendTo="body"
+            [disabled]="isPostMiseBas()"
+            class="full-width">
+          </p-calendar>
+        </div>
+
+        <div class="form-field">
+          <label>✅ Date Mise Bas</label>
+          <p-calendar 
+            formControlName="dateMiseBasReelle"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+            appendTo="body"
+            [disabled]="isPostMiseBas()"
+            class="full-width">
+          </p-calendar>
+        </div>
+
+      </div>
+
+      <!-- Statistiques -->
+      <div class="grid-3">
+
+        <div class="form-field">
+          <label>💚 Nés Vivants</label>
+          <input pInputText type="number" formControlName="nbNesVivants" class="full-width"/>
+        </div>
+
+        <div class="form-field">
+          <label>💔 Morts Nés</label>
+          <input pInputText type="number" formControlName="nbMortsNes" class="full-width"/>
+        </div>
+
+        <div class="form-field">
+          <label>🎯 Sevrés</label>
+          <input pInputText type="number" formControlName="nbSevres" class="full-width"/>
+        </div>
+
+      </div>
+
+      <div class="form-field">
+        <label>📝 Observations</label>
         <textarea 
-          pInputTextarea 
-          formControlName="observations" 
-          rows="3" 
-          placeholder="Notes additionnelles..."
-          style="width: 100%; font-size: 0.95rem; border-radius: 10px; resize: vertical;">
+          pInputTextarea
+          formControlName="observations"
+          rows="3"
+          class="full-width">
         </textarea>
       </div>
 
@@ -260,25 +164,24 @@
   </form>
 
   <ng-template pTemplate="footer">
-    <div style="display: flex; gap: 0.75rem; padding-top: 0.75rem;">
+    <div class="dialog-footer">
       <button 
-        type="button" 
+        type="button"
         pButton 
-        label="Annuler" 
+        label="Annuler"
         class="p-button-text"
-        style="flex: 1; padding: 0.75rem; color: #6b7280;"
         (click)="showForm=false">
       </button>
+
       <button 
-        type="submit" 
+        type="button"
         pButton 
-        label="Enregistrer" 
+        label="Enregistrer"
         icon="pi pi-check"
-        [disabled]="form.invalid" 
-        [loading]="processing" 
-        class="p-button-success"
-        style="flex: 2; background:#059669; border-color:#059669; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 500;"
-        (click)="handleSubmit()">
+        [disabled]="form.invalid"
+        [loading]="processing"
+        (click)="handleSubmit()"
+        class="p-button-success">
       </button>
     </div>
   </ng-template>

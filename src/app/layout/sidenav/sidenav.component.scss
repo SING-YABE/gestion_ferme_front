@@ -306,7 +306,7 @@ app-accordion-menu {
 
 // DEBUG - À supprimer après test
 app-accordion-menu {
-  border: 1px solid red !important; // Pour voir si le composant existe
+  border: 1px solid red !important; 
   min-height: 50px !important;
 }
 :host ::ng-deep #app-menu app-accordion-menu
@@ -315,5 +315,39 @@ app-accordion-menu {
   font-size: 18px !important;
   font-weight: 700 !important;
   letter-spacing: 0.6px;
+}
+.farm-logo {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  padding: 4px;
+}
+
+.farm-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* 🔑 empêche l'étirement */
+}
+
+.farm-name {
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.farm-slogan {
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 

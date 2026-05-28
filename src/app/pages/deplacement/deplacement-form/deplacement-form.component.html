@@ -1,0 +1,163 @@
+<button pButton label="Déplacer un animal"
+        icon="pi pi-send"
+        class="p-button-success"
+        style="background:#2E7D32; border-color:#2E7D32;"
+        (click)="handleShow()">
+</button>
+
+<p-dialog header="🚚 Déplacement d'animal"
+          [(visible)]="showForm"
+          [modal]="true"
+          [style]="{width:'520px'}"
+          [draggable]="false"
+          [resizable]="false"
+          appendTo="body">
+
+  <p style="color:#6b7280; font-size:0.95rem; margin-bottom:1.5rem;">
+    Sélectionnez l'animal et sa nouvelle box de destination.
+  </p>
+
+  <form [formGroup]="form">
+
+    <!-- Sélection animal -->
+    <div class="field mb-4">
+      <label style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">
+        Animal <span style="color:red">*</span>
+      </label>
+      <p-dropdown
+        formControlName="animalId"
+        [options]="animaux"
+        optionLabel="codeAnimal"
+        optionValue="id"
+        placeholder="Sélectionner un animal"
+        [filter]="true"
+        styleClass="w-full"
+        [style]="{width:'100%', height:'45px'}"
+        (onChange)="onAnimalChange($event.value)">
+        <ng-template let-a pTemplate="item">
+          <div style="padding:4px 0;">
+            <div style="font-weight:600; color:#059669;">{{ a.codeAnimal }}</div>
+            <div style="font-size:0.85rem; color:#6b7280;">
+              {{ a.typeAnimalNom }} •
+              Box actuelle : <strong>{{ a.boxCode }}</strong> •
+              {{ a.batimentNom }}
+            </div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+
+    <!-- Box actuelle (lecture seule) -->
+    <div *ngIf="boxActuelle"
+         style="background:#f3f4f6; padding:0.75rem 1rem;
+                border-radius:8px; margin-bottom:1.5rem;
+                border-left:3px solid #9ca3af;">
+      <div style="font-size:0.85rem; color:#6b7280; margin-bottom:4px;">
+        📍 Box actuelle
+      </div>
+      <div style="display:flex; gap:1rem; font-size:0.9rem;">
+        <span><strong>{{ boxActuelle.code }}</strong></span>
+        <span style="color:#6b7280;">{{ boxActuelle.batimentNom }}</span>
+        <span style="color:#6b7280;">
+          {{ boxActuelle.occupationActuelle }}/{{ boxActuelle.capaciteMax }} animaux
+        </span>
+      </div>
+    </div>
+
+    <!-- Filtre bâtiment destination -->
+<div class="field mb-3">
+  <label style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">
+    🏠 Bâtiment de destination
+  </label>
+  <p-dropdown
+    [options]="batiments"
+    [(ngModel)]="filtreBatimentId"
+    [ngModelOptions]="{standalone: true}"
+    optionLabel="nom"
+    optionValue="id"
+    placeholder="Tous les bâtiments"
+    [showClear]="true"
+    [disabled]="!form.get('animalId')?.value"
+    styleClass="w-full"
+    [style]="{width:'100%', height:'45px'}"
+    (onChange)="onBatimentCibleChange($event.value)">
+    <ng-template let-b pTemplate="item">
+      <div>
+        <strong>{{ b.nom }}</strong>
+        <div style="font-size:0.85rem; color:#6b7280;">{{ b.localisation }}</div>
+      </div>
+    </ng-template>
+  </p-dropdown>
+</div>
+
+
+    <!-- Sélection nouvelle box -->
+    <div class="field mb-4">
+      <label style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">
+        📦 Nouvelle box <span style="color:red">*</span>
+      </label>
+      <p-dropdown
+        formControlName="nouvelleBoxId"
+        [options]="boxesCibles"
+        optionLabel="code"
+        optionValue="id"
+        placeholder="Sélectionner une box de destination"
+        [disabled]="boxesCibles.length === 0"
+        [filter]="true"
+        styleClass="w-full"
+        [style]="{width:'100%', height:'80px'}">
+        <ng-template let-box pTemplate="item">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0;">
+            <div>
+              <div style="font-weight:600;">{{ box.code }}</div>
+              <div style="font-size:0.85rem; color:#6b7280;">{{ box.batimentNom }}</div>
+            </div>
+            <span [style]="box.occupationActuelle >= box.capaciteMax
+              ? 'background:#fee2e2; color:#b91c1c; padding:2px 8px; border-radius:20px; font-size:0.8rem;'
+              : 'background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:20px; font-size:0.8rem;'">
+              {{ box.occupationActuelle }}/{{ box.capaciteMax }}
+              {{ box.occupationActuelle >= box.capaciteMax ? '🔴 Pleine' : '🟢 Libre' }}
+            </span>
+          </div>
+        </ng-template>
+      </p-dropdown>
+
+      <small *ngIf="form.get('animalId')?.value && boxesCibles.length === 0"
+             style="color:#ef4444; font-size:0.85rem;">
+        Aucune box disponible
+      </small>
+    </div>
+
+    <!-- Motif -->
+    <div class="field mb-2">
+      <label style="display:block; font-weight:600; margin-bottom:0.5rem; font-size:0.9rem;">
+        📝 Motif (optionnel)
+      </label>
+      <input pInputText type="text"
+             formControlName="motif"
+             placeholder="Ex: Transfert pour mise bas, quarantaine..."
+             style="width:100%; height:45px; border-radius:8px;" />
+    </div>
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div style="display:flex; gap:0.75rem;">
+      <button pButton label="Annuler"
+              class="p-button-outlined p-button-secondary"
+              type="button"
+              style="flex:1; height:45px;"
+              (click)="showForm=false">
+      </button>
+      <button pButton label="Déplacer"
+              icon="pi pi-send"
+              class="p-button-success"
+              [loading]="processing"
+              [disabled]="form.invalid"
+              style="flex:2; height:45px; background:#059669; border-color:#059669;"
+              (click)="handleSubmit()">
+      </button>
+    </div>
+  </ng-template>
+
+</p-dialog>

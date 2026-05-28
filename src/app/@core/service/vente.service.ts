@@ -2,18 +2,23 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// 🆕 Nouvelles interfaces
+export type ModeVente = 'AU_POIDS' | 'SANS_PESEE';
+
 export interface AnimalVenteDTO {
   codeAnimal: string;
   typeVenteId: number;
-  poidsVente: number;
-  prixUnitaire: number;
+  modeVente: ModeVente;
+  // AU_POIDS
+  poidsVente?: number | null;
+  prixUnitaire?: number | null;
+  // SANS_PESEE
+  prixNegocie?: number | null;
 }
 
 export interface VenteCreateDTO {
-  dateVente: string;  // format dd/MM/yyyy
-    dateEnlevement?: string | null;
-        dateEnlevementAuPlusTard?: string | null;
+  dateVente: string;
+  dateEnlevement?: string | null;
+  dateEnlevementAuPlusTard?: string | null;
   client: string;
   animaux: AnimalVenteDTO[];
 }
@@ -22,8 +27,12 @@ export interface AnimalVenduResponseDTO {
   id: number;
   animalCode: string;
   typeVenteNom: string;
-  poidsVente: number;
-  prixUnitaire: number;
+  modeVente: ModeVente;
+  // AU_POIDS
+  poidsVente?: number | null;
+  prixUnitaire?: number | null;
+  // SANS_PESEE
+  prixNegocie?: number | null;
   montantTotal: number;
 }
 
@@ -31,14 +40,14 @@ export interface VenteDetailResponseDTO {
   id: number;
   dateVente: string;
   client: string;
-    poidsTotal: number; 
+  poidsTotal: number;
   montantTotal: number;
   animaux: AnimalVenduResponseDTO[];
+  dateEnlevement?: string;
+  dateEnlevementAuPlusTard?: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class VenteService {
 
   private apiUrl = '/api/ventes';
@@ -62,8 +71,6 @@ export class VenteService {
   }
 
   getFacturePdf(id: number): Observable<Blob> {
-  return this.http.get(`${this.apiUrl}/${id}/facture`, { 
-    responseType: 'blob' 
-  });
-}
+    return this.http.get(`${this.apiUrl}/${id}/facture`, { responseType: 'blob' });
+  }
 }

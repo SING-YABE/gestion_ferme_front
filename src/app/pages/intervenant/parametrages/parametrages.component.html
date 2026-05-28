@@ -1,69 +1,241 @@
-<div class="settings-container">
-  <div class="header">
-    <h2>Paramétrage de la ferme</h2>
+<div class="page-wrapper">
+
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <div class="page-header__icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+        <path d="M12 2v2M12 20v2M2 12h2M20 12h2"/>
+      </svg>
+    </div>
+    <div>
+      <h1 class="page-title">Paramètres</h1>
+      <p class="page-subtitle">Configuration générale et seuils d'aide à la décision</p>
+    </div>
   </div>
 
-  <div class="form-group">
-    <label for="farmName">Nom de la ferme</label>
-    <input
-      id="farmName"
-      type="text"
-      [(ngModel)]="settings.farmName"
-      placeholder="Ex : Ferme du Sahel"
-    />
-  </div>
-
-  <div class="form-group">
-    <label for="email">Email de contact</label>
-    <input
-      id="email"
-      type="email"
-      [(ngModel)]="settings.contactEmail"
-      placeholder="contact@ferme.com"
-    />
-  </div>
-
-  <button class="primary-btn" (click)="saveSettings()">
-    💾 Enregistrer les paramètres
-  </button>
-
-  <div class="divider"></div>
-
-  <div class="logo-section">
-    <h3>Logo de la ferme</h3>
-    
-    <div class="logo-preview" *ngIf="logoUrl">
-      <img [src]="logoUrl" alt="Logo ferme" />
+  <!-- ── Card: Paramétrage de la ferme ── -->
+  <div class="card">
+    <div class="card__header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+      </svg>
+      <div>
+        <h2 class="card__title">Paramétrage de la ferme</h2>
+        <p class="card__subtitle">Informations générales de votre exploitation</p>
+      </div>
     </div>
 
-    <div class="file-upload-wrapper">
-      <input 
-        type="file" 
-        id="fileInput"
-        (change)="onFileSelected($event)"
-        accept="image/*"
-        hidden
-      />
-      <label for="fileInput" class="file-upload-label">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="17 8 12 3 7 8"></polyline>
-          <line x1="12" y1="3" x2="12" y2="15"></line>
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="farmName">Nom de la ferme</label>
+        <input id="farmName" type="text"
+               [(ngModel)]="settings.farmName"
+               placeholder="Ma Ferme" />
+      </div>
+      <div class="form-group">
+        <label for="email">Email de contact</label>
+        <input id="email" type="email"
+               [(ngModel)]="settings.contactEmail"
+               placeholder="contact@ferme.com" />
+      </div>
+      <div class="form-group">
+        <label for="tel">Téléphone de contact</label>
+        <input id="tel" type="tel"
+               [(ngModel)]="settings.contactTel"
+               placeholder="+33 6 12 34 56 78" />
+      </div>
+      <div class="form-group">
+        <label for="slogan">Slogan</label>
+        <input id="slogan" type="text"
+               [(ngModel)]="settings.slogan"
+               placeholder="Notre passion, votre qualité" />
+      </div>
+    </div>
+
+    <div class="card__footer">
+      <button class="btn btn--primary" [disabled]="isLoading" (click)="saveSettings()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
         </svg>
-        <span class="file-text">
-          {{ selectedFileName || 'Choisir un fichier' }}
-        </span>
-      </label>
-      
-      <button 
-        class="upload-btn" 
-        (click)="uploadLogo()"
-        [disabled]="!selectedFile"
-      >
-        Uploader
+        Enregistrer les paramètres
       </button>
     </div>
-
-    <p class="hint">Format : JPG, PNG (max 2 Mo)</p>
   </div>
+
+  <!-- ── Card: Logo de la ferme ── -->
+  <div class="card">
+    <div class="card__header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+      <div>
+        <h2 class="card__title">Logo de la ferme</h2>
+        <p class="card__subtitle">Format : JPG, PNG (max 2 Mo)</p>
+      </div>
+    </div>
+
+    <div class="logo-row">
+      <div class="logo-preview">
+        <img *ngIf="logoUrl" [src]="logoUrl" alt="Logo ferme" />
+        <div *ngIf="!logoUrl" class="logo-placeholder">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="file-upload-wrapper">
+        <input type="file" id="fileInput"
+               (change)="onFileSelected($event)"
+               accept="image/*" hidden />
+        <label for="fileInput" class="file-upload-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <span class="file-text">{{ selectedFileName || 'Choisir un fichier' }}</span>
+        </label>
+        <button class="btn btn--upload"
+                (click)="uploadLogo()"
+                [disabled]="!selectedFile || isLoading">
+          Uploader
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section: Système d'Aide à la Décision ── -->
+  <div class="advisor-header">
+    <div class="advisor-header__icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <div>
+      <h2 class="advisor-header__title">Système d'Aide à la Décision</h2>
+      <p class="advisor-header__desc">Ces seuils pilotent les alertes automatiques générées par l'advisor</p>
+    </div>
+  </div>
+
+  <!-- ── Card: Reproduction ── -->
+  <div class="card">
+    <div class="param-group-label">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+      </svg>
+      Reproduction
+    </div>
+
+    <div class="param-row">
+      <div class="param-info">
+        <span class="param-name">Seuil porcelets nés vivants</span>
+        <span class="param-hint">Une mise bas en dessous de ce nombre est considérée comme mauvaise performance</span>
+      </div>
+      <div class="param-control">
+        <button class="counter-btn"
+                (click)="parametresEleveur.seuilNesVivants = parametresEleveur.seuilNesVivants - 1"
+                [disabled]="parametresEleveur.seuilNesVivants <= 1">−</button>
+        <span class="counter-value">{{ parametresEleveur.seuilNesVivants }}</span>
+        <button class="counter-btn"
+                (click)="parametresEleveur.seuilNesVivants = parametresEleveur.seuilNesVivants + 1"
+                [disabled]="parametresEleveur.seuilNesVivants >= 15">+</button>
+      </div>
+    </div>
+
+    <div class="param-row param-row--last">
+      <div class="param-info">
+        <span class="param-name">Mauvaises mises bas avant alerte réforme</span>
+        <span class="param-hint">Après ce nombre de mauvaises performances, l'advisor recommande la réforme</span>
+      </div>
+      <div class="param-control">
+        <button class="counter-btn"
+                (click)="parametresEleveur.nbMisesBasMax = parametresEleveur.nbMisesBasMax - 1"
+                [disabled]="parametresEleveur.nbMisesBasMax <= 1">−</button>
+        <span class="counter-value">{{ parametresEleveur.nbMisesBasMax }}</span>
+        <button class="counter-btn"
+                (click)="parametresEleveur.nbMisesBasMax = parametresEleveur.nbMisesBasMax + 1"
+                [disabled]="parametresEleveur.nbMisesBasMax >= 10">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Card: Occupation des boxes ── -->
+  <div class="card">
+    <div class="param-group-label">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+      Occupation des boxes
+    </div>
+
+    <!-- Seuil jaune -->
+    <div class="param-row">
+      <div class="param-info">
+        <span class="param-name">
+          <span class="dot dot--warning"></span>
+          Seuil d'alerte jaune
+        </span>
+        <span class="param-hint">En dessous de ce taux → aucune alerte. Au-dessus → avertissement</span>
+      </div>
+      <div class="param-control param-control--slider">
+        <input type="range" class="slider slider--warning"
+               min="0.5" max="0.95" step="0.05"
+               [(ngModel)]="parametresEleveur.seuilOccupationBoxWarning" />
+        <span class="slider-value slider-value--warning">
+          {{ (parametresEleveur.seuilOccupationBoxWarning * 100) | number:'1.0-0' }}%
+        </span>
+      </div>
+    </div>
+
+    <!-- Seuil rouge -->
+    <div class="param-row param-row--last">
+      <div class="param-info">
+        <span class="param-name">
+          <span class="dot dot--critical"></span>
+          Seuil d'alerte rouge
+        </span>
+        <span class="param-hint">Au-dessus de ce taux → alerte critique box saturé</span>
+      </div>
+      <div class="param-control param-control--slider">
+        <input type="range" class="slider slider--critical"
+               min="0.6" max="1.0" step="0.05"
+               [(ngModel)]="parametresEleveur.seuilOccupationBoxCritique" />
+        <span class="slider-value slider-value--critical">
+          {{ (parametresEleveur.seuilOccupationBoxCritique * 100) | number:'1.0-0' }}%
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Footer: Save advisor ── -->
+  <div class="page-footer">
+    <div class="save-success" *ngIf="advisorSaved">
+      ✅ Paramètres enregistrés avec succès
+    </div>
+    <button class="btn btn--primary"
+            [disabled]="isLoadingAdvisor"
+            (click)="saveParametresEleveur()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+        <polyline points="17 21 17 13 7 13 7 21"/>
+        <polyline points="7 3 7 8 15 8"/>
+      </svg>
+      Enregistrer les seuils advisor
+    </button>
+  </div>
+
 </div>

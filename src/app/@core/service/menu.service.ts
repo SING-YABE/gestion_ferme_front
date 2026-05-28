@@ -50,6 +50,11 @@ export class MenuService {
       icon: faClipboardList,
       routerLink: '/fiches-animaux',
     },
+        {
+      title: 'Deplacements',
+      icon: faTruck,
+      routerLink: '/deplacements',
+    },
     {
       title: 'Suivi reproduction',
       icon: faVenusMars,
@@ -102,6 +107,7 @@ export class MenuService {
       children: [
         { title: 'Type Animaux', icon: faCow, routerLink: '/typeAnimaux' },
         { title: 'Bâtiment', icon: faWarehouse, routerLink: '/batiments' },
+        { title: 'Box', icon: faWarehouse, routerLink: '/box' },
         { title: 'Etat de santé', icon: faHeartPulse, routerLink: '/etatSante' },
         { title: 'Stade', icon: faHeartPulse, routerLink: '/stade' },
         { title: 'Type Aliment', icon: faWheatAwn, routerLink: '/typeAliment' },

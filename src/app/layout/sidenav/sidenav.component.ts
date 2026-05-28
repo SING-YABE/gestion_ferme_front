@@ -1,24 +1,30 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {Router, RouterLink, RouterLinkActive} from "@angular/router";
-import {faPowerOff} from "@fortawesome/free-solid-svg-icons/faPowerOff";
-import {MenuService} from "../../@core/service/menu.service";
-import {TagModule} from "primeng/tag";
-import {environment} from "../../../environments/environment";
-import {ButtonDirective} from "primeng/button";
-import {AccordionComponent} from "../../partials/accordion.menu";
-import {Menu, MenuItemContent, MenuModule} from "primeng/menu";
-import {ConfirmationService, MenuItem} from "primeng/api";
-import {AuthService} from "../../@core/service/auth.service";
-import {ConfirmDialogModule} from "primeng/confirmdialog";
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faPowerOff } from '@fortawesome/free-solid-svg-icons/faPowerOff';
+
+import { MenuService } from '../../@core/service/menu.service';
+import { AuthService } from '../../@core/service/auth.service';
+import { ParametrageService } from '../../@core/service/parametrage.service';
+
+import { TagModule } from 'primeng/tag';
+import { ButtonDirective } from 'primeng/button';
+import { MenuModule } from 'primeng/menu';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MenuItem } from 'primeng/api';
+
+import { AccordionComponent } from '../../partials/accordion.menu';
 import { HasPermissionDirective } from '../../@core/security/directives/has-permission.directive';
 
+import { environment } from '../../../environments/environment';
+import { AppSettings } from '../../models/app-settings.model';
 
 @Component({
   selector: 'app-sidenav',
   standalone: true,
-  imports:[
+  imports: [
     CommonModule,
     FaIconComponent,
     RouterLink,
@@ -34,11 +40,17 @@ import { HasPermissionDirective } from '../../@core/security/directives/has-perm
   styleUrl: './sidenav.component.scss',
   providers: [ConfirmationService]
 })
+export class SidenavComponent implements OnInit {
 
-export class SidenavComponent implements OnInit{
+  // 🔹 AJOUT MINIMAL (pour le template)
+  settings!: AppSettings;
+  logoUrl = '';
+
+  // 🔹 EXISTANT (inchangé)
   appName = environment.appName;
   appVersion = environment.appVersion;
   appSession: any;
+
   menuItems: MenuItem[] = [
     {
       label: 'Mon compte',
@@ -65,29 +77,46 @@ export class SidenavComponent implements OnInit{
     }
   ];
 
+  protected readonly faPowerOff = faPowerOff;
+
   constructor(
     public menuService: MenuService,
     private router: Router,
     private authService: AuthService,
-    private cs: ConfirmationService
+    private cs: ConfirmationService,
+    private parametrageService: ParametrageService   // 🔹 AJOUT
   ) {
-    this.appSession = JSON.parse(localStorage.getItem(environment.sessionKey)??'{}');
+    this.appSession = JSON.parse(
+      localStorage.getItem(environment.sessionKey) ?? '{}'
+    );
   }
 
-  
   ngOnInit(): void {
-    const tokenData = this.authService.getTokenData();  // Récupérer les données du token décodé
-    //console.log('Token décodé:', tokenData); // Afficher le token décodé dans la console
-  
+    this.loadSettings(); // 🔹 AJOUT MINIMAL
+
+    const tokenData = this.authService.getTokenData();
     if (tokenData) {
-      //console.log('Permissions de l\'utilisateur:', tokenData.permissions); // Afficher les permissions dans la console
+      // permissions OK
     }
   }
 
-trackByFn(index: number, item: any): any {
-    return item.title;  // Assure-toi que `item` a une propriété unique, comme `title` ou `id`
-  }
-  
+  // 🔹 AJOUT MINIMAL
+private loadSettings(): void {
+  this.parametrageService.getSettings().subscribe({
+    next: (data) => {
+      this.settings = data;
 
-  protected readonly faPowerOff = faPowerOff;
+      // ✅ URL LOGO CORRIGÉE (API)
+    this.logoUrl = data.logoPath
+  ? `http://localhost:8080/uploads/logos/${data.logoPath}`
+  : 'assets/default-logo.png';
+
+    }
+  });
+}
+
+
+  trackByFn(index: number, item: any): any {
+    return item.title;
+  }
 }

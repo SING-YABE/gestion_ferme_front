@@ -10,10 +10,14 @@ export interface SuiviReproduction {
   truie?: {
     codeAnimal: string;
     typeAnimal: { nom: string; prefix: string };
+       photoUrl?: string;   
+    boxCode?: string;   
   };
   verrat?: {
     codeAnimal: string;
     typeAnimal: { nom: string; prefix: string };
+     photoUrl?: string;    // ← vérifier que c'est là
+    boxCode?: string; 
   };
   dateSaillie: string;
   dateMiseBasPrevue: string;
@@ -22,6 +26,24 @@ export interface SuiviReproduction {
   nbMortsNes?: number | null;
   nbSevres?: number | null;
   observations?: string;
+}
+export interface VerratPerformanceDTO {
+  truieCode: string;
+  dateSaillie: string;
+  dateMiseBasReelle?: string;
+  nbNesVivants?: number;
+  nbMortsNes?: number;
+  nbSevres?: number;
+}
+
+export interface TruieCarriereDTO {
+  rang: number;
+  verratCode: string;
+  dateSaillie: string;
+  dateMiseBasReelle?: string;
+  nbNesVivants?: number;
+  nbMortsNes?: number;
+  nbSevres?: number;
 }
 
 @Injectable({
@@ -48,12 +70,15 @@ export class SuiviReproductionService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-
+getPerformancesVerrat(code: string): Observable<VerratPerformanceDTO[]> {
+  return this.http.get<VerratPerformanceDTO[]>(
+    `${this.apiUrl}/verrat/${code}/performances`
+  );
 }
 
+getCarriereTruie(code: string): Observable<TruieCarriereDTO[]> {
+  return this.http.get<TruieCarriereDTO[]>(
+    `${this.apiUrl}/truie/${code}/carriere`
+  );
 
-
-
-
-
-
+}}

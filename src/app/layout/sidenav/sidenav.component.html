@@ -1,12 +1,37 @@
 <!-- <div class="h-full sidebar-container text-black flex flex-column"> -->
 <div class="h-full sidebar-container flex flex-column">
   <!-- Header -->
-  <div class="sidebar-header flex align-items-center justify-content-between px-4">
+  <!-- <div class="sidebar-header flex align-items-center justify-content-between px-4">
     <div class="flex align-items-center gap-3">
             <div class="version-badge">{{ appVersion }}</div>
       <h1 class="m-0 app-logo">{{ appName.toUpperCase() }}</h1>
     </div>
+  </div> -->
+  <div class="sidebar-header px-4 py-3" *ngIf="settings">
+
+ <div class="flex align-items-center gap-3">
+
+  <img
+    [src]="logoUrl"
+    class="farm-logo"
+    alt=""
+  />
+
+  <div class="farm-text">
+    <span class="farm-name">
+      {{ settings.farmName }}
+    </span>
+
+    <!-- <span class="farm-slogan" *ngIf="settings.slogan">
+      {{ settings.slogan }}
+    </span> -->
   </div>
+
+</div>
+
+
+</div>
+
 
   <!-- Menu Content -->
   <div class="h-full">

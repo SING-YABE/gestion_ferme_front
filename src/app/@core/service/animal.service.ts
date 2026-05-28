@@ -7,7 +7,7 @@ export interface AnimalDTO {
   dateEntree: string;
   poidsInitial: number;
   etatSanteId: number;
-  batimentId: number;
+  boxId: number;
   observations?: string;
 }
 
@@ -22,29 +22,28 @@ export interface EtatSanteInfo {
   description: string;
 }
 
-export interface BatimentInfo {
-  id: number;
-  nom: string;
-  localisation: string;
-}
 
 export interface AnimalResponseDTO {
   id: number;
   codeAnimal: string;
-  typeAnimal: TypeAnimalInfo;
+  typeAnimalId: number;
+  typeAnimalNom: string;
   dateEntree: string;
   poidsInitial: number;
-  etatSante: EtatSanteInfo;
-  batiment: BatimentInfo;
+  etatSanteId: number;
+  etatSanteLibelle: string;
+  boxId: number;
+  boxCode: string;
+  batimentNom: string;
   observations?: string;
-  vendu: boolean;  
+  vendu: boolean;
+  photoUrl?: string | null;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+
+@Injectable({ providedIn: 'root' })
 export class AnimalService {
-  private apiUrl = 'http://localhost:8080/api/animaux';
+  private apiUrl = '/api/animaux';
 
   constructor(private http: HttpClient) {}
 
@@ -67,20 +66,14 @@ export class AnimalService {
   deleteById(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  uploadPhoto(id: number, file: File): Observable<{ photoUrl: string }> {
+  const formData = new FormData();
+  formData.append('file', file);
+  return this.http.post<{ photoUrl: string }>(
+    `${this.apiUrl}/${id}/photo`, formData
+  );
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}

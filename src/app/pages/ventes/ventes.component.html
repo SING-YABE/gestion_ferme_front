@@ -8,11 +8,12 @@
             <h5 class="m-0">Liste des ventes</h5>
         </div>
         <div>
+            <!-- ✅ Bouton Nouvelle vente -->
             <app-ventes-form (onUpdate)="loadData()"></app-ventes-form>
         </div>
     </div>
 
-    <!-- TABLE -->
+    <!-- TABLEAU PRINCIPAL -->
     <div>
         <p-table
             [value]="ventes"
@@ -20,9 +21,10 @@
             [rows]="pageSize"
             [rowsPerPageOptions]="[5,10,20]"
             [paginator]="ventes.length > pageSize"
+            dataKey="id"
             [expandedRowKeys]="expandedRows">
 
-            <!-- HEADER TABLE -->
+            <!-- ✅ HEADER TABLEAU PRINCIPAL -->
             <ng-template pTemplate="header">
                 <tr style="background:#DCFCE7;">
                     <th style="width:3rem"></th>
@@ -37,7 +39,7 @@
                 </tr>
             </ng-template>
 
-            <!-- BODY TABLE -->
+            <!-- ✅ BODY TABLEAU PRINCIPAL -->
             <ng-template pTemplate="body" let-v let-expanded="expanded">
                 <tr>
                     <td>
@@ -50,7 +52,6 @@
                             [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
                         </button>
                     </td>
-
                     <td>{{ v.dateVente }}</td>
                     <td>{{ v.client }}</td>
                     <td class="text-center">{{ v.animaux.length }}</td>
@@ -60,7 +61,6 @@
                     <td><strong>{{ v.montantTotal | number:'1.0-0' }} FCFA</strong></td>
 
                     <td class="text-center">
-                        <!-- Imprimer facture -->
                         <button
                             pButton
                             class="p-button-rounded p-button-warning mr-2"
@@ -69,8 +69,6 @@
                             tooltipPosition="top"
                             (click)="imprimerFacture(v.id)">
                         </button>
-
-                        <!-- Supprimer -->
                         <button
                             pButton
                             class="p-button-rounded p-button-danger"
@@ -83,7 +81,7 @@
                 </tr>
             </ng-template>
 
-            <!-- ROW EXPANSION -->
+            <!-- ✅ ROW EXPANSION → tableau interne des animaux -->
             <ng-template pTemplate="rowexpansion" let-v>
                 <tr>
                     <td colspan="9">
@@ -91,36 +89,49 @@
                             <h6 class="mb-3">Détails des animaux vendus</h6>
 
                             <p-table [value]="v.animaux" styleClass="p-datatable-sm">
+
+                                <!-- Header tableau interne -->
                                 <ng-template pTemplate="header">
                                     <tr style="background:#f5f5f5;">
                                         <th>Code animal</th>
                                         <th>Type vente</th>
+                                        <th>Mode</th>
                                         <th>Poids (kg)</th>
                                         <th>Prix unitaire</th>
+                                        <th>Prix négocié</th>
                                         <th>Montant</th>
-                                        <th>Date enlèvement prévue</th>
-                                        <th>Date enlèvement au plus tard</th>
                                     </tr>
                                 </ng-template>
 
+                                <!-- Body tableau interne -->
                                 <ng-template pTemplate="body" let-animal>
                                     <tr>
                                         <td><strong>{{ animal.animalCode }}</strong></td>
                                         <td>{{ animal.typeVenteNom }}</td>
-                                        <td>{{ animal.poidsVente }}</td>
-                                        <td>{{ animal.prixUnitaire | number:'1.0-0' }} FCFA</td>
+
+                                        <!-- Badge mode vente -->
+                                        <td>
+                                            <span [style]="animal.modeVente === 'AU_POIDS'
+                                                ? 'background:#dbeafe; color:#1d4ed8; padding:2px 10px; border-radius:20px; font-size:0.8rem;'
+                                                : 'background:#fef9c3; color:#92400e; padding:2px 10px; border-radius:20px; font-size:0.8rem;'">
+                                                {{ animal.modeVente === 'AU_POIDS' ? '⚖️ Au poids' : '🤝 Sans pesée' }}
+                                            </span>
+                                        </td>
+
+                                        <td>{{ animal.poidsVente != null ? (animal.poidsVente | number:'1.1-1') + ' kg' : '—' }}</td>
+                                        <td>{{ animal.prixUnitaire != null ? (animal.prixUnitaire | number:'1.0-0') + ' FCFA' : '—' }}</td>
+                                        <td>{{ animal.prixNegocie != null ? (animal.prixNegocie | number:'1.0-0') + ' FCFA' : '—' }}</td>
                                         <td><strong>{{ animal.montantTotal | number:'1.0-0' }} FCFA</strong></td>
-                                        <td>{{ animal.dateEnlevement }}</td>
-                                        <td>{{ animal.dateEnlevementAuPlusTard }}</td>
                                     </tr>
                                 </ng-template>
+
                             </p-table>
                         </div>
                     </td>
                 </tr>
             </ng-template>
 
-            <!-- EMPTY MESSAGE -->
+            <!-- EMPTY -->
             <ng-template pTemplate="emptymessage">
                 <tr>
                     <td colspan="9" class="text-center py-4">
@@ -134,5 +145,4 @@
     </div>
 </div>
 
-<!-- CONFIRM DIALOG -->
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

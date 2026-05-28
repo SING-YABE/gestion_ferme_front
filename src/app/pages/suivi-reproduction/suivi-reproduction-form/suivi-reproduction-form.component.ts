@@ -113,29 +113,35 @@ decrement(fieldName: string) {
     this.form.get(fieldName)?.setValue(currentValue - 1);
   }
 }
-  loadAnimals() {
-    this.animalService.getAll().subscribe({
-      next: (animals) => {
-        this.truies = animals
-          .filter(a => a.typeAnimal.prefix === 'T')
-          .map(t => ({
-            label: t.codeAnimal,
-            value: t.codeAnimal
-          }));
+ loadAnimals() {
+  this.animalService.getAll().subscribe({
+    next: (animals) => {
+      // Filtrer les truies
+      this.truies = animals
+        .filter(a => a.typeAnimalNom?.toLowerCase() === 'truie') // sécurité si typeAnimalNom manquant
+        .map(t => ({
+          label: t.codeAnimal,
+          value: t.codeAnimal
+        }));
 
-        this.verrats = animals
-          .filter(a => a.typeAnimal.prefix === 'V')
-          .map(v => ({
-            label: v.codeAnimal,
-            value: v.codeAnimal
-          }));
-      },
-      error: (err) => { 
-        console.error(err);
-        this.toastr.error("Impossible de charger les animaux");
-      }
-    });
-  }
+      // Filtrer les verrats
+      this.verrats = animals
+        .filter(a => a.typeAnimalNom?.toLowerCase() === 'verrat') // sécurité si typeAnimalNom manquant
+        .map(v => ({
+          label: v.codeAnimal,
+          value: v.codeAnimal
+        }));
+
+      // Optionnel : log pour vérifier le résultat
+      console.log('Truies chargées:', this.truies);
+      console.log('Verrats chargés:', this.verrats);
+    },
+    error: (err) => { 
+      console.error('Erreur lors du chargement des animaux:', err);
+      this.toastr.error("Impossible de charger les animaux");
+    }
+  });
+}
   handleShow() {
     this.showForm = true;
   }

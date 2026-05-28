@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ChartModule } from 'primeng/chart';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-
+import { AdvisorAlert, AdvisorAlertsResponse } from '../../@core/service/home-service.service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -27,7 +27,9 @@ anneesDisponibles: number[] = [];
 anneeSelectionnee: number | null = null;
 
   chartData: any;
-
+advisorAlerts: AdvisorAlert[] = [];
+advisorSummary: AdvisorAlertsResponse['summary'] | null = null;
+advisorError: string | null = null;
   constructor(private homeService: HomeService) { }
 
   ngOnInit(): void {
@@ -35,8 +37,27 @@ anneeSelectionnee: number | null = null;
     this.loadCharges();
     this.loadAlertes();
     this.loadEvolutionVentes();
+      this.loadAdvisorAlerts(); 
   }
+// Groupement par catégorie pour l'affichage
+get alertsGrouped(): Record<string, AdvisorAlert[]> {
+  const groups: Record<string, AdvisorAlert[]> = {};
+  for (const alert of this.advisorAlerts) {
+    const key = this.getAlertGroup(alert);
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(alert);
+  }
+  return groups;
+}
 
+getAlertGroup(alert: AdvisorAlert): string {
+  const t = alert.title.toLowerCase();
+  if (t.includes('truie') || t.includes('verrat') || t.includes('saillie')) return 'Reproduction';
+  if (t.includes('box')) return 'Boxes & capacité';
+  if (t.includes('vaccin')) return 'Santé';
+  if (t.includes('sevrage')) return 'Sevrage';
+  return 'Autres';
+}
   loadStats() {
     this.homeService.getStatsReproductions().subscribe(res => this.stats = res);
   }
@@ -102,6 +123,21 @@ updateVentesChart(grouped: any) {
 
 getRandomColor() {
   return '#' + Math.floor(Math.random() * 16777215).toString(16);
+}
+loadAdvisorAlerts(): void {
+  this.homeService.getAdvisorAlerts().subscribe({
+    next: (res) => {
+      if (res.error) {
+        this.advisorError = res.error;
+        return;
+      }
+      this.advisorAlerts = res.alerts;
+      this.advisorSummary = res.summary;
+    },
+    error: () => {
+      this.advisorError = 'Impossible de charger les alertes advisor.';
+    }
+  });
 }
 }
 

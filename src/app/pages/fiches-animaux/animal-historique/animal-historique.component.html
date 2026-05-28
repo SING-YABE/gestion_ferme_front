@@ -1,0 +1,156 @@
+<button
+  pButton type="button"
+  [icon]="isVerrat ? 'pi pi-chart-bar' : 'pi pi-list'"
+  class="p-button-rounded"
+  [pTooltip]="isVerrat ? 'Performances du verrat' : 'Carrière de la truie'"
+  tooltipPosition="top"
+  [style]="isVerrat
+    ? 'background:#7c3aed; border-color:#7c3aed;'
+    : 'background:#db2777; border-color:#db2777;'"
+  (click)="ouvrirHistorique()">
+</button>
+
+<p-dialog
+  [header]="dialogHeader"
+  [(visible)]="showDialog"
+  [modal]="true"
+  [style]="{width:'680px'}"
+  appendTo="body"
+  [draggable]="false"
+  [resizable]="false">
+
+  <!-- VERRAT -->
+  <ng-container *ngIf="isVerrat">
+
+    <div *ngIf="performancesVerrat.length === 0 && !loading"
+         style="text-align:center; padding:2rem; color:#9ca3af;">
+      <i class="pi pi-inbox" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
+      Aucune saillie enregistrée pour ce verrat
+    </div>
+
+    <p-table *ngIf="performancesVerrat.length > 0"
+             [value]="performancesVerrat"
+             [loading]="loading"
+             [rows]="5"
+             [paginator]="performancesVerrat.length > 5"
+             styleClass="p-datatable-sm">
+
+      <ng-template pTemplate="header">
+        <tr style="background:#ede9fe;">
+          <th>#</th>
+          <th>Truie</th>
+          <th>Date Saillie</th>
+          <th>Date Mise Bas</th>
+          <th style="text-align:center;">💚 Vivants</th>
+          <th style="text-align:center;">💔 Morts</th>
+          <th style="text-align:center;">🎯 Sevrés</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row let-i="rowIndex">
+        <tr>
+          <td style="color:#7c3aed; font-weight:700;">{{ i + 1 }}</td>
+          <td>
+            <span style="background:#ede9fe; color:#7c3aed; padding:2px 10px;
+                         border-radius:20px; font-size:0.85rem; font-weight:600;">
+              {{ row.truieCode }}
+            </span>
+          </td>
+          <td style="font-size:0.88rem;">{{ row.dateSaillie }}</td>
+          <td style="font-size:0.88rem;">
+            <span *ngIf="row.dateMiseBasReelle">{{ row.dateMiseBasReelle }}</span>
+            <span *ngIf="!row.dateMiseBasReelle"
+                  style="color:#f59e0b; font-size:0.82rem;">En attente</span>
+          </td>
+          <td style="text-align:center; font-weight:600; color:#15803d;">{{ row.nbNesVivants ?? '-' }}</td>
+          <td style="text-align:center; font-weight:600; color:#b91c1c;">{{ row.nbMortsNes ?? '-' }}</td>
+          <td style="text-align:center; font-weight:600; color:#0369a1;">{{ row.nbSevres ?? '-' }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="footer">
+        <tr style="background:#f5f3ff; font-weight:700;">
+          <td colspan="4" style="text-align:right; color:#7c3aed; padding-right:1rem;">TOTAL</td>
+          <td style="text-align:center; color:#15803d;">{{ totalNesVivants }}</td>
+          <td style="text-align:center; color:#b91c1c;">{{ totalMortsNes }}</td>
+          <td style="text-align:center; color:#0369a1;">{{ totalSevresVerrat }}</td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </ng-container>
+
+  <!-- TRUIE -->
+  <ng-container *ngIf="isTruie">
+
+    <div *ngIf="carriereTruie.length === 0 && !loading"
+         style="text-align:center; padding:2rem; color:#9ca3af;">
+      <i class="pi pi-inbox" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
+      Aucune mise bas enregistrée pour cette truie
+    </div>
+
+    <p-table *ngIf="carriereTruie.length > 0"
+             [value]="carriereTruie"
+             [loading]="loading"
+             [rows]="5"
+             [paginator]="carriereTruie.length > 5"
+             styleClass="p-datatable-sm">
+
+      <ng-template pTemplate="header">
+        <tr style="background:#fce7f3;">
+          <th style="text-align:center;">Rang</th>
+          <th>Verrat</th>
+          <th>Date Saillie</th>
+          <th>Date Mise Bas</th>
+          <th style="text-align:center;">💚 Vivants</th>
+          <th style="text-align:center;">💔 Morts</th>
+          <th style="text-align:center;">🎯 Sevrés</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td style="text-align:center;">
+            <span style="background:#fce7f3; color:#db2777; padding:3px 12px;
+                         border-radius:20px; font-size:0.85rem; font-weight:700;">
+              {{ row.rang }}ème
+            </span>
+          </td>
+          <td>
+            <span style="background:#dbeafe; color:#1d4ed8; padding:2px 10px;
+                         border-radius:20px; font-size:0.85rem; font-weight:600;">
+              {{ row.verratCode }}
+            </span>
+          </td>
+          <td style="font-size:0.88rem;">{{ row.dateSaillie }}</td>
+          <td style="font-size:0.88rem;">
+            <span *ngIf="row.dateMiseBasReelle">{{ row.dateMiseBasReelle }}</span>
+            <span *ngIf="!row.dateMiseBasReelle"
+                  style="color:#f59e0b; font-size:0.82rem;">En attente</span>
+          </td>
+          <td style="text-align:center; font-weight:600; color:#15803d;">{{ row.nbNesVivants ?? '-' }}</td>
+          <td style="text-align:center; font-weight:600; color:#b91c1c;">{{ row.nbMortsNes ?? '-' }}</td>
+          <td style="text-align:center; font-weight:600; color:#0369a1;">{{ row.nbSevres ?? '-' }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="footer">
+        <tr style="background:#fdf2f8; font-weight:700;">
+          <td colspan="4" style="text-align:right; color:#db2777; padding-right:1rem;">TOTAL</td>
+          <td style="text-align:center; color:#15803d;">{{ totalNesVivantsTruie }}</td>
+          <td style="text-align:center; color:#b91c1c;">{{ totalMortsNesTruie }}</td>
+          <td style="text-align:center; color:#0369a1;">{{ totalSevresTruie }}</td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </ng-container>
+
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Fermer"
+            class="p-button-text" style="color:#6b7280;"
+            (click)="showDialog=false">
+    </button>
+  </ng-template>
+
+</p-dialog>

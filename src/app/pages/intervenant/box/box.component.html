@@ -1,0 +1,86 @@
+<div class="odyssey-shadow-low border-round" style="background:#F5F0E6; border:1px solid #D9D2C2;">
+  <div class="px-4 py-2 flex gap-3 align-items-center"
+       style="background:#2E7D32; color:white; border-radius:8px 8px 0 0;">
+    <div class="flex-1">
+      <h5 class="m-0">Gestion des boxes</h5>
+    </div>
+    <div>
+      <app-box-form (onUpdate)="loadData()" mode="create"
+                    [batiments]="batiments">
+      </app-box-form>
+    </div>
+  </div>
+
+  <!-- Filtre par bâtiment -->
+  <div class="px-4 pt-3">
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+      <label style="font-weight:600; white-space:nowrap;">Filtrer par bâtiment :</label>
+      <p-dropdown
+        [options]="batiments"
+        [(ngModel)]="filtreBatimentId"
+        optionLabel="nom"
+        optionValue="id"
+        placeholder="Tous les bâtiments"
+        [showClear]="true"
+        [style]="{width:'250px'}"
+        (onChange)="onFiltreBatiment()">
+      </p-dropdown>
+    </div>
+  </div>
+
+  <p-table [value]="boxesFiltrees" [loading]="loading" [rows]="pageSize"
+           [rowsPerPageOptions]="[5,10,20]"
+           [paginator]="boxesFiltrees.length > pageSize"
+           styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr style="background:#DCFCE7;">
+        <th>Code</th>
+        <th>Numéro</th>
+        <th>Bâtiment</th>
+        <th class="text-center">Capacité max</th>
+        <th class="text-center">Occupation</th>
+        <th class="text-center">Disponibilité</th>
+        <th style="width:150px; text-align:center;">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-box>
+      <tr>
+        <td><strong>{{ box.code }}</strong></td>
+        <td>Box {{ box.numero }}</td>
+        <td>{{ box.batimentNom }}</td>
+        <td class="text-center">{{ box.capaciteMax }}</td>
+        <td class="text-center">{{ box.occupationActuelle }} / {{ box.capaciteMax }}</td>
+        <td class="text-center">
+          <span [style]="box.occupationActuelle >= box.capaciteMax
+            ? 'background:#fee2e2; color:#b91c1c; padding:2px 12px; border-radius:20px; font-size:0.85rem;'
+            : 'background:#dcfce7; color:#15803d; padding:2px 12px; border-radius:20px; font-size:0.85rem;'">
+            {{ box.occupationActuelle >= box.capaciteMax ? '🔴 Pleine' : '🟢 Disponible' }}
+          </span>
+        </td>
+        <td>
+          <div class="flex gap-2 justify-content-center">
+            <app-box-form [target]="box" mode="edit"
+                          [batiments]="batiments"
+                          (onUpdate)="loadData()">
+            </app-box-form>
+            <button pButton icon="pi pi-trash" class="p-button-rounded"
+                    style="background:#B91C1C; border-color:#B91C1C;"
+                    (click)="confirmDelete(box)">
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7" class="text-center py-4">
+          <i class="pi pi-inbox mr-2"></i>Aucune box trouvée
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>

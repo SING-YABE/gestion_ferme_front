@@ -20,6 +20,28 @@ export interface PourcentageTypeCharge {
   pourcentage: number;
 }
 
+
+export interface AdvisorAlert {
+  level: 'critical' | 'warning' | 'info';
+  title: string;
+  message: string;
+  entity: Record<string, any>; // flexible pour tous les types futurs
+}
+
+export interface AdvisorAlertsResponse {
+  alerts: AdvisorAlert[];
+  summary: {
+    total_alerts: number;
+    by_level: {
+      critical: number;
+      warning: number;
+      info?: number;
+    };
+  };
+  error?: string;
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,6 +67,12 @@ export class HomeService {
   getEvolutionVentes() {
     return this.http.get<any[]>(`${this.baseUrl}/ventes/evolution`);
   }
+  
+private pythonUrl = 'http://localhost:8000';
+
+getAdvisorAlerts(): Observable<AdvisorAlertsResponse> {
+  return this.http.get<AdvisorAlertsResponse>(`${this.pythonUrl}/api/advisor/alerts`);
+}
 }
 
 

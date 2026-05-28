@@ -70,7 +70,112 @@
 
   </div>
 
+<!-- Alertes Advisor -->
+<div class="advisor-section">
 
+  <!-- En-tête avec compteurs -->
+  <div class="advisor-header">
+    <h3>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+      </svg>
+      Alertes Advisor
+      <span class="badge-count" *ngIf="advisorSummary">
+        {{ advisorSummary.total_alerts }} alerte{{ advisorSummary.total_alerts > 1 ? 's' : '' }}
+      </span>
+    </h3>
+
+    <div class="summary-bar" *ngIf="advisorSummary">
+      <span class="summary-pill critical" *ngIf="advisorSummary.by_level.critical > 0">
+        <span class="dot"></span>
+        {{ advisorSummary.by_level.critical }} critique{{ advisorSummary.by_level.critical > 1 ? 's' : '' }}
+      </span>
+      <span class="summary-pill warning" *ngIf="advisorSummary.by_level.warning > 0">
+        <span class="dot"></span>
+        {{ advisorSummary.by_level.warning }} warning{{ advisorSummary.by_level.warning > 1 ? 's' : '' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Erreur si paramètres non configurés -->
+  <div class="advisor-error" *ngIf="advisorError">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    {{ advisorError }}
+  </div>
+
+  <!-- Aucune alerte -->
+  <div class="no-alerts" *ngIf="!advisorError && advisorAlerts.length === 0">
+    Aucune alerte active. La ferme fonctionne normalement.
+  </div>
+
+  <!-- Groupes d'alertes -->
+  <ng-container *ngFor="let group of alertsGrouped | keyvalue">
+    <div class="group-label">{{ group.key }}</div>
+
+    <div
+      class="alert-card"
+      [ngClass]="alert.level"
+      *ngFor="let alert of group.value">
+
+      <!-- Icône selon le level -->
+      <div class="alert-icon" [ngClass]="alert.level">
+        <svg *ngIf="alert.level === 'critical'" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <svg *ngIf="alert.level === 'warning'" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 22 21 2 21"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <svg *ngIf="alert.level === 'info'" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+      </div>
+
+      <!-- Corps de l'alerte -->
+      <div class="alert-body">
+        <div class="alert-header-row">
+          <span class="alert-title">{{ alert.title }}</span>
+          <span class="badge" [ngClass]="'badge-' + alert.level">{{ alert.level }}</span>
+        </div>
+        <div class="alert-msg">{{ alert.message }}</div>
+
+        <!-- Chips dynamiques depuis entity -->
+        <div class="alert-meta" *ngIf="alert.entity">
+          <span class="chip" *ngIf="alert.entity['code_animal']">
+            {{ alert.entity['code_animal'] }}
+          </span>
+          <span class="chip" *ngIf="alert.entity['code']">
+            Box {{ alert.entity['code'] }}
+          </span>
+          <span class="chip" *ngIf="alert.entity['percent']">
+            {{ alert.entity['percent'] }}%
+          </span>
+          <span class="chip" *ngIf="alert.entity['count_low_farrowings']">
+            {{ alert.entity['count_low_farrowings'] }} mises bas concernées
+          </span>
+          <span class="chip" *ngIf="alert.entity['seuil_applique']">
+            Seuil : {{ alert.entity['seuil_applique'] }} porcelets
+          </span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+</div>
   <div class="alertes-misebas" *ngIf="alertesMiseBas.length > 0">
     <h3>Alertes Mise Bas (prochaines 7 jours)</h3>
     <div class="alert-cards">
