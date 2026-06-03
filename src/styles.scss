@@ -194,6 +194,8 @@ mat-icon{
     flex: 1;
     background: #ffff;
     overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 2rem;
   }
 }
 

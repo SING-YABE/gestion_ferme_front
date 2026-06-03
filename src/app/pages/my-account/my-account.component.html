@@ -1,77 +1,78 @@
-<div class="user-profile" *ngIf="userConnected">
-  <div class="profile-card">
-    <div class="profile-header">
-      <h2>Utilisateur Connecté</h2>
-      <p class="user-role">
-        <i class="pi pi-user"></i> {{ user?.roles }}
-      </p>
-    </div>
+<div class="profile-wrapper" *ngIf="profile; else loading">
 
-    <div class="profile-body">
-
-      <div class="profile-info">
-        <div class="info-item">
-          <i class="pi pi-user"></i>
-          <div>
-            <strong>Nom:</strong> {{ userConnected?.lastname }}
-          </div>
-        </div>
-
-        <div class="info-item">
-          <i class="pi pi-user"></i>
-          <div>
-            <strong>Prénom:</strong> {{ userConnected?.firstname }}
-          </div>
-        </div>
-
-        <div class="info-item">
-          <i class="pi pi-star"></i>
-          <div>
-            <strong>Rôle:</strong> {{ user?.roles }}
-          </div>
-        </div>
-        
-        <div class="info-item">
-          <i class="pi pi-envelope"></i>
-          <div>
-            <strong>Email:</strong> {{ userConnected?.email ? userConnected?.email : 'Non renseigné' }}
-          </div>
-        </div>
-
-        <div class="info-item">
-          <i class="pi pi-phone"></i>
-          <div>
-            <strong>Téléphone:</strong> {{ userConnected?.msisdn ? userConnected?.msisdn : 'Non renseigné' }}
-          </div>
-        </div>
-
-        <div class="info-item">
-          <i class="pi pi-calendar"></i>
-          <div>
-            <strong>Expiration:</strong> {{ user?.exp | date:'short' }}
-          </div>
-        </div>
-
-        <!-- <div class="info-item">
-          <strong>Permissions:</strong>
-          <ul class="permissions-list">
-            <li *ngFor="let permission of user?.permissions">
-              <i class="pi pi-check"></i> {{ permission }}
-            </li>
-          </ul>
-        </div> -->
-      </div>
-    </div>
-
-    <div class="profile-footer">
-      <button class="p-button p-button-rounded p-button-success" (click)="redirectToDashboard()">
-        Valider
-      </button>        
+  <!-- Carte en-tête -->
+  <div class="profile-hero">
+    <div class="avatar">{{ initiales }}</div>
+    <div class="hero-info">
+      <h2>{{ profile.prenom }} {{ profile.nom }}</h2>
+      <span class="role-chip" [ngClass]="roleCssClass">{{ roleLabel }}</span>
+      <p class="poste-label">{{ profile.poste || '—' }}</p>
     </div>
   </div>
+
+  <!-- Informations principales -->
+  <div class="profile-card">
+    <h3><i class="pi pi-id-card"></i> Informations du compte</h3>
+    <div class="info-grid">
+
+      <div class="info-row">
+        <i class="pi pi-user"></i>
+        <div>
+          <span class="info-label">Nom complet</span>
+          <span class="info-value">{{ profile.prenom }} {{ profile.nom }}</span>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <i class="pi pi-envelope"></i>
+        <div>
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ profile.email }}</span>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <i class="pi pi-briefcase"></i>
+        <div>
+          <span class="info-label">Poste</span>
+          <span class="info-value">{{ profile.poste || 'Non renseigné' }}</span>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <i class="pi pi-shield"></i>
+        <div>
+          <span class="info-label">Rôle</span>
+          <span class="info-value">{{ roleLabel }}</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Permissions effectives -->
+  <div class="profile-card">
+    <h3><i class="pi pi-lock"></i> Permissions actives ({{ profile.permissions.length }})</h3>
+    <div class="permissions-grid">
+      <span class="perm-chip" *ngFor="let p of profile.permissions">{{ p }}</span>
+    </div>
+    <p class="perm-note" *ngIf="profile.permissions.length === 0">
+      Aucune permission assignée.
+    </p>
+  </div>
+
+  <!-- Actions -->
+  <div class="profile-actions">
+    <button pButton label="Tableau de bord" icon="pi pi-home"
+      class="p-button-outlined" (click)="redirectToDashboard()">
+    </button>
+  </div>
+
 </div>
 
-<!-- Message en attendant les données -->
-<div *ngIf="!userConnected">
-  <p>Chargement des informations...</p>
-</div>
+<ng-template #loading>
+  <div class="profile-loading">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem; color: #2d8a4e"></i>
+    <p>Chargement du profil…</p>
+  </div>
+</ng-template>

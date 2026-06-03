@@ -1,19 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { AppService } from "../../@core/service/app.service";
-import { AuthService } from '../../@core/service/auth.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { AppService } from '../../@core/service/app.service';
+import { AuthService, UserProfile } from '../../@core/service/auth.service';
 
 @Component({
   selector: 'app-my-account',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonModule],
   templateUrl: './my-account.component.html',
   styleUrls: ['./my-account.component.scss']
 })
 export class MyAccountComponent implements OnInit {
-  user: any = {};  
-  userConnected: any = null;  
+
+  profile: UserProfile | null = null;
 
   constructor(
     private appService: AppService,
@@ -21,31 +22,39 @@ export class MyAccountComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.appService.setTitle('Mon compte');
-
-    // 🔥 SIMPLIFICATION : Utiliser directement les données du user connecté
-    const currentUser = this.authService.getCurrentUser();
-    this.user = currentUser || {};  
-    
-    console.log("Information de l'utilisateur :", this.user);
-
-    // 🔥 SIMPLIFICATION : Préparer les données pour l'affichage
-    if (this.user) {
-      this.userConnected = {
-        nom: this.user.nom || 'Non défini',
-        prenom: this.user.prenom || 'Non défini', 
-        role: this.user.role || 'Utilisateur',
-        email: this.user.username || this.user.email,
-        nomComplet: `${this.user.nom || ''} ${this.user.prenom || ''}`.trim() || this.user.username,
-        id: this.user.id
-      };
-      
-      console.log("Informations formatées :", this.userConnected);
-    }
+    this.profile = this.authService.getProfile();
   }
 
-  // 🔥 SUPPRESSION : Pas besoin de gestion détaillée des rôles pour l'instant
+  // ── Helpers d'affichage ──────────────────────────────────────────────────
+
+  get initiales(): string {
+    if (!this.profile) return '?';
+    const p = (this.profile.prenom?.[0] ?? '').toUpperCase();
+    const n = (this.profile.nom?.[0] ?? '').toUpperCase();
+    return `${p}${n}` || '?';
+  }
+
+  get roleLabel(): string {
+    const map: Record<string, string> = {
+      'ROLE_ADMINISTRATEUR': 'Administrateur',
+      'ROLE_GERANT':         'Gérant',
+      'ROLE_RESPONSABLE':    'Responsable',
+      'ROLE_OUVRIER':        'Ouvrier',
+    };
+    return map[this.profile?.role ?? ''] ?? this.profile?.role ?? '—';
+  }
+
+  get roleCssClass(): string {
+    const map: Record<string, string> = {
+      'ROLE_ADMINISTRATEUR': 'role-admin',
+      'ROLE_GERANT':         'role-gerant',
+      'ROLE_RESPONSABLE':    'role-responsable',
+      'ROLE_OUVRIER':        'role-ouvrier',
+    };
+    return map[this.profile?.role ?? ''] ?? '';
+  }
 
   redirectToDashboard(): void {
     this.router.navigate(['/dashboard']);

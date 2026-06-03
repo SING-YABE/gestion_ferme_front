@@ -1,138 +1,167 @@
-/* Global styles for orange theme */
-:root {
-    --primary-color: #FF6F00; /* Orange color */
-    --hover-color: #FF8F1F;  /* Lighter orange on hover */
+.profile-wrapper {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-/* .user-profile container */
-.user-profile {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    width: 100%;
+/* ── Hero ── */
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(135deg, #2d8a4e, #1a5c34);
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
 }
 
-/* Profile card styling */
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  flex-shrink: 0;
+  letter-spacing: 2px;
+}
+
+.hero-info h2 {
+  margin: 0 0 6px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.poste-label {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* ── Role chip ── */
+.role-chip {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.role-admin        { background: #dc2626; color: white; }
+  &.role-gerant       { background: #d97706; color: white; }
+  &.role-responsable  { background: #2563eb; color: white; }
+  &.role-ouvrier      { background: #16a34a; color: white; }
+}
+
+/* ── Cards ── */
 .profile-card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 800px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    padding: 30px;
-}
+  background: white;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 
-/* Profile header styles */
-.profile-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.profile-header h2 {
-    margin: 0;
-    font-size: 1.8rem;
-    color: var(--primary-color);
-}
-
-.user-role {
-    font-size: 1.2rem;
-    color: #555;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Profile info section */
-.profile-body {
-    margin-bottom: 30px;
-}
-
-/* Display profile info in two columns */
-.profile-info {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Affiche deux colonnes */
-    gap: 20px;
-}
-
-/* Email and Expiration side by side */
-.info-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-
-/* Align icons and titles side by side */
-.info-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.info-item i {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-}
-
-/* Permissions section */
-.permissions-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.2rem;
-    color: #555;
-}
-
-.permissions-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    padding: 0;
-    margin: 0;
-}
-
-.permissions-list li {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  h3 {
+    margin: 0 0 16px;
     font-size: 1rem;
-    color: #555;
-}
-
-.permissions-list i {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-}
-
-/* Footer and button styling */
-.profile-footer {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.p-button {
-    font-size: 1.1rem;
-    padding: 12px 25px;
-    border-radius: 25px;
+    font-weight: 600;
+    color: #374151;
     display: flex;
     align-items: center;
-    gap: 10px;
-    background-color: var(--primary-color);
-    color: rgb(3, 3, 3);
-    border: none;
+    gap: 8px;
+
+    i { color: #2d8a4e; }
+  }
+
+  h4 {
+    margin: 0 0 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+  }
 }
 
-.p-button:hover {
-    background-color: var(--hover-color);
+/* ── Info grid ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 520px) { grid-template-columns: 1fr; }
 }
 
-.p-button .pi {
-    font-size: 1.4rem;
-    color: var(--primary-color);
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  i {
+    color: #2d8a4e;
+    font-size: 1rem;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  div { display: flex; flex-direction: column; }
+}
+
+.info-label {
+  font-size: 0.72rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.info-value {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+/* ── Permissions ── */
+.permissions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.perm-chip {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  font-family: monospace;
+}
+
+.perm-note {
+  color: #9ca3af;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* ── Actions ── */
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── Loading ── */
+.profile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 12px;
+  color: #6b7280;
 }

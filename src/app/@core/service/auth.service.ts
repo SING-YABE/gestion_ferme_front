@@ -1,92 +1,181 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { JwtHelperService } from '@auth0/angular-jwt';
+import { BehaviorSubject, Observable, tap, switchMap } from 'rxjs';
+import { PermissionType } from '../security/permissions.constants';
+import { RoleType } from '../security/roles.constants';
 
+const BASE_URL = 'http://localhost:8080';
+
+/** Réponse du backend au login */
 export interface LoginResponse {
   token: string;
   role?: string;
   username: string;
-  id?: number;
-  nom?: string;
-  prenom?: string;
+}
+
+/** Profil complet retourné par GET /api/me */
+export interface UserProfile {
+  id: number;
+  nom: string;
+  prenom: string;
+  email: string;
+  poste: string;
+  role: string;
+  permissions: string[];   // permissions effectives (rôle + overrides)
+}
+
+/** Données stockées en session */
+export interface SessionData {
+  token: string;
+  profile: UserProfile;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/login';
-  private helper = new JwtHelperService();
 
-  // Initialisation à partir du localStorage
-  private currentUserSubject = new BehaviorSubject<LoginResponse | null>(this.loadUserFromStorage());
-  currentUser$ = this.currentUserSubject.asObservable();
+  private sessionSubject = new BehaviorSubject<SessionData | null>(this.loadSession());
+  session$ = this.sessionSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  private loadUserFromStorage(): LoginResponse | null {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      return JSON.parse(userData);
-    }
-    return null;
+  // ─── Authentification ────────────────────────────────────────────────────
+
+  /**
+   * Login en deux étapes :
+   * 1. POST /login → obtient le token
+   * 2. GET /api/me → récupère le profil complet avec permissions
+   */
+  login(email: string, password: string): Observable<SessionData> {
+    return this.http
+      .post<LoginResponse>(`${BASE_URL}/login`, { email, password })
+      .pipe(
+        switchMap((loginRes) => {
+          // Sauvegarde le token en session avant d'appeler /api/me
+          // L'intercepteur le récupère automatiquement via getToken()
+          this.saveSession({ token: loginRes.token, profile: null as any });
+
+          return this.http.get<UserProfile>(`${BASE_URL}/api/me`).pipe(
+            tap((profile) => {
+              // Met à jour la session avec le profil complet
+              this.saveSession({ token: loginRes.token, profile });
+            })
+          );
+        }),
+        // Retourne la SessionData finale
+        switchMap((profile) => {
+          const session = this.sessionSubject.value!;
+          return new Observable<SessionData>(obs => { obs.next(session); obs.complete(); });
+        })
+      );
   }
 
-  login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.apiUrl, { email, password }).pipe(
-      tap((res) => {
-        this.setCurrentUser(res);
-        console.log('✅ Utilisateur connecté :', res);
+  logout(): void {
+    localStorage.removeItem('session');
+    this.sessionSubject.next(null);
+    this.router.navigate(['/login']);
+  }
+
+  // ─── Accès à la session ───────────────────────────────────────────────────
+
+  isLoggedIn(): boolean {
+    return !!this.sessionSubject.value?.token;
+  }
+
+  getToken(): string | null {
+    return this.sessionSubject.value?.token ?? null;
+  }
+
+  getProfile(): UserProfile | null {
+    return this.sessionSubject.value?.profile ?? null;
+  }
+
+  getRole(): string | null {
+    return this.getProfile()?.role ?? null;
+  }
+
+  getPermissions(): string[] {
+    return this.getProfile()?.permissions ?? [];
+  }
+
+  // ─── Vérifications d'accès ────────────────────────────────────────────────
+
+  /** Vérifie si l'utilisateur a un rôle donné */
+  hasRole(role: RoleType | string): boolean {
+    return this.getRole() === role;
+  }
+
+  /** Vérifie si l'utilisateur a AU MOINS UN des rôles donnés */
+  hasAnyRole(roles: (RoleType | string)[]): boolean {
+    const current = this.getRole();
+    return current ? roles.includes(current) : false;
+  }
+
+  /** Vérifie si l'utilisateur possède une permission spécifique */
+  hasPermission(permission: PermissionType | string): boolean {
+    return this.getPermissions().includes(permission);
+  }
+
+  /** Vérifie si l'utilisateur possède TOUTES les permissions listées */
+  hasAllPermissions(permissions: (PermissionType | string)[]): boolean {
+    const current = this.getPermissions();
+    return permissions.every(p => current.includes(p));
+  }
+
+  /** Vérifie si l'utilisateur possède AU MOINS UNE des permissions listées */
+  hasAnyPermission(permissions: (PermissionType | string)[]): boolean {
+    const current = this.getPermissions();
+    return permissions.some(p => current.includes(p));
+  }
+
+  // ─── Rafraîchir le profil (après modification d'override) ────────────────
+
+  /**
+   * Recharge le profil depuis /api/me.
+   * À appeler après qu'un admin a modifié les permissions d'un utilisateur.
+   */
+  refreshProfile(): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${BASE_URL}/api/me`).pipe(
+      tap((profile) => {
+        const current = this.sessionSubject.value;
+        if (current) {
+          const updated: SessionData = { ...current, profile };
+          this.saveSession(updated);
+        }
       })
     );
   }
 
-  logout() {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
+  // ─── Rétro-compatibilité (anciens composants) ────────────────────────────
+
+  /** @deprecated Utiliser getProfile() */
+  getCurrentUser(): UserProfile | null {
+    return this.getProfile();
   }
 
-  getRole(): string | null {
-    const user = this.getCurrentUser();
-    return user?.role || null;
+  /** @deprecated La session est déjà sauvegardée automatiquement au login */
+  setCurrentUser(_user: any): void {
+    // no-op : la session est gérée par login() via /api/me
   }
 
-  isLoggedIn(): boolean {
-    const user = this.getCurrentUser();
-    return !!user?.token;
-  }
-
-  getCurrentUser(): LoginResponse | null {
-    const user = this.currentUserSubject.value;
-    if (!user) return this.loadUserFromStorage();
-    return user;
-  }
-
-  // Méthode publique pour mettre à jour le user
-  setCurrentUser(user: LoginResponse) {
-    this.currentUserSubject.next(user);
-    localStorage.setItem('user', JSON.stringify(user));
-  }
-
-  // Méthode pour vérifier les autorisations
-  hasRole(role: string): boolean {
-    const userRole = this.getRole();
-    return userRole === role;
-  }
-   // 🔥 AJOUT : Méthode pour récupérer les données du token
+  /** @deprecated Utiliser getProfile() pour décoder les infos du token */
   getTokenData(): any {
-    const user = this.getCurrentUser();
-    if (!user?.token) return null;
-    
+    return this.getProfile();
+  }
+
+  // ─── Stockage ─────────────────────────────────────────────────────────────
+
+  private saveSession(session: SessionData): void {
+    this.sessionSubject.next(session);
+    localStorage.setItem('session', JSON.stringify(session));
+  }
+
+  private loadSession(): SessionData | null {
     try {
-      return this.helper.decodeToken(user.token);
-    } catch (error) {
-      console.error('Erreur décodage token:', error);
+      const raw = localStorage.getItem('session');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
       return null;
     }
   }
-  
 }

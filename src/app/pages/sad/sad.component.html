@@ -1,0 +1,402 @@
+<p-toast position="top-right"></p-toast>
+
+<div class="sad-page">
+
+  <!-- ═══════════════════════════════════ EN-TÊTE ════════════════════════════ -->
+  <div class="sad-header">
+    <div>
+      <h4 class="sad-title"><i class="pi pi-brain mr-2"></i>Aide à la décision</h4>
+      <p class="sad-sub">Pilotez votre élevage avec vos indicateurs réels — Burkina Faso.</p>
+    </div>
+    <div class="sad-header-actions">
+      <button class="btn-outline" (click)="loadKpis(); loadAdvisorAlerts(); loadTopSoins(); loadIssf()">
+        <i class="pi pi-refresh mr-1"></i> Actualiser
+      </button>
+      <button class="btn-primary" [class.loading]="analyseLoading" [disabled]="analyseLoading" (click)="lancerAnalyse()">
+        <i class="pi pi-sparkles mr-1"></i>
+        {{ analyseLoading ? 'Analyse en cours...' : 'Lancer l\'analyse IA' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ ALERTES MÉTIER ════════════════════════ -->
+  <div class="sad-section" *ngIf="!advisorError && advisorAlerts.length > 0">
+    <div class="sad-section-title">
+      <i class="pi pi-bell" style="color:#E57373;"></i> Alertes automatiques
+      <span class="count-badge count-red" *ngIf="advisorSummary?.by_level?.critical">
+        {{ advisorSummary!.by_level.critical }} critique{{ advisorSummary!.by_level.critical > 1 ? 's' : '' }}
+      </span>
+      <span class="count-badge count-orange" *ngIf="advisorSummary?.by_level?.warning">
+        {{ advisorSummary!.by_level.warning }} attention
+      </span>
+    </div>
+    <div class="alerts-list">
+      <div class="alert-row" [class.alert-critical]="a.level==='critical'" [class.alert-warning]="a.level==='warning'"
+           *ngFor="let a of advisorAlerts">
+        <div class="alert-stripe"></div>
+        <div class="alert-row-body">
+          <div class="alert-row-top">
+            <span class="alert-row-title">{{ a.title }}</span>
+            <span class="alert-lv-badge" [class.lv-critical]="a.level==='critical'" [class.lv-warning]="a.level==='warning'">
+              {{ a.level === 'critical' ? 'Critique' : 'Attention' }}
+            </span>
+          </div>
+          <div class="alert-row-msg">{{ a.message }}</div>
+          <div class="alert-chips" *ngIf="a.entity">
+            <span class="chip" *ngIf="a.entity['code_animal']">{{ a.entity['code_animal'] }}</span>
+            <span class="chip" *ngIf="a.entity['code']">Box {{ a.entity['code'] }}</span>
+            <span class="chip" *ngIf="a.entity['percent']">{{ a.entity['percent'] }}%</span>
+            <span class="chip" *ngIf="a.entity['seuil_applique']">Seuil : {{ a.entity['seuil_applique'] }} porcelets</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="no-alerts-ok" *ngIf="!advisorLoading && !advisorError && advisorAlerts.length === 0">
+    <i class="pi pi-check-circle mr-2" style="color:#4CAF50;"></i> Aucune alerte — l'élevage fonctionne normalement.
+  </div>
+
+  <!-- ═══════════════════════════ GRILLE KPI + CHAT ════════════════════════ -->
+  <div class="sad-two-col">
+
+    <!-- ── Colonne gauche : KPI + Santé + Rentabilité + Analyse ── -->
+    <div class="sad-left">
+
+      <div class="kpi-loading" *ngIf="kpiLoading">
+        <p-progressSpinner strokeWidth="4" [style]="{width:'40px',height:'40px'}"></p-progressSpinner>
+        <span>Chargement des indicateurs...</span>
+      </div>
+
+      <div *ngIf="kpiRaw && !kpiLoading">
+
+        <!-- ── REPRODUCTION ── -->
+        <div class="kpi-group-label">Reproduction</div>
+        <div class="kpi-grid-5">
+          <div class="kpi-tile">
+            <div class="kpi-tile-top"><span class="kpi-tile-name">Taux mise bas</span>
+              <p-tag *ngIf="kpiRaw.reproduction.taux_mise_bas_pct!==null" [severity]="kpiSev(kpiRaw.reproduction.taux_mise_bas_pct,80)" [value]="kpiLabel(kpiSev(kpiRaw.reproduction.taux_mise_bas_pct,80))"></p-tag>
+            </div>
+            <div class="kpi-tile-val">{{ kpiRaw.reproduction.taux_mise_bas_pct!==null ? (kpiRaw.reproduction.taux_mise_bas_pct|number:'1.1-1')+'%' : '—' }}</div>
+            <div class="kpi-tile-ref">Cible : ≥ 80 %</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-tile-top"><span class="kpi-tile-name">Prolificité</span>
+              <p-tag *ngIf="kpiRaw.reproduction.prolificite_moy!==null" [severity]="kpiSev(kpiRaw.reproduction.prolificite_moy,8)" [value]="kpiLabel(kpiSev(kpiRaw.reproduction.prolificite_moy,8))"></p-tag>
+            </div>
+            <div class="kpi-tile-val">{{ kpiRaw.reproduction.prolificite_moy!==null ? (kpiRaw.reproduction.prolificite_moy|number:'1.1-1')+' nés' : '—' }}</div>
+            <div class="kpi-tile-ref">Objectif ≥ 8 / portée</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-tile-top"><span class="kpi-tile-name">Portées/truie/an</span>
+              <p-tag *ngIf="kpiRaw.reproduction.portees_par_truie_an!==null" [severity]="kpiSev(kpiRaw.reproduction.portees_par_truie_an,2,2.5)" [value]="kpiLabel(kpiSev(kpiRaw.reproduction.portees_par_truie_an,2,2.5))"></p-tag>
+            </div>
+            <div class="kpi-tile-val">{{ kpiRaw.reproduction.portees_par_truie_an!==null ? (kpiRaw.reproduction.portees_par_truie_an|number:'1.1-1') : '—' }}</div>
+            <div class="kpi-tile-ref">Cible : 2 – 2,5 / an</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-tile-top"><span class="kpi-tile-name">Mortalité porcelet</span>
+              <p-tag *ngIf="kpiRaw.reproduction.taux_mortalite_porcelet_pct!==null" [severity]="kpiSev(kpiRaw.reproduction.taux_mortalite_porcelet_pct,15,undefined,true)" [value]="kpiLabel(kpiSev(kpiRaw.reproduction.taux_mortalite_porcelet_pct,15,undefined,true))"></p-tag>
+            </div>
+            <div class="kpi-tile-val">{{ kpiRaw.reproduction.taux_mortalite_porcelet_pct!==null ? (kpiRaw.reproduction.taux_mortalite_porcelet_pct|number:'1.1-1')+'%' : '—' }}</div>
+            <div class="kpi-tile-ref">Seuil : ≤ 15 %</div>
+          </div>
+          <!-- ISSF depuis Kotlin -->
+          <div class="kpi-tile" [class.kpi-tile-highlight]="issfData">
+            <div class="kpi-tile-top"><span class="kpi-tile-name">ISSF (sevrage→saillie)</span>
+              <p-tag *ngIf="issfData?.issfMoyenJours!==null && issfData?.issfMoyenJours!==undefined"
+                [severity]="kpiSev(issfData!.issfMoyenJours!,7,undefined,true)"
+                [value]="issfData!.conforme ? 'Conforme' : 'Trop long'">
+              </p-tag>
+            </div>
+            <div class="kpi-tile-val">
+              {{ issfData?.issfMoyenJours!=null ? (issfData!.issfMoyenJours|number:'1.1-1')+' j' : (issfLoading ? '...' : '—') }}
+            </div>
+            <div class="kpi-tile-ref">Objectif : ≤ 7 jours</div>
+          </div>
+        </div>
+
+        <!-- ── CROISSANCE ── -->
+        <div class="kpi-group-label">Croissance & production</div>
+        <div class="kpi-grid-5">
+          <div class="kpi-tile">
+            <div class="kpi-tile-top"><span class="kpi-tile-name">GMQ (g/jour)</span>
+              <p-tag *ngIf="kpiRaw.croissance.gmq_g_jour!==null" [severity]="kpiSev(kpiRaw.croissance.gmq_g_jour,400,600)" [value]="kpiLabel(kpiSev(kpiRaw.croissance.gmq_g_jour,400,600))"></p-tag>
+            </div>
+            <div class="kpi-tile-val">{{ kpiRaw.croissance.gmq_g_jour!==null ? (kpiRaw.croissance.gmq_g_jour|number:'1.0-0')+' g/j' : '—' }}</div>
+            <div class="kpi-tile-ref">Cible BF : 400–600 g/j</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-tile-top"><span class="kpi-tile-name">IC (alim/gain)</span>
+              <p-tag *ngIf="kpiRaw.croissance.ic!==null" [severity]="kpiSev(kpiRaw.croissance.ic,3,4)" [value]="kpiLabel(kpiSev(kpiRaw.croissance.ic,3,4))"></p-tag>
+            </div>
+            <div class="kpi-tile-val">{{ kpiRaw.croissance.ic!==null ? (kpiRaw.croissance.ic|number:'1.1-1') : '—' }}</div>
+            <div class="kpi-tile-ref">Optimal : 3 à 4</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-tile-top"><span class="kpi-tile-name">Poids moyen vente</span>
+              <p-tag *ngIf="kpiRaw.croissance.poids_moyen_vente_kg!==null" [severity]="kpiSev(kpiRaw.croissance.poids_moyen_vente_kg,80,100)" [value]="kpiLabel(kpiSev(kpiRaw.croissance.poids_moyen_vente_kg,80,100))"></p-tag>
+            </div>
+            <div class="kpi-tile-val">{{ kpiRaw.croissance.poids_moyen_vente_kg!==null ? (kpiRaw.croissance.poids_moyen_vente_kg|number:'1.1-1')+' kg' : '—' }}</div>
+            <div class="kpi-tile-ref">Cible : 80–100 kg</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-tile-top"><span class="kpi-tile-name">Mortalité globale</span>
+              <p-tag *ngIf="kpiRaw.croissance.taux_mortalite_pct!==null" [severity]="kpiSev(kpiRaw.croissance.taux_mortalite_pct,10,undefined,true)" [value]="kpiLabel(kpiSev(kpiRaw.croissance.taux_mortalite_pct,10,undefined,true))"></p-tag>
+            </div>
+            <div class="kpi-tile-val">{{ kpiRaw.croissance.taux_mortalite_pct!==null ? (kpiRaw.croissance.taux_mortalite_pct|number:'1.1-1')+'%' : '—' }}</div>
+            <div class="kpi-tile-ref">Seuil : ≤ 10 %</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-tile-top"><span class="kpi-tile-name">Âge à la vente</span></div>
+            <div class="kpi-tile-val">{{ kpiRaw.croissance.age_moyen_vente_jours!==null ? kpiRaw.croissance.age_moyen_vente_jours+' j' : '—' }}</div>
+            <div class="kpi-tile-ref">Référence BF</div>
+          </div>
+        </div>
+
+        <!-- ── ÉCONOMIE + GESTION ── -->
+        <div class="kpi-two-block">
+          <div>
+            <div class="kpi-group-label">Rentabilité</div>
+            <div class="rentabilite-grid">
+              <div class="kpi-tile">
+                <div class="kpi-tile-top"><span class="kpi-tile-name">Coût/kg aliment</span>
+                  <p-tag *ngIf="kpiRaw.economie.cout_par_kg_aliment_fcfa!==null" [severity]="kpiSev(kpiRaw.economie.cout_par_kg_aliment_fcfa,100,undefined,true)" [value]="kpiSev(kpiRaw.economie.cout_par_kg_aliment_fcfa,100,undefined,true)==='success'?'Conforme':'Trop cher'"></p-tag>
+                </div>
+                <div class="kpi-tile-val">{{ kpiRaw.economie.cout_par_kg_aliment_fcfa!==null ? (kpiRaw.economie.cout_par_kg_aliment_fcfa|number:'1.0-0')+' F/kg' : '—' }}</div>
+                <div class="kpi-tile-ref">Seuil Thamani : ≤ 100 F/kg</div>
+              </div>
+              <div class="kpi-tile">
+                <div class="kpi-tile-top"><span class="kpi-tile-name">Coût prod./kg</span></div>
+                <div class="kpi-tile-val">{{ kpiRaw.economie.cout_production_par_kg!==null ? (kpiRaw.economie.cout_production_par_kg|number:'1.0-0')+' F/kg' : '—' }}</div>
+                <div class="kpi-tile-ref">Total charges / poids vendu</div>
+              </div>
+              <div class="kpi-tile">
+                <div class="kpi-tile-top"><span class="kpi-tile-name">Marge brute/porc</span>
+                  <p-tag *ngIf="kpiRaw.economie.marge_brute_par_porc!==null" [severity]="kpiSev(kpiRaw.economie.marge_brute_par_porc,0)" [value]="(kpiRaw.economie.marge_brute_par_porc||0) > 0 ? 'Positive' : 'Négative'"></p-tag>
+                </div>
+                <div class="kpi-tile-val">{{ kpiRaw.economie.marge_brute_par_porc!==null ? (kpiRaw.economie.marge_brute_par_porc|number:'1.0-0')+' F' : '—' }}</div>
+                <div class="kpi-tile-ref">CA - alimentation - soins</div>
+              </div>
+              <div class="kpi-tile">
+                <div class="kpi-tile-top"><span class="kpi-tile-name">CA total (12 mois)</span></div>
+                <div class="kpi-tile-val">{{ kpiRaw.economie.ca_total_fcfa!==null ? (kpiRaw.economie.ca_total_fcfa|number:'1.0-0')+' F' : '—' }}</div>
+              </div>
+              <div class="kpi-tile">
+                <div class="kpi-tile-top"><span class="kpi-tile-name">CA / truie / an</span></div>
+                <div class="kpi-tile-val">{{ kpiRaw.economie.ca_par_truie_an!==null ? (kpiRaw.economie.ca_par_truie_an|number:'1.0-0')+' F' : '—' }}</div>
+              </div>
+              <div class="kpi-tile">
+                <div class="kpi-tile-top"><span class="kpi-tile-name">Porcs vendus</span></div>
+                <div class="kpi-tile-val">{{ kpiRaw.economie.nb_porcs_vendus }}</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="kpi-group-label">Gestion</div>
+            <div class="kpi-tile mb-2">
+              <div class="kpi-tile-top"><span class="kpi-tile-name">Taux occupation</span>
+                <p-tag *ngIf="kpiRaw.gestion.taux_occupation_batiments_pct!==null" [severity]="kpiSev(kpiRaw.gestion.taux_occupation_batiments_pct,50,85)" [value]="kpiLabel(kpiSev(kpiRaw.gestion.taux_occupation_batiments_pct,50,85))"></p-tag>
+              </div>
+              <div class="kpi-tile-val">{{ kpiRaw.gestion.taux_occupation_batiments_pct!==null ? (kpiRaw.gestion.taux_occupation_batiments_pct|number:'1.1-1')+'%' : '—' }}</div>
+              <div class="kpi-tile-ref">Optimal : 50–85 %</div>
+            </div>
+            <div class="kpi-tile mb-2">
+              <div class="kpi-tile-top"><span class="kpi-tile-name">PPTA</span>
+                <p-tag *ngIf="kpiRaw.gestion.ppta!==null" [severity]="kpiSev(kpiRaw.gestion.ppta,16)" [value]="kpiLabel(kpiSev(kpiRaw.gestion.ppta,16))"></p-tag>
+              </div>
+              <div class="kpi-tile-val">{{ kpiRaw.gestion.ppta!==null ? (kpiRaw.gestion.ppta|number:'1.1-1') : '—' }}</div>
+              <div class="kpi-tile-ref">Porcs/truie/an · Cible ≥ 16</div>
+            </div>
+            <div class="kpi-tile">
+              <div class="kpi-tile-top"><span class="kpi-tile-name">Durée cycle</span></div>
+              <div class="kpi-tile-val">{{ kpiRaw.gestion.duree_cycle_jours!==null ? kpiRaw.gestion.duree_cycle_jours+' j' : '—' }}</div>
+              <div class="kpi-tile-ref">Sevrage → vente</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SANTÉ ANIMALE ── -->
+        <div class="sante-section">
+          <div class="kpi-group-label" style="margin-top:1.1rem;">Santé animale</div>
+          <div class="sante-header-row">
+            <div class="sante-kpis">
+              <div class="kpi-tile">
+                <div class="kpi-tile-top"><span class="kpi-tile-name">Taux morbidité</span>
+                  <p-tag *ngIf="kpiRaw.sante.taux_morbidite_pct!==null" [severity]="kpiSev(kpiRaw.sante.taux_morbidite_pct,10,undefined,true)" [value]="kpiLabel(kpiSev(kpiRaw.sante.taux_morbidite_pct,10,undefined,true))"></p-tag>
+                </div>
+                <div class="kpi-tile-val">{{ kpiRaw.sante.taux_morbidite_pct!==null ? (kpiRaw.sante.taux_morbidite_pct|number:'1.1-1')+'%' : '—' }}</div>
+                <div class="kpi-tile-ref">Seuil : ≤ 10 %</div>
+              </div>
+              <div class="kpi-tile">
+                <div class="kpi-tile-top"><span class="kpi-tile-name">Médicaments (12 mois)</span></div>
+                <div class="kpi-tile-val">{{ kpiRaw.sante.conso_medicaments_fcfa!==null ? (kpiRaw.sante.conso_medicaments_fcfa|number:'1.0-0')+' F' : '—' }}</div>
+                <div class="kpi-tile-ref">{{ kpiRaw.sante.nb_actes_veterinaires }} actes · {{ kpiRaw.sante.nb_animaux_traites }} animaux traités</div>
+              </div>
+              <div class="kpi-tile">
+                <div class="kpi-tile-top"><span class="kpi-tile-name">Animaux actifs</span></div>
+                <div class="kpi-tile-val">{{ kpiRaw.sante.nb_animaux_actifs }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top consommateurs de soins -->
+          <div class="top-soins-block">
+            <div class="top-soins-title">
+              <i class="pi pi-sort-amount-down mr-2" style="color:#E57373;"></i>
+              Top animaux par coût de soins (12 mois)
+              <span *ngIf="topSoinsLoading" style="font-size:12px; color:#9CA3AF; margin-left:8px;">Chargement...</span>
+            </div>
+            <div *ngIf="topSoins.length === 0 && !topSoinsLoading" style="font-size:13px; color:#9CA3AF; padding:.5rem 0;">
+              Aucun soin enregistré sur les 12 derniers mois.
+            </div>
+            <table *ngIf="topSoins.length > 0" class="soins-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Animal</th>
+                  <th>Type</th>
+                  <th class="text-right">Visites</th>
+                  <th class="text-right">Médicaments</th>
+                  <th class="text-right">Coût total</th>
+                  <th>Dernier soin</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let a of topSoins; let i = index">
+                  <td>
+                    <span class="rank-badge" [class.rank-1]="i===0" [class.rank-2]="i===1" [class.rank-3]="i===2">
+                      {{ i + 1 }}
+                    </span>
+                  </td>
+                  <td class="font-semibold">{{ a.codeAnimal }}</td>
+                  <td style="color:#9CA3AF;">{{ a.typeAnimal }}</td>
+                  <td class="text-right">{{ a.nbVisites }}</td>
+                  <td class="text-right">{{ a.coutMedicaments | number:'1.0-0' }} F</td>
+                  <td class="text-right font-semibold"
+                    [style.color]="a.coutTotal > 10000 ? '#DC2626' : a.coutTotal > 5000 ? '#F59E0B' : '#16A34A'">
+                    {{ a.coutTotal | number:'1.0-0' }} F
+                  </td>
+                  <td style="color:#9CA3AF; font-size:12px;">{{ a.derniereSoin || '—' }}</td>
+                  <td>
+                    <button pButton icon="pi pi-eye" class="p-button-text p-button-sm"
+                      style="color:#1976D2;" title="Voir bilan complet"
+                      (click)="ouvrirBilanSante(a.animalId)">
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── ANALYSE GEMINI ── -->
+        <div class="analyse-block" *ngIf="analyseLoading">
+          <div class="analyse-loading">
+            <p-progressSpinner strokeWidth="3" [style]="{width:'36px',height:'36px'}"></p-progressSpinner>
+            <span>Gemini analyse vos 12 derniers mois...</span>
+          </div>
+        </div>
+        <div class="analyse-block" *ngIf="analyseErreur && !analyseLoading">
+          <div class="analyse-error"><i class="pi pi-exclamation-triangle mr-2"></i>{{ analyseErreur }}</div>
+        </div>
+        <div class="analyse-block" *ngIf="analyseTexte && !analyseLoading">
+          <div class="analyse-header"><i class="pi pi-sparkles mr-2"></i>Diagnostic Gemini — élevage porcin Burkina Faso</div>
+          <div class="analyse-body" [innerHTML]="formatAnalyse(analyseTexte)"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Colonne droite : Chat ── -->
+    <div class="sad-right">
+      <div class="chat-header">
+        <i class="pi pi-comments mr-2"></i>Assistant IA
+        <span class="chat-sub">Posez une question sur vos données</span>
+      </div>
+      <div class="suggestions" *ngIf="chatMessages.length <= 1">
+        <div class="suggestion-chip" *ngFor="let s of suggestions_contexte" (click)="useSuggestion(s)">{{ s }}</div>
+      </div>
+      <div class="chat-messages">
+        <div class="chat-msg" [class.msg-user]="m.role==='user'" [class.msg-ai]="m.role==='ai'"
+             *ngFor="let m of chatMessages">
+          <div class="msg-bubble" *ngIf="!m.loading" [innerHTML]="m.role==='ai' ? formatAnalyse(m.text) : m.text"></div>
+          <div class="msg-bubble msg-typing" *ngIf="m.loading"><span></span><span></span><span></span></div>
+        </div>
+        <div #chatBottom></div>
+      </div>
+      <div class="chat-input-bar">
+        <textarea [(ngModel)]="questionTexte" (keydown)="onEnter($event)"
+          placeholder="Ex : Que faire pour améliorer ma prolificité ?"
+          rows="2" class="chat-textarea"></textarea>
+        <button class="chat-send" [disabled]="!questionTexte.trim() || chatLoading" (click)="envoyerQuestion()">
+          <i class="pi pi-send"></i>
+        </button>
+      </div>
+      <div class="chat-hint">Entrée pour envoyer · Shift+Entrée pour nouvelle ligne</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ DIALOG BILAN SANTÉ ══════════════════════ -->
+<p-dialog [(visible)]="bilanDialog" [modal]="true" [style]="{width:'650px'}"
+  header="Bilan sanitaire" [draggable]="false">
+
+  <div *ngIf="bilanLoading" class="flex justify-content-center py-5">
+    <p-progressSpinner strokeWidth="4" [style]="{width:'40px',height:'40px'}"></p-progressSpinner>
+  </div>
+
+  <div *ngIf="bilanData && !bilanLoading">
+    <!-- En-tête animal -->
+    <div class="bilan-header">
+      <div class="bilan-avatar">{{ bilanData.codeAnimal.substring(0,2) }}</div>
+      <div>
+        <div class="bilan-code">{{ bilanData.codeAnimal }}</div>
+        <div class="bilan-type">{{ bilanData.typeAnimal }}</div>
+      </div>
+      <div class="bilan-stats">
+        <div class="bilan-stat">
+          <div class="bilan-stat-val">{{ bilanData.nbVisitesSoins }}</div>
+          <div class="bilan-stat-label">Visites</div>
+        </div>
+        <div class="bilan-stat">
+          <div class="bilan-stat-val">{{ bilanData.coutTotalPrestations | number:'1.0-0' }} F</div>
+          <div class="bilan-stat-label">Coût total</div>
+        </div>
+        <div class="bilan-stat">
+          <div class="bilan-stat-val">{{ bilanData.coutTotalMedicaments | number:'1.0-0' }} F</div>
+          <div class="bilan-stat-label">Médicaments</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Motifs principaux -->
+    <div class="bilan-motifs" *ngIf="bilanData.motifsPrincipaux.length > 0">
+      <span style="font-size:12px; color:#9CA3AF; margin-right:8px;">Motifs principaux :</span>
+      <span class="motif-chip" *ngFor="let m of bilanData.motifsPrincipaux">{{ m }}</span>
+    </div>
+
+    <!-- Tableau des soins -->
+    <table class="soins-table mt-3" *ngIf="bilanData.soins.length > 0">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Motif</th>
+          <th>Traitement</th>
+          <th class="text-right">Coût</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of bilanData.soins">
+          <td style="white-space:nowrap;">{{ s.dateSoin }}</td>
+          <td>{{ s.motif }}</td>
+          <td style="color:#9CA3AF; font-size:12px;">{{ s.traitement }}</td>
+          <td class="text-right">{{ s.coutTotal | number:'1.0-0' }} F</td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="bilanData.soins.length === 0" style="font-size:13px; color:#9CA3AF; padding:1rem 0;">
+      Aucun soin enregistré sur la période.
+    </div>
+  </div>
+</p-dialog>

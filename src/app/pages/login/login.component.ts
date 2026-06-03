@@ -4,12 +4,12 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { InputTextModule } from "primeng/inputtext";
 import { ButtonDirective } from "primeng/button";
 import { ToastrService } from "ngx-toastr";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { CommonModule } from '@angular/common';
 import { PasswordModule } from 'primeng/password';
 import { CheckboxModule } from 'primeng/checkbox';
-import { FormsModule } from '@angular/forms'; 
-import { AuthService } from '../../@core/service/auth.service';
+import { FormsModule } from '@angular/forms';
+import { AuthService, SessionData } from '../../@core/service/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -33,20 +33,34 @@ export class LoginComponent implements OnInit {
     username: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
   });
-  
+
   processing = false;
   checked = false;
   errorMsg = '';
+  private returnUrl = '/dashboard';
 
   constructor(
     private formBuilder: FormBuilder,
     private toastr: ToastrService,
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Si déjà connecté → dashboard directement
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+    // Récupère l'URL de retour depuis les queryParams (mis par le guard)
+    const fromQuery = this.route.snapshot.queryParams['returnUrl'] || '';
+    const INVALID = ['/login', '/unauthorized', ''];
+    this.returnUrl = INVALID.includes(fromQuery) ? '/dashboard' : fromQuery;
 
+    // Nettoyer le stale localStorage de l'ancien guard
+    localStorage.removeItem('redirectUrl');
+  }
 
   handleSubmit() {
     if (this.loginForm.invalid) {
@@ -56,35 +70,26 @@ export class LoginComponent implements OnInit {
 
     this.processing = true;
     this.errorMsg = '';
-    
-    const email = this.loginForm.get('username')?.value;
+
+    const email    = this.loginForm.get('username')?.value;
     const password = this.loginForm.get('password')?.value;
 
     this.authService.login(email, password).subscribe({
-      next: (response: any) => {
+      next: (session: SessionData) => {
         this.processing = false;
-        
-        this.authService.setCurrentUser(response);
-        
-        // if (this.checked && response.token) {
-        //   localStorage.setItem('token', response.token);
-        // }
+        this.router.navigateByUrl(this.returnUrl).then(() => {
+          const nomComplet = session.profile.prenom && session.profile.nom
+            ? `${session.profile.prenom} ${session.profile.nom}`
+            : session.profile.email;
 
-        const redirectUrl = localStorage.getItem('redirectUrl') || '/dashboard';
-        this.router.navigateByUrl(redirectUrl).then(() => {
-          const nomComplet = response.nom && response.prenom 
-            ? `${response.nom} ${response.prenom}`
-            : response.username;
-            
           this.toastr.success(
             `Bienvenue ${nomComplet}`,
             'Connexion réussie',
-            { timeOut: 10000, progressBar: true, positionClass: 'toast-bottom-left' }
+            { timeOut: 5000, progressBar: true, positionClass: 'toast-bottom-left' }
           );
         });
       },
       error: (err: any) => {
-        console.log(err);
         this.processing = false;
         this.errorMsg = err.error?.error || 'Email ou mot de passe incorrect';
         this.toastr.error(this.errorMsg);

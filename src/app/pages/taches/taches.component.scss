@@ -1,0 +1,243 @@
+// ── Palette ──────────────────────────────────────────────────────────────────
+$green:   #2d8a4e;
+$green-l: #f0fdf4;
+$blue-l:  #eff6ff;
+$blue:    #2563eb;
+$amber:   #b45309;
+$amber-l: #fffbeb;
+$red:     #dc2626;
+$red-l:   #fef2f2;
+$gray-50: #f9fafb;
+$gray-100:#f3f4f6;
+$gray-200:#e5e7eb;
+$gray-500:#6b7280;
+$gray-700:#374151;
+$shadow-sm: 0 1px 4px rgba(0,0,0,.06);
+$shadow-md: 0 4px 16px rgba(0,0,0,.08);
+$radius:  14px;
+
+// ── Layout ────────────────────────────────────────────────────────────────────
+.taches-page { padding: 24px; width: 100%; box-sizing: border-box; }
+
+// ── KPI Bar ───────────────────────────────────────────────────────────────────
+.kpi-bar {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+}
+
+.kpi-spacer { flex: 1; }
+
+.kpi-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px; border-radius: $radius; min-width: 120px;
+  box-shadow: $shadow-sm; transition: box-shadow .15s;
+
+  &:hover { box-shadow: $shadow-md; }
+
+  i { font-size: 1.3rem; flex-shrink: 0; }
+
+  div { display: flex; flex-direction: column; }
+
+  .kpi-val { font-size: 1.4rem; font-weight: 800; line-height: 1; }
+  .kpi-lbl { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; opacity: .8; margin-top: 2px; }
+
+  &.kpi-secondary { background: $gray-100; color: $gray-700; i { color: $gray-500; } }
+  &.kpi-info      { background: $blue-l;   color: $blue;     i { color: $blue; } }
+  &.kpi-warning   { background: $amber-l;  color: $amber;    i { color: $amber; } }
+  &.kpi-success   { background: $green-l;  color: $green;    i { color: $green; } }
+  &.kpi-danger    { background: $red-l;    color: $red;      i { color: $red; } }
+}
+
+// ── Tab icons ─────────────────────────────────────────────────────────────────
+.tab-icon { margin-right: 6px; font-size: .85rem; }
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+.task-row { transition: background .1s; }
+
+.task-title-cell {
+  display: flex; align-items: center; gap: 6px;
+  strong { color: $gray-700; }
+}
+.task-recur-dot {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: $green-l; color: $green; font-size: .7rem; font-weight: 800;
+  flex-shrink: 0;
+}
+.date-cell { color: $gray-500; font-size: .85rem; white-space: nowrap; }
+.no-type { color: $gray-200; }
+.empty-row { text-align: center; color: $gray-500; padding: 24px; }
+
+.actions-cell { display: flex; gap: 2px; }
+.assignees-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+
+// ── Mini Avatar ───────────────────────────────────────────────────────────────
+.mini-avatar {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, $green, darken($green, 15%));
+  color: white; display: flex; align-items: center; justify-content: center;
+  font-size: .65rem; font-weight: 700; letter-spacing: .5px;
+  cursor: default;
+
+  &.lg { width: 40px; height: 40px; font-size: .82rem; }
+
+  // Couleurs par statut dans la colonne assignés
+  &.av-validee            { background: linear-gradient(135deg, #16a34a, #14532d); }
+  &.av-invalidee          { background: linear-gradient(135deg, #dc2626, #991b1b); }
+  &.av-en_attente_validation { background: linear-gradient(135deg, #d97706, #92400e); }
+  &.av-en_cours           { background: linear-gradient(135deg, $blue, #1e40af); }
+  &.av-expiree            { background: linear-gradient(135deg, $gray-500, #374151); }
+}
+
+// ── Type pill ─────────────────────────────────────────────────────────────────
+.type-pill {
+  display: inline-block; padding: 2px 10px; border-radius: 20px;
+  color: white; font-size: .72rem; font-weight: 600; white-space: nowrap;
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.empty-state {
+  text-align: center; padding: 60px 24px; color: $gray-500;
+}
+.empty-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 64px; height: 64px; border-radius: 50%;
+  background: $gray-100; margin: 0 auto 16px;
+  i { font-size: 1.8rem; color: $gray-500; }
+  &.green { background: $green-l; i { color: $green; } }
+}
+.empty-title { font-size: 1rem; font-weight: 700; color: $gray-700; margin: 0 0 4px; }
+.empty-sub   { font-size: .85rem; color: $gray-500; margin: 0; }
+
+// ── Section "À valider" ───────────────────────────────────────────────────────
+.validation-list { display: flex; flex-direction: column; gap: 16px; padding: 4px 0; }
+
+.validation-card {
+  background: white; border-radius: $radius; padding: 20px 22px;
+  box-shadow: $shadow-sm; border-left: 4px solid $amber;
+  transition: box-shadow .15s;
+  &:hover { box-shadow: $shadow-md; }
+}
+
+.vc-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+}
+.vc-header-left {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  h4 { margin: 0; font-size: 1rem; color: $gray-700; }
+}
+.vc-header-right {
+  display: flex; align-items: center; gap: 10px;
+}
+.due-date {
+  font-size: .8rem; color: $gray-500;
+  display: flex; align-items: center; gap: 5px;
+  i { font-size: .8rem; }
+}
+
+.submission-row {
+  display: flex; flex-direction: column; gap: 12px;
+  background: $gray-50; border-radius: 10px; padding: 14px 16px;
+  border: 1px solid $gray-200;
+}
+.submission-who { display: flex; align-items: flex-start; gap: 12px; }
+.submission-meta {
+  display: flex; flex-direction: column; gap: 2px;
+  strong { font-size: .9rem; color: $gray-700; }
+}
+.sub-date    { font-size: .75rem; color: $gray-500; }
+.sub-comment { font-style: italic; font-size: .83rem; color: $gray-700; margin-top: 2px; }
+
+.preuves-section { }
+.preuves-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+.preuve-img {
+  width: 88px; height: 88px; object-fit: cover; border-radius: 10px;
+  cursor: pointer; border: 2px solid $gray-200;
+  transition: border-color .15s, transform .15s;
+  &:hover { border-color: $green; transform: scale(1.04); }
+}
+.no-preuve {
+  color: $gray-500; font-size: .8rem;
+  display: flex; align-items: center; gap: 6px;
+  i { color: $gray-200; font-size: 1.1rem; }
+}
+
+.submission-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-action { min-width: 110px; }
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+.types-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+  h3 { margin: 0; }
+}
+.types-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.type-card {
+  display: flex; align-items: center; gap: 12px;
+  background: white; border-radius: $radius; padding: 14px 16px;
+  box-shadow: $shadow-sm; transition: box-shadow .15s;
+  &:hover { box-shadow: $shadow-md; }
+}
+.type-icon {
+  width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  i { color: white; font-size: 1.1rem; }
+}
+.type-info {
+  flex: 1; display: flex; flex-direction: column; gap: 3px;
+  strong { font-size: .9rem; }
+  small { color: $gray-500; font-size: .78rem; }
+}
+.type-actions { display: flex; gap: 4px; }
+
+// ── Formulaires ───────────────────────────────────────────────────────────────
+.tache-form {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px;
+  .form-row {
+    display: flex; flex-direction: column; gap: 6px;
+    label { font-size: .88rem; font-weight: 600; color: $gray-700; }
+    &.full { grid-column: 1 / -1; }
+  }
+}
+
+// ── Détail tâche ──────────────────────────────────────────────────────────────
+.detail-tache { display: flex; flex-direction: column; gap: 12px; }
+.detail-header h3 { margin: 0 0 8px; }
+.detail-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.detail-desc { color: $gray-700; background: $gray-50; padding: 10px 14px; border-radius: 8px; margin: 0; }
+.detail-info-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  div { display: flex; align-items: center; gap: 8px; font-size: .88rem; color: $gray-500;
+    i { color: $green; } }
+}
+.assignation-detail {
+  display: flex; flex-direction: column; gap: 8px;
+  background: $gray-50; border-radius: 10px; padding: 12px; margin-bottom: 8px;
+}
+.assignation-person {
+  display: flex; align-items: center; gap: 10px;
+  strong { display: block; } small { color: $gray-500; }
+}
+.commentaire-box {
+  background: $green-l; border-left: 3px solid $green; padding: 8px 12px;
+  border-radius: 0 8px 8px 0; font-size: .85rem; color: $gray-700;
+  small { color: $gray-500; display: block; margin-top: 4px; }
+  &.danger { background: $red-l; border-color: $red; }
+  &.ouvrier { background: $blue-l; border-color: $blue; }
+}
+
+// ── Misc ──────────────────────────────────────────────────────────────────────
+.required-note { font-size: .75rem; color: $red; font-weight: normal; }
+
+.type-form .field {
+  margin-bottom: 16px;
+  label { font-size: .88rem; font-weight: 600; display: block; margin-bottom: 6px; }
+}
+.color-picker { width: 60px; height: 40px; border-radius: 8px; border: none; cursor: pointer; }
+.icone-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.icone-btn {
+  width: 40px; height: 40px; border-radius: 8px; border: 2px solid $gray-200;
+  background: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: border-color .12s, background .12s;
+  &.selected { border-color: $green; background: $green-l; }
+  &:hover { border-color: $green; }
+}

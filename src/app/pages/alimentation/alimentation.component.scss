@@ -1,0 +1,325 @@
+// ============================================================
+// AlimentationComponent — Styles
+// ============================================================
+
+// ── Layout général ──────────────────────────────────────────
+
+.alim-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+}
+
+.alim-header {
+  background: #2E7D32;
+  color: white;
+  padding: .875rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  h5 { margin: 0; font-weight: 600; }
+}
+
+// ── Onglets PrimeNG ─────────────────────────────────────────
+
+::ng-deep .alim-tabs {
+  .p-tabview-nav {
+    background: white;
+    border-bottom: 2px solid #E5E7EB;
+    padding: 0 1rem;
+  }
+
+  .p-tabview-nav li .p-tabview-nav-link {
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: .875rem 1.25rem;
+    font-weight: 500;
+    color: #6B7280;
+    transition: all .2s;
+
+    &:hover { color: #2E7D32; background: transparent; }
+  }
+
+  .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    border-bottom-color: #2E7D32;
+    color: #2E7D32;
+    background: transparent;
+  }
+
+  .p-tabview-panels { padding: 1.25rem; background: #F9FAFB; }
+}
+
+// ── Tableau liste ────────────────────────────────────────────
+
+.alim-table-header th {
+  background: #DCFCE7 !important;
+  color: #15803D;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.alim-skeleton {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 4px;
+  margin: 4px auto;
+  width: 80%;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+// ── Utilitaires communs ──────────────────────────────────────
+
+.tab-content { padding: .25rem 0; }
+
+.section-info {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 1.25rem;
+}
+
+.form-card {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.field-label {
+  display: block;
+  font-weight: 500;
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: .4rem;
+}
+
+.req { color: #DC2626; }
+
+.alim-alert {
+  border-radius: 8px;
+  padding: .875rem 1rem;
+  font-size: 13px;
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+
+  &.alim-alert-danger  { background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; }
+  &.alim-alert-warning { background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }
+}
+
+// ── Onglet 2 — Ration de référence ──────────────────────────
+
+.kpi-card {
+  background: white;
+  border: 2px solid #E5E7EB;
+  border-radius: 10px;
+  padding: .875rem;
+  text-align: center;
+
+  .kpi-label { font-size: 11px; color: #9CA3AF; text-transform: uppercase; letter-spacing: .5px; margin-bottom: .35rem; }
+  .kpi-value { font-size: 1.3rem; font-weight: 700; color: #1F2937; }
+  .kpi-sub   { font-size: 11px; font-weight: 600; margin-top: .25rem; }
+}
+
+.ration-result {
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+
+.ration-title {
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  font-weight: 600;
+  color: #065F46;
+  margin-bottom: 1.25rem;
+  font-size: 15px;
+}
+
+.ration-composition {
+  background: #F9FAFB;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.composition-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: .6rem;
+
+  .composition-label { width: 130px; font-size: 13px; color: #374151; flex-shrink: 0; }
+  .composition-bar-wrapper { flex: 1; background: #E5E7EB; border-radius: 99px; height: 14px; }
+  .composition-bar { height: 14px; border-radius: 99px; transition: width .4s ease; }
+  .composition-pct { width: 40px; text-align: right; font-size: 13px; font-weight: 600; color: #374151; }
+}
+
+.source-badge {
+  font-size: 11px;
+  color: #9CA3AF;
+  background: #F3F4F6;
+  border-radius: 6px;
+  padding: .4rem .75rem;
+  display: inline-block;
+}
+
+// ── Onglet 3 — Calculateur de coût ──────────────────────────
+
+.sous-total-badge {
+  background: #F3F4F6;
+  border-radius: 6px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+  color: #374151;
+}
+
+.total-bar {
+  background: linear-gradient(135deg, #2E7D32, #388E3C);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, .25);
+
+  .total-amount { font-size: 1.5rem; font-weight: 700; }
+}
+
+.conformite-banner {
+  border-radius: 10px;
+  border: 2px solid;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.detail-table {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #E5E7EB;
+
+  table { border-collapse: collapse; font-size: 13px; }
+
+  thead tr { background: #F3F4F6; }
+  th, td { padding: .625rem 1rem; text-align: left; border-bottom: 1px solid #E5E7EB; }
+  th { font-weight: 600; color: #374151; font-size: 12px; text-transform: uppercase; letter-spacing: .3px; }
+
+  .total-row { background: #ECFDF5; }
+  .total-row td { border-top: 2px solid #BBF7D0; font-weight: 600; }
+}
+
+.cout-par-kg {
+  font-size: 15px;
+  font-weight: 600;
+  padding: .5rem 0;
+}
+
+// ── Onglet 4 — Analyse IA ───────────────────────────────────
+
+.kpi-section-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #1F2937;
+  margin-bottom: .875rem;
+  display: flex;
+  align-items: center;
+}
+
+.kpi-group-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: .5rem;
+  margin-top: .25rem;
+}
+
+.kpi-tile {
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: .875rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+
+  .kpi-tile-label { font-size: 11px; color: #9CA3AF; text-transform: uppercase; letter-spacing: .4px; margin-bottom: .3rem; }
+  .kpi-tile-value { font-size: 1.15rem; font-weight: 700; color: #1F2937; margin-bottom: .4rem; }
+
+  ::ng-deep .p-tag { font-size: 10px; }
+}
+
+.llm-loading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #9CA3AF;
+  font-size: 14px;
+  padding: 1rem 0;
+}
+
+.llm-response {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #E5E7EB;
+  margin-top: .5rem;
+
+  .llm-response-header {
+    background: #7C3AED;
+    color: white;
+    padding: .75rem 1rem;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+  }
+
+  .llm-response-body {
+    background: white;
+    padding: 1.25rem;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.7;
+
+    ::ng-deep .llm-heading {
+      color: #2E7D32;
+      font-size: 15px;
+      font-weight: 700;
+      margin: 1rem 0 .4rem;
+    }
+
+    ::ng-deep strong { color: #1F2937; }
+  }
+}
+
+.question-bar {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #E5E7EB;
+  margin-top: .5rem;
+}

@@ -1,194 +1,156 @@
-<div class="page">
+<div class="dashboard">
 
-  <div class="stats-container">
-    <div class="row top-row">
-      <div class="card card-blue" *ngIf="stats">
-        <h3>Truies Gestantes</h3>
-        <p>{{ stats.truiesGestantes }}</p>
+  <!-- ══════════════════════════════════════════════════════════
+       HERO — KPI RAPIDES
+       ══════════════════════════════════════════════════════════ -->
+  <div class="hero-stats" *ngIf="stats">
+    <div class="stat-card stat-green">
+      <div class="stat-icon"><i class="pi pi-heart-fill"></i></div>
+      <div class="stat-body">
+        <div class="stat-label">Truies gestantes</div>
+        <div class="stat-value">{{ stats.truiesGestantes }}</div>
       </div>
-      <div class="card card-green" *ngIf="stats">
-        <h3>Mises Bas ce Mois</h3>
-        <p>{{ stats.misesBasMois }}</p>
+    </div>
+    <div class="stat-card stat-blue">
+      <div class="stat-icon"><i class="pi pi-star-fill"></i></div>
+      <div class="stat-body">
+        <div class="stat-label">Mises bas ce mois</div>
+        <div class="stat-value">{{ stats.misesBasMois }}</div>
       </div>
-      <div class="card card-orange" *ngIf="stats">
-        <h3>Porcelets Sevrés</h3>
-        <p>{{ stats.porceletsSevres }}</p>
+    </div>
+    <div class="stat-card stat-orange">
+      <div class="stat-icon"><i class="pi pi-users"></i></div>
+      <div class="stat-body">
+        <div class="stat-label">Porcelets sevrés</div>
+        <div class="stat-value">{{ stats.porceletsSevres }}</div>
       </div>
-
-      <div class="card card-purple" *ngIf="stats">
-        <h3>Taux Réussite mois</h3>
-        <p>{{ stats.tauxReussite | number:'1.0-2' }}%</p>
-
+    </div>
+    <div class="stat-card stat-purple">
+      <div class="stat-icon"><i class="pi pi-chart-line"></i></div>
+      <div class="stat-body">
+        <div class="stat-label">Taux réussite</div>
+        <div class="stat-value">{{ stats.tauxReussite | number:'1.0-1' }}%</div>
       </div>
-
-      <div class="card card-red" *ngIf="stats">
-        <h3>Total Saillies</h3>
-        <p>{{ stats.totalSaillies }}</p>
+    </div>
+    <div class="stat-card stat-teal">
+      <div class="stat-icon"><i class="pi pi-list"></i></div>
+      <div class="stat-body">
+        <div class="stat-label">Total saillies</div>
+        <div class="stat-value">{{ stats.totalSaillies }}</div>
       </div>
     </div>
   </div>
 
-  <!-- <div class="charges-chart" *ngIf="chartData">
-  <p-chart
-  type="doughnut"
-  [data]="chartData"
-  [style]="{ width: '100%', height: '280px' }">
- </p-chart>
-</div>
-<div class="ventes-chart" *ngIf="venteChartData">
-  <h3>Évolution des Ventes</h3>
-  <p-chart
-      type="line"
-      [data]="venteChartData"
-      [style]="{ width: '100%', height: '320px' }">
-  </p-chart>
-</div> -->
-  <div class="charts-row" *ngIf="chartData && venteChartData">
+  <!-- ══════════════════════════════════════════════════════════
+       ALERTES ADVISOR (Python SAD)
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section-block" *ngIf="!advisorError && advisorAlerts.length > 0">
+    <div class="section-header">
+      <div class="section-title">
+        <i class="pi pi-bell mr-2"></i>Alertes prioritaires
+      </div>
+      <div class="alert-pills">
+        <span class="pill pill-danger" *ngIf="advisorSummary && advisorSummary.by_level.critical > 0">
+          <span class="dot dot-danger"></span>
+          {{ advisorSummary.by_level.critical }} critique{{ advisorSummary.by_level.critical > 1 ? 's' : '' }}
+        </span>
+        <span class="pill pill-warning" *ngIf="advisorSummary && advisorSummary.by_level.warning > 0">
+          <span class="dot dot-warning"></span>
+          {{ advisorSummary.by_level.warning }} avertissement{{ advisorSummary.by_level.warning > 1 ? 's' : '' }}
+        </span>
+      </div>
+    </div>
 
-    <div class="chart-left">
-      <h3 class="chart-title">Répartition des Charges</h3>
+    <div class="alerts-grid">
+      <div class="alert-item" [ngClass]="'alert-' + alert.level"
+           *ngFor="let alert of advisorAlerts">
+        <div class="alert-bar"></div>
+        <div class="alert-content">
+          <div class="alert-top">
+            <span class="alert-title">{{ alert.title }}</span>
+            <span class="alert-badge" [ngClass]="'badge-' + alert.level">
+              {{ alert.level === 'critical' ? 'Critique' : 'Attention' }}
+            </span>
+          </div>
+          <div class="alert-msg">{{ alert.message }}</div>
+          <div class="alert-chips" *ngIf="alert.entity">
+            <span class="chip" *ngIf="alert.entity['code_animal']">{{ alert.entity['code_animal'] }}</span>
+            <span class="chip" *ngIf="alert.entity['code']">Box {{ alert.entity['code'] }}</span>
+            <span class="chip" *ngIf="alert.entity['percent']">{{ alert.entity['percent'] }}% occupé</span>
+            <span class="chip" *ngIf="alert.entity['seuil_applique']">Seuil : {{ alert.entity['seuil_applique'] }} porcelets</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <p-chart type="doughnut" [data]="chartData" [style]="{ width: '100%', height: '260px' }">
+  <!-- ══════════════════════════════════════════════════════════
+       GRAPHIQUES
+       ══════════════════════════════════════════════════════════ -->
+  <div class="charts-row" *ngIf="chargesPieData || venteChartData">
+
+    <div class="chart-card" *ngIf="chargesPieData">
+      <div class="chart-card-header">
+        <span class="chart-card-title"><i class="pi pi-chart-pie mr-2"></i>Répartition des charges</span>
+      </div>
+      <p-chart type="doughnut" [data]="chargesPieData"
+        [options]="{plugins:{legend:{position:'bottom', labels:{font:{size:12}}}}}"
+        [style]="{'width':'100%','height':'240px'}">
       </p-chart>
     </div>
 
-    <div class="chart-right">
-      <h3 class="chart-title">Évolution des Ventes</h3>
-
-      <div class="annee-filter">
-        <label>Année :</label>
-        <select [(ngModel)]="anneeSelectionnee" (change)="loadEvolutionVentes()">
-          <option *ngFor="let a of anneesDisponibles" [value]="a">
-            {{ a }}
-          </option>
+    <div class="chart-card" *ngIf="venteChartData">
+      <div class="chart-card-header">
+        <span class="chart-card-title"><i class="pi pi-chart-line mr-2"></i>Évolution des ventes</span>
+        <select class="year-select" [(ngModel)]="anneeSelectionnee" (change)="loadEvolutionVentes()">
+          <option *ngFor="let a of anneesDisponibles" [value]="a">{{ a }}</option>
         </select>
       </div>
-
-      <p-chart type="line" [data]="venteChartData" [style]="{ width: '100%', height: '320px' }">
+      <p-chart type="line" [data]="venteChartData"
+        [options]="{plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}, x:{grid:{display:false}}}}"
+        [style]="{'width':'100%','height':'240px'}">
       </p-chart>
     </div>
-
   </div>
 
-<!-- Alertes Advisor -->
-<div class="advisor-section">
-
-  <!-- En-tête avec compteurs -->
-  <div class="advisor-header">
-    <h3>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="2">
-        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-      </svg>
-      Alertes Advisor
-      <span class="badge-count" *ngIf="advisorSummary">
-        {{ advisorSummary.total_alerts }} alerte{{ advisorSummary.total_alerts > 1 ? 's' : '' }}
-      </span>
-    </h3>
-
-    <div class="summary-bar" *ngIf="advisorSummary">
-      <span class="summary-pill critical" *ngIf="advisorSummary.by_level.critical > 0">
-        <span class="dot"></span>
-        {{ advisorSummary.by_level.critical }} critique{{ advisorSummary.by_level.critical > 1 ? 's' : '' }}
-      </span>
-      <span class="summary-pill warning" *ngIf="advisorSummary.by_level.warning > 0">
-        <span class="dot"></span>
-        {{ advisorSummary.by_level.warning }} warning{{ advisorSummary.by_level.warning > 1 ? 's' : '' }}
-      </span>
-    </div>
-  </div>
-
-  <!-- Erreur si paramètres non configurés -->
-  <div class="advisor-error" *ngIf="advisorError">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-         stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/>
-      <line x1="12" y1="8" x2="12" y2="12"/>
-      <line x1="12" y1="16" x2="12.01" y2="16"/>
-    </svg>
-    {{ advisorError }}
-  </div>
-
-  <!-- Aucune alerte -->
-  <div class="no-alerts" *ngIf="!advisorError && advisorAlerts.length === 0">
-    Aucune alerte active. La ferme fonctionne normalement.
-  </div>
-
-  <!-- Groupes d'alertes -->
-  <ng-container *ngFor="let group of alertsGrouped | keyvalue">
-    <div class="group-label">{{ group.key }}</div>
-
-    <div
-      class="alert-card"
-      [ngClass]="alert.level"
-      *ngFor="let alert of group.value">
-
-      <!-- Icône selon le level -->
-      <div class="alert-icon" [ngClass]="alert.level">
-        <svg *ngIf="alert.level === 'critical'" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="12"/>
-          <line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        <svg *ngIf="alert.level === 'warning'" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2">
-          <polygon points="12 2 22 21 2 21"/>
-          <line x1="12" y1="9" x2="12" y2="13"/>
-          <line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
-        <svg *ngIf="alert.level === 'info'" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="16" x2="12" y2="12"/>
-          <line x1="12" y1="8" x2="12.01" y2="8"/>
-        </svg>
+  <!-- ══════════════════════════════════════════════════════════
+       ALERTES MISE BAS (7 prochains jours)
+       ══════════════════════════════════════════════════════════ -->
+  <div class="section-block" *ngIf="alertesMiseBas.length > 0">
+    <div class="section-header">
+      <div class="section-title">
+        <i class="pi pi-calendar mr-2"></i>Mises bas prévues (7 prochains jours)
       </div>
-
-      <!-- Corps de l'alerte -->
-      <div class="alert-body">
-        <div class="alert-header-row">
-          <span class="alert-title">{{ alert.title }}</span>
-          <span class="badge" [ngClass]="'badge-' + alert.level">{{ alert.level }}</span>
-        </div>
-        <div class="alert-msg">{{ alert.message }}</div>
-
-        <!-- Chips dynamiques depuis entity -->
-        <div class="alert-meta" *ngIf="alert.entity">
-          <span class="chip" *ngIf="alert.entity['code_animal']">
-            {{ alert.entity['code_animal'] }}
-          </span>
-          <span class="chip" *ngIf="alert.entity['code']">
-            Box {{ alert.entity['code'] }}
-          </span>
-          <span class="chip" *ngIf="alert.entity['percent']">
-            {{ alert.entity['percent'] }}%
-          </span>
-          <span class="chip" *ngIf="alert.entity['count_low_farrowings']">
-            {{ alert.entity['count_low_farrowings'] }} mises bas concernées
-          </span>
-          <span class="chip" *ngIf="alert.entity['seuil_applique']">
-            Seuil : {{ alert.entity['seuil_applique'] }} porcelets
+      <span class="pill pill-info">{{ alertesMiseBas.length }} truie{{ alertesMiseBas.length > 1 ? 's' : '' }}</span>
+    </div>
+    <div class="misebas-grid">
+      <div class="misebas-card" *ngFor="let a of alertesMiseBas">
+        <div class="misebas-code">{{ a.truieCode }}</div>
+        <div class="misebas-date">{{ a.dateMiseBasPrevue }}</div>
+        <div class="misebas-jours">
+          <span class="jours-badge" [class.urgent]="a.joursRestants <= 2">
+            J - {{ a.joursRestants }}
           </span>
         </div>
       </div>
     </div>
-  </ng-container>
+  </div>
 
-</div>
-  <div class="alertes-misebas" *ngIf="alertesMiseBas.length > 0">
-    <h3>Alertes Mise Bas (prochaines 7 jours)</h3>
-    <div class="alert-cards">
-      <div class="alert-card" *ngFor="let a of alertesMiseBas">
-        <div class="alert-header">
-          <span class="alert-truie">{{ a.truieCode }}</span>
-          <span class="alert-jours">{{ a.joursRestants }} jour{{ a.joursRestants > 1 ? 's' : '' }}</span>
-        </div>
-        <div class="alert-body">
-          Mise bas prévue le <strong>{{ a.dateMiseBasPrevue }}</strong>
-        </div>
+  <!-- ══════════════════════════════════════════════════════════
+       LIEN VERS L'AIDE À LA DÉCISION
+       ══════════════════════════════════════════════════════════ -->
+  <div class="sad-banner">
+    <div class="sad-banner-text">
+      <div class="sad-banner-title">
+        <i class="pi pi-sparkles mr-2"></i>Aide à la décision IA disponible
+      </div>
+      <div class="sad-banner-sub">
+        Analysez vos KPI de reproduction, croissance et économie avec Gemini — conseils adaptés au Burkina Faso.
       </div>
     </div>
+    <a routerLink="/aide-decision" class="sad-banner-btn">
+      Accéder au tableau de bord IA <i class="pi pi-arrow-right ml-2"></i>
+    </a>
   </div>
 
 </div>

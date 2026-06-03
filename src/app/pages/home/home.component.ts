@@ -1,153 +1,164 @@
 import { Component, OnInit } from '@angular/core';
-import { HomeService, PourcentageTypeCharge, StatsReproductions } from '../../@core/service/home-service.service';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { ChartModule } from 'primeng/chart';
-import { HttpClientModule } from '@angular/common/http';
+import { TagModule } from 'primeng/tag';
+import { BadgeModule } from 'primeng/badge';
 import { FormsModule } from '@angular/forms';
-import { AdvisorAlert, AdvisorAlertsResponse } from '../../@core/service/home-service.service';
+import {
+  HomeService, StatsReproductions, AlerteMiseBas,
+  PourcentageTypeCharge, AnimalCountByType, SyntheseFinanciere, TacheStats
+} from '../../@core/service/home-service.service';
+import { AuthService } from '../../@core/service/auth.service';
+import { forkJoin } from 'rxjs';
+
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
-    CommonModule,ChartModule, HttpClientModule, FormsModule
-  ],
+  imports: [CommonModule, ChartModule, TagModule, BadgeModule, RouterLink, FormsModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-
-
 export class HomeComponent implements OnInit {
+  venteChartData: any = null;
+  anneeSelectionnee: number = new Date().getFullYear();
+  anneesDisponibles: number[] = [2023, 2024, 2025, 2026];
+  prenom = '';
+  today  = new Date();
 
+  // Stats reproduction
   stats: StatsReproductions | null = null;
-  charges: PourcentageTypeCharge[] = []
-  alertesMiseBas: any[] = [];
-venteChartData: any;
-months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-anneesDisponibles: number[] = [];
-anneeSelectionnee: number | null = null;
+  alertesMiseBas: AlerteMiseBas[] = [];
 
-  chartData: any;
-advisorAlerts: AdvisorAlert[] = [];
-advisorSummary: AdvisorAlertsResponse['summary'] | null = null;
-advisorError: string | null = null;
-  constructor(private homeService: HomeService) { }
+  // Animaux
+  totalAnimaux = 0;
+  animauxParType: AnimalCountByType[] = [];
+
+  // Finance
+  synthese: SyntheseFinanciere | null = null;
+  chargesData: PourcentageTypeCharge[] = [];
+
+  // Tâches
+  tacheStats: TacheStats | null = null;
+  tachesAValider: any[] = [];
+  tachesJour: any[] = [];
+
+  // Charts
+  chargesPieData: any   = null;
+  chargesOptions: any   = null;
+
+  // Alertes IA
+  advisorAlerts: any[]  = [];
+  advisorError: string | null = null;
+
+  loading = true;
+
+  constructor(
+    private homeService: HomeService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    this.loadStats();
-    this.loadCharges();
-    this.loadAlertes();
-    this.loadEvolutionVentes();
-      this.loadAdvisorAlerts(); 
+    this.prenom = this.authService.getProfile()?.prenom ?? '';
+    this.loadAll();
   }
-// Groupement par catégorie pour l'affichage
-get alertsGrouped(): Record<string, AdvisorAlert[]> {
-  const groups: Record<string, AdvisorAlert[]> = {};
-  for (const alert of this.advisorAlerts) {
-    const key = this.getAlertGroup(alert);
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(alert);
-  }
-  return groups;
-}
 
-getAlertGroup(alert: AdvisorAlert): string {
-  const t = alert.title.toLowerCase();
-  if (t.includes('truie') || t.includes('verrat') || t.includes('saillie')) return 'Reproduction';
-  if (t.includes('box')) return 'Boxes & capacité';
-  if (t.includes('vaccin')) return 'Santé';
-  if (t.includes('sevrage')) return 'Sevrage';
-  return 'Autres';
-}
-  loadStats() {
-    this.homeService.getStatsReproductions().subscribe(res => this.stats = res);
+    get advisorSummary() {
+    if (!this.advisorAlerts.length) return null;
+    return {
+      by_level: {
+        critical: this.advisorAlerts.filter(a => a.level === 'critical').length,
+        warning:  this.advisorAlerts.filter(a => a.level === 'warning').length,
+      }
+    };
   }
-  loadAlertes() {
-    this.homeService.getAlertes().subscribe(res => this.alertesMiseBas = res);
-  }
-  loadCharges() {
-    this.homeService.getPourcentageParType().subscribe(res => {
-      this.charges = res;
 
-      this.chartData = {
-        labels: res.map(c => `${c.typeDepense} (${c.montant})`),
-        datasets: [
-          {
-            data: res.map(c => c.montant),
-            backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726', '#AB47BC', '#26C6DA', '#FF7043'],
+  loadEvolutionVentes(): void {
+  }
+
+  loadAll(): void {
+    this.loading = true;
+
+    // Chargement en parallèle
+    forkJoin({
+      stats:          this.homeService.getStatsReproductions(),
+      alertes:        this.homeService.getAlertes(),
+      total:          this.homeService.getTotalAnimaux(),
+      parType:        this.homeService.getAnimauxParType(),
+      synthese:       this.homeService.getSynthese(),
+      charges:        this.homeService.getPourcentageParType(),
+      tacheStats:     this.homeService.getTacheStats(),
+      tachesValider:  this.homeService.getTachesAValider(),
+      tachesJour:     this.homeService.getTachesJour(),
+    }).subscribe({
+      next: (res) => {
+        this.stats         = res.stats;
+        this.alertesMiseBas= res.alertes;
+        this.totalAnimaux  = res.total;
+        this.animauxParType= res.parType;
+        this.synthese      = res.synthese;
+        this.chargesData   = res.charges;
+        this.tacheStats    = res.tacheStats;
+        this.tachesAValider= res.tachesValider;
+        this.tachesJour    = res.tachesJour;
+        this.buildChartesPie();
+        this.loading = false;
+      },
+      error: () => { this.loading = false; }
+    });
+
+    // Alertes IA (backend Python séparé)
+    this.homeService.getAdvisorAlerts().subscribe({
+      next: r => { this.advisorAlerts = r.alerts?.slice(0, 4) ?? []; },
+      error: () => {}
+    });
+  }
+
+  buildChartesPie(): void {
+    if (!this.chargesData.length) return;
+    const COLORS = ['#16a34a','#2563eb','#d97706','#7c3aed','#0891b2','#dc2626','#78716c','#ca8a04'];
+    this.chargesPieData = {
+      labels: this.chargesData.map(c => c.typeDepense),
+      datasets: [{
+        data: this.chargesData.map(c => c.montant),
+        backgroundColor: COLORS.slice(0, this.chargesData.length),
+        borderWidth: 2, borderColor: '#fff'
+      }]
+    };
+    this.chargesOptions = {
+      plugins: {
+        legend: { position: 'right', labels: { font: { size: 12 }, boxWidth: 14 } },
+        tooltip: {
+          callbacks: {
+            label: (ctx: any) => {
+              const c = this.chargesData[ctx.dataIndex];
+              return ` ${c.typeDepense} : ${c.montant.toLocaleString('fr-FR')} FCFA (${c.pourcentage?.toFixed(1) ?? '?'}%)`;
+            }
           }
-        ]
-      };
-    });
+        }
+      },
+      cutout: '55%',
+    };
   }
 
+  formatMontant(v: number | undefined): string {
+    if (!v) return '—';
+    return v.toLocaleString('fr-FR') + ' FCFA';
+  }
 
-loadEvolutionVentes() {
-  this.homeService.getEvolutionVentes().subscribe(data => {
+  get joursRestantsBadge(): string {
+    if (!this.alertesMiseBas.length) return '';
+    const proche = this.alertesMiseBas.find(a => a.joursRestants <= 3);
+    return proche ? `⚠️ ${proche.joursRestants}j` : '';
+  }
 
-    const grouped: any = {};
+  statutTacheLabel(s: string): string {
+    return { A_FAIRE:'À faire', EN_COURS:'En cours', EN_ATTENTE_VALIDATION:'À valider',
+      VALIDEE:'Validée', INVALIDEE:'Invalidée', EXPIREE:'Expirée' }[s] ?? s;
+  }
 
-    data.forEach(item => {
-      if (!grouped[item.annee]) grouped[item.annee] = Array(12).fill(0);
-      grouped[item.annee][item.mois - 1] = item.totalVentes;
-    });
-
-    this.anneesDisponibles = Object.keys(grouped).map(a => Number(a));
-
-    // Sélection automatique si aucune année choisie
-    if (!this.anneeSelectionnee && this.anneesDisponibles.length > 0) {
-      this.anneeSelectionnee = this.anneesDisponibles[0];
-    }
-
-    this.updateVentesChart(grouped);
-  });
+  statutTacheSeverity(s: string): string {
+    return { A_FAIRE:'secondary', EN_COURS:'info', EN_ATTENTE_VALIDATION:'warning',
+      VALIDEE:'success', INVALIDEE:'danger', EXPIREE:'danger' }[s] ?? 'secondary';
+  }
 }
-updateVentesChart(grouped: any) {
-  if (!this.anneeSelectionnee) return;
-
-  const data = grouped[this.anneeSelectionnee];
-
-  this.venteChartData = {
-    labels: this.months,
-    datasets: [
-      {
-        label: this.anneeSelectionnee.toString(),
-        data,
-        fill: false,
-        borderColor: this.getRandomColor(),
-        tension: 0.4
-      }
-    ]
-  };
-}
-
-
-getRandomColor() {
-  return '#' + Math.floor(Math.random() * 16777215).toString(16);
-}
-loadAdvisorAlerts(): void {
-  this.homeService.getAdvisorAlerts().subscribe({
-    next: (res) => {
-      if (res.error) {
-        this.advisorError = res.error;
-        return;
-      }
-      this.advisorAlerts = res.alerts;
-      this.advisorSummary = res.summary;
-    },
-    error: () => {
-      this.advisorError = 'Impossible de charger les alertes advisor.';
-    }
-  });
-}
-}
-
-
-
-
-
-
-
-
-
-
-

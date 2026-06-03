@@ -1,0 +1,411 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="taches-page">
+
+  <!-- ── KPI Bar ── -->
+  <div class="kpi-bar" *ngIf="stats">
+    <div class="kpi-card kpi-secondary">
+      <i class="pi pi-list"></i>
+      <div><span class="kpi-val">{{ stats.aFaire }}</span><span class="kpi-lbl">À faire</span></div>
+    </div>
+    <div class="kpi-card kpi-info">
+      <i class="pi pi-spin pi-cog"></i>
+      <div><span class="kpi-val">{{ stats.enCours }}</span><span class="kpi-lbl">En cours</span></div>
+    </div>
+    <div class="kpi-card kpi-warning">
+      <i class="pi pi-clock"></i>
+      <div><span class="kpi-val">{{ stats.enAttenteValidation }}</span><span class="kpi-lbl">À valider</span></div>
+    </div>
+    <div class="kpi-card kpi-success">
+      <i class="pi pi-check-circle"></i>
+      <div><span class="kpi-val">{{ stats.validees }}</span><span class="kpi-lbl">Validées</span></div>
+    </div>
+    <div class="kpi-card kpi-danger">
+      <i class="pi pi-times-circle"></i>
+      <div><span class="kpi-val">{{ stats.invalidees }}</span><span class="kpi-lbl">Invalidées</span></div>
+    </div>
+
+    <div class="kpi-spacer"></div>
+    <p-button icon="pi pi-plus" label="Nouvelle tâche" (click)="ouvrirCreation()"></p-button>
+  </div>
+
+  <!-- ── Tabs ── -->
+  <p-tabView>
+
+    <!-- ═══ TAB 1 — Aujourd'hui ═══ -->
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-sun tab-icon"></i>
+        <span>Aujourd'hui</span>
+        <p-badge *ngIf="tachesJour.length" [value]="''+tachesJour.length" severity="info" class="ml-2"></p-badge>
+      </ng-template>
+      <ng-container *ngTemplateOutlet="tableTaches; context:{taches: tachesJour, showActions: true}"></ng-container>
+    </p-tabPanel>
+
+    <!-- ═══ TAB 2 — À valider ═══ -->
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-verified tab-icon"></i>
+        <span>À valider</span>
+        <p-badge *ngIf="tachesAValider.length" [value]="''+tachesAValider.length" severity="warning" class="ml-2"></p-badge>
+      </ng-template>
+
+      <div *ngIf="tachesAValider.length === 0" class="empty-state">
+        <div class="empty-icon green"><i class="pi pi-check-circle"></i></div>
+        <p class="empty-title">Tout est à jour !</p>
+        <p class="empty-sub">Aucune soumission en attente de révision.</p>
+      </div>
+
+      <div class="validation-list">
+        <div class="validation-card" *ngFor="let tache of tachesAValider">
+
+          <!-- En-tête tâche -->
+          <div class="vc-header">
+            <div class="vc-header-left">
+              <span *ngIf="tache.typeTache" class="type-pill" [style.background]="tache.typeTache.couleur">
+                {{ tache.typeTache.nom }}
+              </span>
+              <h4>{{ tache.titre }}</h4>
+            </div>
+            <div class="vc-header-right">
+              <p-tag [value]="prioriteLabel(tache.priorite)" [severity]="prioriteSeverity(tache.priorite)"></p-tag>
+              <span class="due-date"><i class="pi pi-calendar"></i>{{ tache.dateEcheance | date:'dd/MM HH:mm' }}</span>
+            </div>
+          </div>
+
+          <!-- Soumissions à valider -->
+          <div *ngFor="let a of tache.assignations">
+            <div *ngIf="a.statut === 'EN_ATTENTE_VALIDATION'" class="submission-row">
+
+              <!-- Identité ouvrier -->
+              <div class="submission-who">
+                <div class="mini-avatar">{{ (a.assignee.prenom[0] + a.assignee.nom[0]).toUpperCase() }}</div>
+                <div class="submission-meta">
+                  <strong>{{ a.assignee.prenom }} {{ a.assignee.nom }}</strong>
+                  <span class="sub-date">Soumis le {{ a.dateSoumission | date:'dd/MM à HH:mm' }}</span>
+                  <span *ngIf="a.commentaireOuvrier" class="sub-comment">"{{ a.commentaireOuvrier }}"</span>
+                </div>
+              </div>
+
+              <!-- Preuves -->
+              <div class="preuves-section">
+                <div *ngIf="a.preuves.length > 0" class="preuves-grid">
+                  <img *ngFor="let p of a.preuves"
+                    [src]="'http://localhost:8080' + p.urlFichier"
+                    class="preuve-img"
+                    alt="Preuve"
+                    (click)="ouvrirPreuve('http://localhost:8080' + p.urlFichier)">
+                </div>
+                <div *ngIf="a.preuves.length === 0" class="no-preuve">
+                  <i class="pi pi-image"></i> Aucune photo jointe
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="submission-actions">
+                <p-button icon="pi pi-check" label="Valider" severity="success"
+                  styleClass="btn-action" (click)="ouvrirValider(a)"></p-button>
+                <p-button icon="pi pi-times" label="Refuser" severity="danger" [outlined]="true"
+                  styleClass="btn-action" (click)="ouvrirInvalider(a)"></p-button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <!-- ═══ TAB 3 — À venir ═══ -->
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-calendar tab-icon"></i>
+        <span>À venir</span>
+      </ng-template>
+      <ng-container *ngTemplateOutlet="tableTaches; context:{taches: tachesAVenir, showActions: true}"></ng-container>
+    </p-tabPanel>
+
+    <!-- ═══ TAB 4 — Historique ═══ -->
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-history tab-icon"></i>
+        <span>Historique</span>
+      </ng-template>
+      <ng-container *ngTemplateOutlet="tableTaches; context:{taches: tachesPassees, showActions: false}"></ng-container>
+    </p-tabPanel>
+
+    <!-- ═══ TAB 5 — Types ═══ -->
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-tag tab-icon"></i>
+        <span>Types de tâches</span>
+      </ng-template>
+      <div class="types-header">
+        <h3>Catégories de tâches</h3>
+        <p-button icon="pi pi-plus" label="Nouveau type" severity="secondary" (click)="ouvrirCreationType()"></p-button>
+      </div>
+      <div class="types-grid">
+        <div class="type-card" *ngFor="let t of typesTaches">
+          <div class="type-icon" [style.background]="t.couleur">
+            <i [class]="t.icone"></i>
+          </div>
+          <div class="type-info">
+            <strong>{{ t.nom }}</strong>
+            <small>{{ t.description }}</small>
+          </div>
+          <div class="type-actions">
+            <p-button icon="pi pi-pencil" [text]="true" severity="warning" (click)="ouvrirEditionType(t)"></p-button>
+            <p-button icon="pi pi-trash"  [text]="true" severity="danger"  (click)="supprimerType(t)"></p-button>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+
+  </p-tabView>
+</div>
+
+<!-- ── Template tableau réutilisable ── -->
+<ng-template #tableTaches let-taches="taches" let-showActions="showActions">
+  <div *ngIf="taches.length === 0" class="empty-state">
+    <div class="empty-icon"><i class="pi pi-inbox"></i></div>
+    <p class="empty-title">Aucune tâche</p>
+    <p class="empty-sub">Cette section est vide pour le moment.</p>
+  </div>
+
+  <p-table *ngIf="taches.length > 0" [value]="taches" [paginator]="true" [rows]="10"
+    styleClass="p-datatable-sm p-datatable-striped" [rowsPerPageOptions]="[10,25,50]"
+    [globalFilterFields]="['titre']">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="titre">Titre <p-sortIcon field="titre"></p-sortIcon></th>
+        <th>Type</th>
+        <th pSortableColumn="priorite">Priorité <p-sortIcon field="priorite"></p-sortIcon></th>
+        <th pSortableColumn="dateEcheance">Échéance <p-sortIcon field="dateEcheance"></p-sortIcon></th>
+        <th>Assignés</th>
+        <th>Statut</th>
+        <th style="width:110px">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-t>
+      <tr class="task-row">
+        <td>
+          <div class="task-title-cell">
+            <span class="task-recur-dot" *ngIf="t.recurrence !== 'UNIQUE'" title="Récurrente">↻</span>
+            <strong>{{ t.titre }}</strong>
+          </div>
+        </td>
+        <td>
+          <span *ngIf="t.typeTache" class="type-pill" [style.background]="t.typeTache.couleur">
+            {{ t.typeTache.nom }}
+          </span>
+          <span *ngIf="!t.typeTache" class="no-type">—</span>
+        </td>
+        <td><p-tag [value]="prioriteLabel(t.priorite)" [severity]="prioriteSeverity(t.priorite)"></p-tag></td>
+        <td class="date-cell">{{ t.dateEcheance | date:'dd/MM/yy HH:mm' }}</td>
+        <td>
+          <div class="assignees-chips">
+            <span class="mini-avatar" *ngFor="let a of t.assignations"
+              [title]="a.assignee.prenom + ' ' + a.assignee.nom + ' — ' + statutLabel(a.statut)"
+              [class]="'av-' + a.statut.toLowerCase()">
+              {{ (a.assignee.prenom[0] + a.assignee.nom[0]).toUpperCase() }}
+            </span>
+          </div>
+        </td>
+        <td><p-tag [value]="statutLabel(t.statutGlobal)" [severity]="statutSeverity(t.statutGlobal)"></p-tag></td>
+        <td>
+          <div class="actions-cell">
+            <p-button icon="pi pi-eye"    [text]="true" severity="secondary" (click)="ouvrirDetail(t)"        pTooltip="Voir" tooltipPosition="top"></p-button>
+            <p-button *ngIf="showActions" icon="pi pi-pencil" [text]="true" severity="warning" (click)="ouvrirEdition(t)"     pTooltip="Modifier" tooltipPosition="top"></p-button>
+            <p-button *ngIf="showActions" icon="pi pi-trash"  [text]="true" severity="danger"  (click)="confirmerSuppression(t)" pTooltip="Supprimer" tooltipPosition="top"></p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="7" class="empty-row">Aucun résultat</td></tr>
+    </ng-template>
+  </p-table>
+</ng-template>
+
+<!-- ════════ MODAL — Créer/Modifier tâche ════════ -->
+<p-dialog [(visible)]="showFormTache"
+  [header]="isEditMode ? 'Modifier la tâche' : 'Nouvelle tâche'"
+  [style]="{width:'860px'}" [modal]="true" [draggable]="false">
+
+  <div class="tache-form">
+    <div class="form-row full">
+      <label>Titre *</label>
+      <input pInputText [(ngModel)]="formTache.titre" placeholder="Titre de la tâche" class="w-full" />
+    </div>
+    <div class="form-row full">
+      <label>Description</label>
+      <textarea pInputTextarea [(ngModel)]="formTache.description" rows="3"
+        placeholder="Description détaillée…" class="w-full"></textarea>
+    </div>
+    <div class="form-row">
+      <label>Type de tâche</label>
+      <p-dropdown [(ngModel)]="formTache.typeTacheId" [options]="typeTacheOptions()"
+        optionLabel="label" optionValue="value" placeholder="Sélectionner…" appendTo="body" class="w-full"></p-dropdown>
+    </div>
+    <div class="form-row">
+      <label>Priorité</label>
+      <p-dropdown [(ngModel)]="formTache.priorite" [options]="prioriteOptions"
+        optionLabel="label" optionValue="value" appendTo="body" class="w-full"></p-dropdown>
+    </div>
+    <div class="form-row">
+      <label>Date et heure limite *</label>
+      <p-calendar [(ngModel)]="formDate" [showTime]="true" [showSeconds]="false"
+        dateFormat="dd/mm/yy" appendTo="body" class="w-full"></p-calendar>
+    </div>
+    <div class="form-row">
+      <label>Récurrence</label>
+      <p-dropdown [(ngModel)]="formTache.recurrence" [options]="recurrenceOptions"
+        optionLabel="label" optionValue="value" appendTo="body" class="w-full"></p-dropdown>
+    </div>
+    <div class="form-row">
+      <label>Bâtiment</label>
+      <input pInputText [(ngModel)]="formTache.batiment" placeholder="Ex: Bâtiment A" class="w-full" />
+    </div>
+    <div class="form-row">
+      <label>Box</label>
+      <input pInputText [(ngModel)]="formTache.box" placeholder="Ex: Box 3" class="w-full" />
+    </div>
+    <div class="form-row full">
+      <label>Assignés * (une ou plusieurs personnes)</label>
+      <p-multiSelect [(ngModel)]="formTache.assigneeIds" [options]="utilisateursOptions()"
+        optionLabel="label" optionValue="value" placeholder="Sélectionner les assignés"
+        appendTo="body" class="w-full" display="chip"></p-multiSelect>
+    </div>
+    <div class="form-row full">
+      <label>Notes supplémentaires</label>
+      <textarea pInputTextarea [(ngModel)]="formTache.notes" rows="2"
+        placeholder="Instructions particulières…" class="w-full"></textarea>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" severity="secondary" (click)="showFormTache=false"></p-button>
+    <p-button [label]="isEditMode ? 'Enregistrer' : 'Créer'" icon="pi pi-check"
+      (click)="soumettreTache()"
+      [disabled]="!formTache.titre || !formDate || formTache.assigneeIds.length === 0">
+    </p-button>
+  </ng-template>
+</p-dialog>
+
+<!-- ════════ MODAL — Détail tâche ════════ -->
+<p-dialog [(visible)]="showDetailTache" header="Détail de la tâche"
+  [style]="{width:'700px'}" [modal]="true">
+  <div *ngIf="selectedTache" class="detail-tache">
+    <div class="detail-header">
+      <h3>{{ selectedTache.titre }}</h3>
+      <div class="detail-meta">
+        <p-tag [value]="statutLabel(selectedTache.statutGlobal)" [severity]="statutSeverity(selectedTache.statutGlobal)"></p-tag>
+        <p-tag [value]="prioriteLabel(selectedTache.priorite)" [severity]="prioriteSeverity(selectedTache.priorite)"></p-tag>
+        <span *ngIf="selectedTache.typeTache" class="type-pill" [style.background]="selectedTache.typeTache.couleur">
+          {{ selectedTache.typeTache.nom }}
+        </span>
+      </div>
+    </div>
+    <p *ngIf="selectedTache.description" class="detail-desc">{{ selectedTache.description }}</p>
+    <div class="detail-info-grid">
+      <div><i class="pi pi-calendar"></i> {{ selectedTache.dateEcheance | date:'dd/MM/yyyy HH:mm' }}</div>
+      <div><i class="pi pi-refresh"></i> {{ selectedTache.recurrence }}</div>
+      <div *ngIf="selectedTache.batiment"><i class="pi pi-home"></i> {{ selectedTache.batiment }}</div>
+      <div *ngIf="selectedTache.box"><i class="pi pi-th-large"></i> Box {{ selectedTache.box }}</div>
+    </div>
+    <h4>Assignations</h4>
+    <div class="assignation-detail" *ngFor="let a of selectedTache.assignations">
+      <div class="assignation-person">
+        <div class="mini-avatar lg">{{ (a.assignee.prenom[0] + a.assignee.nom[0]).toUpperCase() }}</div>
+        <div>
+          <strong>{{ a.assignee.prenom }} {{ a.assignee.nom }}</strong>
+          <small>{{ a.assignee.poste }}</small>
+        </div>
+        <p-tag [value]="statutLabel(a.statut)" [severity]="statutSeverity(a.statut)" class="ml-auto"></p-tag>
+      </div>
+      <div *ngIf="a.commentaireOuvrier" class="commentaire-box ouvrier">
+        💬 {{ a.commentaireOuvrier }}
+      </div>
+      <div *ngIf="a.commentaireValidateur" class="commentaire-box" [class.danger]="a.statut === 'INVALIDEE'">
+        {{ a.statut === 'INVALIDEE' ? '❌' : '✅' }} {{ a.commentaireValidateur }}
+        <small>— {{ a.validateur?.prenom }} {{ a.validateur?.nom }}</small>
+      </div>
+      <div class="preuves-grid" *ngIf="a.preuves.length > 0">
+        <img *ngFor="let p of a.preuves"
+          [src]="'http://localhost:8080' + p.urlFichier"
+          class="preuve-img"
+          (click)="ouvrirPreuve('http://localhost:8080' + p.urlFichier)">
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- ════════ MODAL — Valider ════════ -->
+<p-dialog [(visible)]="showValiderModal" header="Valider la tâche"
+  [style]="{width:'480px'}" [modal]="true">
+  <div class="p-fluid">
+    <p>Vous allez valider la tâche de <strong>{{ selectedAssignation?.assignee?.prenom }} {{ selectedAssignation?.assignee?.nom }}</strong>.</p>
+    <div class="field mt-3">
+      <label>Commentaire (optionnel)</label>
+      <textarea pInputTextarea [(ngModel)]="commentaireValidation" rows="3" placeholder="Bravo ! Travail bien fait…" class="w-full"></textarea>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" severity="secondary" (click)="showValiderModal=false"></p-button>
+    <p-button label="Valider ✓" severity="success" icon="pi pi-check" (click)="confirmerValidation()"></p-button>
+  </ng-template>
+</p-dialog>
+
+<!-- ════════ MODAL — Invalider ════════ -->
+<p-dialog [(visible)]="showInvaliderModal" header="Refuser la soumission"
+  [style]="{width:'480px'}" [modal]="true">
+  <div class="p-fluid">
+    <p>Vous refusez la soumission de <strong>{{ selectedAssignation?.assignee?.prenom }} {{ selectedAssignation?.assignee?.nom }}</strong>.</p>
+    <div class="field mt-3">
+      <label>Motif de refus * <span class="required-note">(obligatoire)</span></label>
+      <textarea pInputTextarea [(ngModel)]="commentaireValidation" rows="4"
+        placeholder="Photo insuffisante. Recommencer et photographier les animaux…"
+        class="w-full"></textarea>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" severity="secondary" (click)="showInvaliderModal=false"></p-button>
+    <p-button label="Refuser ✗" severity="danger" icon="pi pi-times"
+      (click)="confirmerInvalidation()" [disabled]="!commentaireValidation.trim()">
+    </p-button>
+  </ng-template>
+</p-dialog>
+
+<!-- ════════ MODAL — Type de tâche ════════ -->
+<p-dialog [(visible)]="showFormType" [header]="editTypeId ? 'Modifier le type' : 'Nouveau type'"
+  [style]="{width:'480px'}" [modal]="true">
+  <div class="p-fluid type-form">
+    <div class="field">
+      <label>Nom *</label>
+      <input pInputText [(ngModel)]="formType.nom" placeholder="Ex: Alimentation" class="w-full" />
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <input pInputText [(ngModel)]="formType.description" class="w-full" />
+    </div>
+    <div class="field">
+      <label>Couleur</label>
+      <input type="color" [(ngModel)]="formType.couleur" class="color-picker" />
+    </div>
+    <div class="field">
+      <label>Icône</label>
+      <div class="icone-grid">
+        <button *ngFor="let ic of iconeOptions" class="icone-btn"
+          [class.selected]="formType.icone === ic"
+          (click)="formType.icone = ic">
+          <i [class]="ic"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" severity="secondary" (click)="showFormType=false"></p-button>
+    <p-button label="Enregistrer" icon="pi pi-check" (click)="soumettreType()" [disabled]="!formType.nom"></p-button>
+  </ng-template>
+</p-dialog>

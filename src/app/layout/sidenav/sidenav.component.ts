@@ -94,10 +94,7 @@ export class SidenavComponent implements OnInit {
   ngOnInit(): void {
     this.loadSettings(); // 🔹 AJOUT MINIMAL
 
-    const tokenData = this.authService.getTokenData();
-    if (tokenData) {
-      // permissions OK
-    }
+    // Profil disponible via authService.getProfile() si nécessaire
   }
 
   // 🔹 AJOUT MINIMAL
