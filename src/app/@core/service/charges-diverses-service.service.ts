@@ -50,7 +50,7 @@ export interface DepenseSummaryDTO {
 })
 export class ChargesDiversesService {
 
-  private apiUrl = 'http://localhost:8000/expenses';
+  private apiUrl = 'http://localhost:8001/expenses';
 
   constructor(private http: HttpClient) {}
 

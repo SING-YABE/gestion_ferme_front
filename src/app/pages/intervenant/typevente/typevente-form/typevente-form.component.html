@@ -1,50 +1,57 @@
-<!-- Bouton Ajouter ou Modifier -->
-<button *ngIf="mode === 'create'" 
-        pButton label="Ajouter type vente" 
-        icon="pi pi-plus" 
-        class="p-button-success" 
+<!-- Bouton déclencheur create -->
+<button *ngIf="mode === 'create'"
+        pButton
+        label="Ajouter"
+        icon="pi pi-plus"
+        class="p-button-sm"
+        style="background: transparent; border: 2px solid white; color: white;"
         (click)="handleShow()">
 </button>
 
-<button *ngIf="mode === 'edit'" 
-        pButton 
+<!-- Bouton déclencheur edit -->
+<button *ngIf="mode === 'edit'"
+        pButton
         icon="pi pi-pencil"
-        class="p-button-rounded"
-        style="background:#16A34A ; border-color: #16A34A ;color:white;"
+        class="p-button-rounded p-button-sm"
+        style="background: #16A34A; border-color: #16A34A; color: white;"
         (click)="handleShow()">
 </button>
 
-<p-dialog 
-    header="{{ mode === 'create' ? 'Nouveau type de vente' : 'Modifier type de vente' }}" 
-    [(visible)]="showForm" 
-    [modal]="true" 
-    [style]="{width: '500px'}">
+<!-- Dialog -->
+<p-dialog
+    [header]="mode === 'create' ? 'Nouveau type de vente' : 'Modifier type de vente'"
+    [(visible)]="showForm"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{width: 'min(480px, 95vw)'}">
 
-    <!-- FORMULAIRE -->
-    <form [formGroup]="form">
-      <div class="field">
-        <label for="nom">Nom</label>
-        <input id="nom" type="text" formControlName="nom" pInputText placeholder="Ex: Pour consommation" />
-      </div>
+  <form [formGroup]="form" class="flex flex-column gap-3 pt-2">
 
-    </form>
+    <div class="flex flex-column gap-1">
+      <label for="nom" class="font-medium text-sm">Nom</label>
+      <input id="nom" type="text" formControlName="nom" pInputText
+             placeholder="Ex: Pour consommation" class="w-full" />
+    </div>
 
-    <!-- FOOTER DOIT ÊTRE DIRECTEMENT SOUS <p-dialog> -->
-    <ng-template pTemplate="footer">
-      <button type="button" 
-              pButton 
-              class="p-button-outlined p-button-danger mr-2" 
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end gap-2">
+      <button type="button" pButton
+              label="Annuler" icon="pi pi-times"
+              class="p-button-outlined p-button-secondary p-button-sm"
               (click)="showForm=false">
-        Annuler
       </button>
-
-      <button pButton 
-              class="p-button-success"
+      <button pButton
+              [label]="mode === 'create' ? 'Enregistrer' : 'Mettre à jour'"
+              icon="pi pi-check"
+              class="p-button-success p-button-sm"
               [disabled]="form.invalid"
               [loading]="processing"
               (click)="handleSubmit()">
-        {{ mode === 'create' ? 'Enregistrer' : 'Mettre à jour' }}
       </button>
-    </ng-template>
+    </div>
+  </ng-template>
 
 </p-dialog>

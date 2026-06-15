@@ -72,28 +72,28 @@
         <!-- ── REPRODUCTION ── -->
         <div class="kpi-group-label">Reproduction</div>
         <div class="kpi-grid-5">
-          <div class="kpi-tile">
+          <div class="kpi-tile" pTooltip="Proportion de saillies ayant abouti à une mise bas. Mesure la réussite de la reproduction." tooltipPosition="top">
             <div class="kpi-tile-top"><span class="kpi-tile-name">Taux mise bas</span>
               <p-tag *ngIf="kpiRaw.reproduction.taux_mise_bas_pct!==null" [severity]="kpiSev(kpiRaw.reproduction.taux_mise_bas_pct,80)" [value]="kpiLabel(kpiSev(kpiRaw.reproduction.taux_mise_bas_pct,80))"></p-tag>
             </div>
             <div class="kpi-tile-val">{{ kpiRaw.reproduction.taux_mise_bas_pct!==null ? (kpiRaw.reproduction.taux_mise_bas_pct|number:'1.1-1')+'%' : '—' }}</div>
             <div class="kpi-tile-ref">Cible : ≥ 80 %</div>
           </div>
-          <div class="kpi-tile">
+          <div class="kpi-tile" pTooltip="Nombre moyen de porcelets nés vivants par portée. Indicateur clé de la performance reproductrice des truies." tooltipPosition="top">
             <div class="kpi-tile-top"><span class="kpi-tile-name">Prolificité</span>
               <p-tag *ngIf="kpiRaw.reproduction.prolificite_moy!==null" [severity]="kpiSev(kpiRaw.reproduction.prolificite_moy,8)" [value]="kpiLabel(kpiSev(kpiRaw.reproduction.prolificite_moy,8))"></p-tag>
             </div>
             <div class="kpi-tile-val">{{ kpiRaw.reproduction.prolificite_moy!==null ? (kpiRaw.reproduction.prolificite_moy|number:'1.1-1')+' nés' : '—' }}</div>
             <div class="kpi-tile-ref">Objectif ≥ 8 / portée</div>
           </div>
-          <div class="kpi-tile">
+          <div class="kpi-tile" pTooltip="Nombre de mises bas par truie sur 12 mois. Reflète le rythme de production de l'élevage." tooltipPosition="top">
             <div class="kpi-tile-top"><span class="kpi-tile-name">Portées/truie/an</span>
               <p-tag *ngIf="kpiRaw.reproduction.portees_par_truie_an!==null" [severity]="kpiSev(kpiRaw.reproduction.portees_par_truie_an,2,2.5)" [value]="kpiLabel(kpiSev(kpiRaw.reproduction.portees_par_truie_an,2,2.5))"></p-tag>
             </div>
             <div class="kpi-tile-val">{{ kpiRaw.reproduction.portees_par_truie_an!==null ? (kpiRaw.reproduction.portees_par_truie_an|number:'1.1-1') : '—' }}</div>
             <div class="kpi-tile-ref">Cible : 2 – 2,5 / an</div>
           </div>
-          <div class="kpi-tile">
+          <div class="kpi-tile" pTooltip="Part des porcelets nés vivants qui meurent avant le sevrage. Un taux élevé signale des problèmes de maternité ou de nutrition." tooltipPosition="top">
             <div class="kpi-tile-top"><span class="kpi-tile-name">Mortalité porcelet</span>
               <p-tag *ngIf="kpiRaw.reproduction.taux_mortalite_porcelet_pct!==null" [severity]="kpiSev(kpiRaw.reproduction.taux_mortalite_porcelet_pct,15,undefined,true)" [value]="kpiLabel(kpiSev(kpiRaw.reproduction.taux_mortalite_porcelet_pct,15,undefined,true))"></p-tag>
             </div>
@@ -101,7 +101,7 @@
             <div class="kpi-tile-ref">Seuil : ≤ 15 %</div>
           </div>
           <!-- ISSF depuis Kotlin -->
-          <div class="kpi-tile" [class.kpi-tile-highlight]="issfData">
+          <div class="kpi-tile" [class.kpi-tile-highlight]="issfData" pTooltip="Intervalle Sevrage–Saillie Fécondante : délai entre le sevrage des porcelets et la prochaine saillie réussie. Un ISSF long réduit le nombre de portées par an." tooltipPosition="top">
             <div class="kpi-tile-top"><span class="kpi-tile-name">ISSF (sevrage→saillie)</span>
               <p-tag *ngIf="issfData?.issfMoyenJours!==null && issfData?.issfMoyenJours!==undefined"
                 [severity]="kpiSev(issfData!.issfMoyenJours!,7,undefined,true)"
@@ -118,35 +118,35 @@
         <!-- ── CROISSANCE ── -->
         <div class="kpi-group-label">Croissance & production</div>
         <div class="kpi-grid-5">
-          <div class="kpi-tile">
+          <div class="kpi-tile" pTooltip="Gain Moyen Quotidien : poids gagné par jour en phase d'engraissement. Mesure la vitesse de croissance des porcs." tooltipPosition="top">
             <div class="kpi-tile-top"><span class="kpi-tile-name">GMQ (g/jour)</span>
               <p-tag *ngIf="kpiRaw.croissance.gmq_g_jour!==null" [severity]="kpiSev(kpiRaw.croissance.gmq_g_jour,400,600)" [value]="kpiLabel(kpiSev(kpiRaw.croissance.gmq_g_jour,400,600))"></p-tag>
             </div>
             <div class="kpi-tile-val">{{ kpiRaw.croissance.gmq_g_jour!==null ? (kpiRaw.croissance.gmq_g_jour|number:'1.0-0')+' g/j' : '—' }}</div>
             <div class="kpi-tile-ref">Cible BF : 400–600 g/j</div>
           </div>
-          <div class="kpi-tile">
+          <div class="kpi-tile" pTooltip="Indice de Consommation : kg d'aliment nécessaires pour produire 1 kg de poids vif. Plus il est bas, plus l'alimentation est efficace." tooltipPosition="top">
             <div class="kpi-tile-top"><span class="kpi-tile-name">IC (alim/gain)</span>
               <p-tag *ngIf="kpiRaw.croissance.ic!==null" [severity]="kpiSev(kpiRaw.croissance.ic,3,4)" [value]="kpiLabel(kpiSev(kpiRaw.croissance.ic,3,4))"></p-tag>
             </div>
             <div class="kpi-tile-val">{{ kpiRaw.croissance.ic!==null ? (kpiRaw.croissance.ic|number:'1.1-1') : '—' }}</div>
             <div class="kpi-tile-ref">Optimal : 3 à 4</div>
           </div>
-          <div class="kpi-tile">
+          <div class="kpi-tile" pTooltip="Poids moyen des porcs au moment de la vente. Un poids trop faible réduit le revenu par tête." tooltipPosition="top">
             <div class="kpi-tile-top"><span class="kpi-tile-name">Poids moyen vente</span>
               <p-tag *ngIf="kpiRaw.croissance.poids_moyen_vente_kg!==null" [severity]="kpiSev(kpiRaw.croissance.poids_moyen_vente_kg,80,100)" [value]="kpiLabel(kpiSev(kpiRaw.croissance.poids_moyen_vente_kg,80,100))"></p-tag>
             </div>
             <div class="kpi-tile-val">{{ kpiRaw.croissance.poids_moyen_vente_kg!==null ? (kpiRaw.croissance.poids_moyen_vente_kg|number:'1.1-1')+' kg' : '—' }}</div>
             <div class="kpi-tile-ref">Cible : 80–100 kg</div>
           </div>
-          <div class="kpi-tile">
+          <div class="kpi-tile" pTooltip="Taux de mortalité sur l'ensemble du troupeau actif (hors porcelets sous mère). Inclut les pertes en engraissement et gestation." tooltipPosition="top">
             <div class="kpi-tile-top"><span class="kpi-tile-name">Mortalité globale</span>
               <p-tag *ngIf="kpiRaw.croissance.taux_mortalite_pct!==null" [severity]="kpiSev(kpiRaw.croissance.taux_mortalite_pct,10,undefined,true)" [value]="kpiLabel(kpiSev(kpiRaw.croissance.taux_mortalite_pct,10,undefined,true))"></p-tag>
             </div>
             <div class="kpi-tile-val">{{ kpiRaw.croissance.taux_mortalite_pct!==null ? (kpiRaw.croissance.taux_mortalite_pct|number:'1.1-1')+'%' : '—' }}</div>
             <div class="kpi-tile-ref">Seuil : ≤ 10 %</div>
           </div>
-          <div class="kpi-tile">
+          <div class="kpi-tile" pTooltip="Âge moyen des porcs à la date de vente. Un âge élevé avec un faible poids révèle une croissance lente et des coûts d'alimentation excessifs." tooltipPosition="top">
             <div class="kpi-tile-top"><span class="kpi-tile-name">Âge à la vente</span></div>
             <div class="kpi-tile-val">{{ kpiRaw.croissance.age_moyen_vente_jours!==null ? kpiRaw.croissance.age_moyen_vente_jours+' j' : '—' }}</div>
             <div class="kpi-tile-ref">Référence BF</div>
@@ -158,34 +158,34 @@
           <div>
             <div class="kpi-group-label">Rentabilité</div>
             <div class="rentabilite-grid">
-              <div class="kpi-tile">
+              <div class="kpi-tile" pTooltip="Coût moyen d'un kilogramme d'aliment. Inclut tous les ingrédients utilisés dans les rations. Seuil ONG Thamani : ≤ 100 F/kg." tooltipPosition="top">
                 <div class="kpi-tile-top"><span class="kpi-tile-name">Coût/kg aliment</span>
                   <p-tag *ngIf="kpiRaw.economie.cout_par_kg_aliment_fcfa!==null" [severity]="kpiSev(kpiRaw.economie.cout_par_kg_aliment_fcfa,100,undefined,true)" [value]="kpiSev(kpiRaw.economie.cout_par_kg_aliment_fcfa,100,undefined,true)==='success'?'Conforme':'Trop cher'"></p-tag>
                 </div>
                 <div class="kpi-tile-val">{{ kpiRaw.economie.cout_par_kg_aliment_fcfa!==null ? (kpiRaw.economie.cout_par_kg_aliment_fcfa|number:'1.0-0')+' F/kg' : '—' }}</div>
                 <div class="kpi-tile-ref">Seuil Thamani : ≤ 100 F/kg</div>
               </div>
-              <div class="kpi-tile">
+              <div class="kpi-tile" pTooltip="Coût de production par kg de porc vendu : (alimentation + soins) ÷ poids total vendu. Indique si le prix de vente couvre les charges." tooltipPosition="top">
                 <div class="kpi-tile-top"><span class="kpi-tile-name">Coût prod./kg</span></div>
                 <div class="kpi-tile-val">{{ kpiRaw.economie.cout_production_par_kg!==null ? (kpiRaw.economie.cout_production_par_kg|number:'1.0-0')+' F/kg' : '—' }}</div>
                 <div class="kpi-tile-ref">Total charges / poids vendu</div>
               </div>
-              <div class="kpi-tile">
+              <div class="kpi-tile" pTooltip="Revenu net moyen par porc vendu après déduction de l'alimentation et des soins. Une marge négative signale une exploitation à perte." tooltipPosition="top">
                 <div class="kpi-tile-top"><span class="kpi-tile-name">Marge brute/porc</span>
                   <p-tag *ngIf="kpiRaw.economie.marge_brute_par_porc!==null" [severity]="kpiSev(kpiRaw.economie.marge_brute_par_porc,0)" [value]="(kpiRaw.economie.marge_brute_par_porc||0) > 0 ? 'Positive' : 'Négative'"></p-tag>
                 </div>
                 <div class="kpi-tile-val">{{ kpiRaw.economie.marge_brute_par_porc!==null ? (kpiRaw.economie.marge_brute_par_porc|number:'1.0-0')+' F' : '—' }}</div>
                 <div class="kpi-tile-ref">CA - alimentation - soins</div>
               </div>
-              <div class="kpi-tile">
+              <div class="kpi-tile" pTooltip="Chiffre d'affaires total généré par les ventes d'animaux sur les 12 derniers mois." tooltipPosition="top">
                 <div class="kpi-tile-top"><span class="kpi-tile-name">CA total (12 mois)</span></div>
                 <div class="kpi-tile-val">{{ kpiRaw.economie.ca_total_fcfa!==null ? (kpiRaw.economie.ca_total_fcfa|number:'1.0-0')+' F' : '—' }}</div>
               </div>
-              <div class="kpi-tile">
+              <div class="kpi-tile" pTooltip="Chiffre d'affaires moyen généré par truie productive sur 12 mois. Mesure la rentabilité individuelle du troupeau reproducteur." tooltipPosition="top">
                 <div class="kpi-tile-top"><span class="kpi-tile-name">CA / truie / an</span></div>
                 <div class="kpi-tile-val">{{ kpiRaw.economie.ca_par_truie_an!==null ? (kpiRaw.economie.ca_par_truie_an|number:'1.0-0')+' F' : '—' }}</div>
               </div>
-              <div class="kpi-tile">
+              <div class="kpi-tile" pTooltip="Nombre total de porcs vendus sur les 12 derniers mois. Indicateur du volume de production commercialisé." tooltipPosition="top">
                 <div class="kpi-tile-top"><span class="kpi-tile-name">Porcs vendus</span></div>
                 <div class="kpi-tile-val">{{ kpiRaw.economie.nb_porcs_vendus }}</div>
               </div>
@@ -193,21 +193,21 @@
           </div>
           <div>
             <div class="kpi-group-label">Gestion</div>
-            <div class="kpi-tile mb-2">
+            <div class="kpi-tile mb-2" pTooltip="Pourcentage de places occupées dans les bâtiments d'élevage. En dessous de 50% = sous-utilisation ; au-dessus de 85% = risque sanitaire." tooltipPosition="top">
               <div class="kpi-tile-top"><span class="kpi-tile-name">Taux occupation</span>
                 <p-tag *ngIf="kpiRaw.gestion.taux_occupation_batiments_pct!==null" [severity]="kpiSev(kpiRaw.gestion.taux_occupation_batiments_pct,50,85)" [value]="kpiLabel(kpiSev(kpiRaw.gestion.taux_occupation_batiments_pct,50,85))"></p-tag>
               </div>
               <div class="kpi-tile-val">{{ kpiRaw.gestion.taux_occupation_batiments_pct!==null ? (kpiRaw.gestion.taux_occupation_batiments_pct|number:'1.1-1')+'%' : '—' }}</div>
               <div class="kpi-tile-ref">Optimal : 50–85 %</div>
             </div>
-            <div class="kpi-tile mb-2">
+            <div class="kpi-tile mb-2" pTooltip="Porcs Produits par Truie par An : nombre total de porcs sevrés produits par chaque truie sur 12 mois. Indicateur global de productivité de l'élevage." tooltipPosition="top">
               <div class="kpi-tile-top"><span class="kpi-tile-name">PPTA</span>
                 <p-tag *ngIf="kpiRaw.gestion.ppta!==null" [severity]="kpiSev(kpiRaw.gestion.ppta,16)" [value]="kpiLabel(kpiSev(kpiRaw.gestion.ppta,16))"></p-tag>
               </div>
               <div class="kpi-tile-val">{{ kpiRaw.gestion.ppta!==null ? (kpiRaw.gestion.ppta|number:'1.1-1') : '—' }}</div>
               <div class="kpi-tile-ref">Porcs/truie/an · Cible ≥ 16</div>
             </div>
-            <div class="kpi-tile">
+            <div class="kpi-tile" pTooltip="Durée moyenne du cycle de production : de la naissance au départ en vente. Reflète l'efficacité globale du processus d'élevage." tooltipPosition="top">
               <div class="kpi-tile-top"><span class="kpi-tile-name">Durée cycle</span></div>
               <div class="kpi-tile-val">{{ kpiRaw.gestion.duree_cycle_jours!==null ? kpiRaw.gestion.duree_cycle_jours+' j' : '—' }}</div>
               <div class="kpi-tile-ref">Sevrage → vente</div>
@@ -220,19 +220,19 @@
           <div class="kpi-group-label" style="margin-top:1.1rem;">Santé animale</div>
           <div class="sante-header-row">
             <div class="sante-kpis">
-              <div class="kpi-tile">
+              <div class="kpi-tile" pTooltip="Proportion d'animaux malades dans le troupeau actif. Un taux élevé signale un problème sanitaire ou de conditions d'élevage." tooltipPosition="top">
                 <div class="kpi-tile-top"><span class="kpi-tile-name">Taux morbidité</span>
                   <p-tag *ngIf="kpiRaw.sante.taux_morbidite_pct!==null" [severity]="kpiSev(kpiRaw.sante.taux_morbidite_pct,10,undefined,true)" [value]="kpiLabel(kpiSev(kpiRaw.sante.taux_morbidite_pct,10,undefined,true))"></p-tag>
                 </div>
                 <div class="kpi-tile-val">{{ kpiRaw.sante.taux_morbidite_pct!==null ? (kpiRaw.sante.taux_morbidite_pct|number:'1.1-1')+'%' : '—' }}</div>
                 <div class="kpi-tile-ref">Seuil : ≤ 10 %</div>
               </div>
-              <div class="kpi-tile">
+              <div class="kpi-tile" pTooltip="Dépenses totales en médicaments et actes vétérinaires sur 12 mois. Un coût élevé peut indiquer des problèmes sanitaires récurrents." tooltipPosition="top">
                 <div class="kpi-tile-top"><span class="kpi-tile-name">Médicaments (12 mois)</span></div>
                 <div class="kpi-tile-val">{{ kpiRaw.sante.conso_medicaments_fcfa!==null ? (kpiRaw.sante.conso_medicaments_fcfa|number:'1.0-0')+' F' : '—' }}</div>
                 <div class="kpi-tile-ref">{{ kpiRaw.sante.nb_actes_veterinaires }} actes · {{ kpiRaw.sante.nb_animaux_traites }} animaux traités</div>
               </div>
-              <div class="kpi-tile">
+              <div class="kpi-tile" pTooltip="Nombre total d'animaux présents et non vendus dans l'élevage à ce jour." tooltipPosition="top">
                 <div class="kpi-tile-top"><span class="kpi-tile-name">Animaux actifs</span></div>
                 <div class="kpi-tile-val">{{ kpiRaw.sante.nb_animaux_actifs }}</div>
               </div>

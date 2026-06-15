@@ -55,13 +55,8 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 10px 30px rgba(45, 80, 22, 0.3);
-  animation: float 3s ease-in-out infinite;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
 
 .logo-circle svg {
   width: 35px;

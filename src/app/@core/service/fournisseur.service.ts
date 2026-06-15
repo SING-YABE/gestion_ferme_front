@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -17,7 +18,7 @@ export interface FournisseurResponseDTO {
   providedIn: 'root'
 })
 export class FournisseurService {
-  private apiUrl = 'http://localhost:8080/api/fournisseur';
+  private apiUrl = environment.apiUrl + '/api/fournisseur';
 
   constructor(private http: HttpClient) {}
 

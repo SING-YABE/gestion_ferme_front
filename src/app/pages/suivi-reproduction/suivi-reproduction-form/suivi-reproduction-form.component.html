@@ -1,162 +1,158 @@
-<button 
-  pButton 
-  class="p-button-success" 
-  icon="pi pi-plus" 
-  label="Ajouter reproduction"
-  style="background:#2E7D32; border-color:#2E7D32;"
-  (click)="handleShow()" 
-  *ngIf="mode==='create'">
+<!-- Bouton déclencheur create -->
+<button *ngIf="mode==='create'"
+        pButton
+        icon="pi pi-plus"
+        label="Ajouter"
+        class="p-button-sm"
+        style="background: transparent; border: 2px solid white; color: white;"
+        (click)="handleShow()">
 </button>
 
-<p-dialog 
-  [header]="mode === 'create' ? '🐷 Nouvelle Reproduction' : '📝 Suivi Reproduction'"
-  [(visible)]="showForm"
-  [modal]="true"
-  [style]="{width: '95%', maxWidth: '700px'}"
-  [breakpoints]="{'960px': '95vw', '640px': '98vw'}"
-  appendTo="body"
-  [draggable]="false"
-  [resizable]="false"
-  [contentStyle]="{padding: '1.5rem'}">
+<!-- Dialog -->
+<p-dialog
+    [header]="mode === 'create' ? 'Nouvelle Reproduction' : 'Suivi Reproduction'"
+    [(visible)]="showForm"
+    [modal]="true"
+    [style]="{width: 'min(700px, 95vw)'}"
+    appendTo="body"
+    [draggable]="false"
+    [resizable]="false">
 
-  <p class="dialog-subtitle">
-    {{ mode === 'create' 
-        ? 'Enregistrez une nouvelle saillie' 
+  <p class="text-color-secondary text-sm mt-0 mb-3">
+    {{ mode === 'create'
+        ? 'Enregistrez une nouvelle saillie'
         : 'Mettez à jour les informations de mise bas' }}
   </p>
 
-  <form [formGroup]="form">
+  <form [formGroup]="form" class="flex flex-column gap-3">
 
     <!-- ================= CREATE ================= -->
-    <div *ngIf="mode==='create'" class="form-section">
+    <div *ngIf="mode==='create'">
 
-      <div class="form-field">
-        <label>🐖 Truie *</label>
-        <p-dropdown 
+      <div class="flex flex-column gap-1 mb-3">
+        <label class="font-medium text-sm">Truie *</label>
+        <p-dropdown
           [options]="truies"
           formControlName="truieCode"
           placeholder="Sélectionnez une truie"
-          class="full-width">
+          styleClass="w-full">
         </p-dropdown>
       </div>
 
-      <div class="form-field">
-        <label>🐗 Verrat *</label>
-        <p-dropdown 
+      <div class="flex flex-column gap-1 mb-3">
+        <label class="font-medium text-sm">Verrat *</label>
+        <p-dropdown
           [options]="verrats"
           formControlName="verratCode"
           placeholder="Sélectionnez un verrat"
-          class="full-width">
+          styleClass="w-full">
         </p-dropdown>
       </div>
 
-      <div class="form-field">
-        <label>📅 Date Saillie *</label>
-        <p-calendar 
+      <div class="flex flex-column gap-1 mb-3">
+        <label class="font-medium text-sm">Date Saillie *</label>
+        <p-calendar
           formControlName="dateSaillie"
           dateFormat="dd/mm/yy"
           [showIcon]="true"
           appendTo="body"
-          class="full-width">
+          styleClass="w-full">
         </p-calendar>
       </div>
 
-      <div class="form-field">
-        <label>📝 Observations</label>
-        <textarea 
-          pInputTextarea
-          formControlName="observations"
-          rows="3"
-          class="full-width">
-        </textarea>
+      <div class="flex flex-column gap-1">
+        <label class="font-medium text-sm">Observations</label>
+        <textarea pInputTextarea formControlName="observations" rows="3" class="w-full"></textarea>
       </div>
 
     </div>
 
-
     <!-- ================= EDIT ================= -->
-    <div *ngIf="mode==='edit'" class="form-section">
+    <div *ngIf="mode==='edit'">
 
       <!-- Photos -->
-      <div class="animals-container">
+      <div class="flex gap-3 mb-4 justify-content-center">
 
-        <div class="animal-photo">
+        <div class="flex flex-column align-items-center gap-1">
           <img *ngIf="target?.truie?.photoUrl"
-               [src]="'http://localhost:8080' + target!.truie!.photoUrl" />
-          <div *ngIf="!target?.truie?.photoUrl" class="no-photo">🐖</div>
-          <div class="animal-label">
-            {{ target?.truie?.codeAnimal }} - Box {{ target?.truie?.boxCode }}
+               [src]="'http://localhost:8080' + target!.truie!.photoUrl"
+               style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #059669;" />
+          <div *ngIf="!target?.truie?.photoUrl"
+               style="width:80px; height:80px; border-radius:50%; background:#dcfce7;
+                      display:flex; align-items:center; justify-content:center; font-size:2rem;">
+            🐖
           </div>
+          <div class="text-sm text-center">{{ target?.truie?.codeAnimal }} - Box {{ target?.truie?.boxCode }}</div>
         </div>
 
-        <div class="animal-photo">
+        <div class="flex flex-column align-items-center gap-1">
           <img *ngIf="target?.verrat?.photoUrl"
-               [src]="'http://localhost:8080' + target!.verrat!.photoUrl" />
-          <div *ngIf="!target?.verrat?.photoUrl" class="no-photo"></div>
-          <div class="animal-label">
-            {{ target?.verrat?.codeAnimal }} - Box {{ target?.verrat?.boxCode }}
+               [src]="'http://localhost:8080' + target!.verrat!.photoUrl"
+               style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #1d4ed8;" />
+          <div *ngIf="!target?.verrat?.photoUrl"
+               style="width:80px; height:80px; border-radius:50%; background:#dbeafe;
+                      display:flex; align-items:center; justify-content:center; font-size:2rem;">
+            🐗
+          </div>
+          <div class="text-sm text-center">{{ target?.verrat?.codeAnimal }} - Box {{ target?.verrat?.boxCode }}</div>
+        </div>
+
+      </div>
+
+      <div class="grid mb-3">
+        <div class="col-6">
+          <div class="flex flex-column gap-1">
+            <label class="font-medium text-sm">Date Saillie</label>
+            <p-calendar
+              formControlName="dateSaillie"
+              dateFormat="dd/mm/yy"
+              [showIcon]="true"
+              appendTo="body"
+              [disabled]="isPostMiseBas()"
+              styleClass="w-full">
+            </p-calendar>
           </div>
         </div>
 
+        <div class="col-6">
+          <div class="flex flex-column gap-1">
+            <label class="font-medium text-sm">Date Mise Bas</label>
+            <p-calendar
+              formControlName="dateMiseBasReelle"
+              dateFormat="dd/mm/yy"
+              [showIcon]="true"
+              appendTo="body"
+              [disabled]="isPostMiseBas()"
+              styleClass="w-full">
+            </p-calendar>
+          </div>
+        </div>
       </div>
 
-      <!-- Dates en grille -->
-      <div class="grid-2">
-
-        <div class="form-field">
-          <label>📅 Date Saillie</label>
-          <p-calendar 
-            formControlName="dateSaillie"
-            dateFormat="dd/mm/yy"
-            [showIcon]="true"
-            appendTo="body"
-            [disabled]="isPostMiseBas()"
-            class="full-width">
-          </p-calendar>
+      <div class="grid mb-3">
+        <div class="col-4">
+          <div class="flex flex-column gap-1">
+            <label class="font-medium text-sm">Nés Vivants</label>
+            <input pInputText type="number" formControlName="nbNesVivants" class="w-full" />
+          </div>
         </div>
-
-        <div class="form-field">
-          <label>✅ Date Mise Bas</label>
-          <p-calendar 
-            formControlName="dateMiseBasReelle"
-            dateFormat="dd/mm/yy"
-            [showIcon]="true"
-            appendTo="body"
-            [disabled]="isPostMiseBas()"
-            class="full-width">
-          </p-calendar>
+        <div class="col-4">
+          <div class="flex flex-column gap-1">
+            <label class="font-medium text-sm">Morts Nés</label>
+            <input pInputText type="number" formControlName="nbMortsNes" class="w-full" />
+          </div>
         </div>
-
+        <div class="col-4">
+          <div class="flex flex-column gap-1">
+            <label class="font-medium text-sm">Sevrés</label>
+            <input pInputText type="number" formControlName="nbSevres" class="w-full" />
+          </div>
+        </div>
       </div>
 
-      <!-- Statistiques -->
-      <div class="grid-3">
-
-        <div class="form-field">
-          <label>💚 Nés Vivants</label>
-          <input pInputText type="number" formControlName="nbNesVivants" class="full-width"/>
-        </div>
-
-        <div class="form-field">
-          <label>💔 Morts Nés</label>
-          <input pInputText type="number" formControlName="nbMortsNes" class="full-width"/>
-        </div>
-
-        <div class="form-field">
-          <label>🎯 Sevrés</label>
-          <input pInputText type="number" formControlName="nbSevres" class="full-width"/>
-        </div>
-
-      </div>
-
-      <div class="form-field">
-        <label>📝 Observations</label>
-        <textarea 
-          pInputTextarea
-          formControlName="observations"
-          rows="3"
-          class="full-width">
-        </textarea>
+      <div class="flex flex-column gap-1">
+        <label class="font-medium text-sm">Observations</label>
+        <textarea pInputTextarea formControlName="observations" rows="3" class="w-full"></textarea>
       </div>
 
     </div>
@@ -164,24 +160,19 @@
   </form>
 
   <ng-template pTemplate="footer">
-    <div class="dialog-footer">
-      <button 
-        type="button"
-        pButton 
-        label="Annuler"
-        class="p-button-text"
-        (click)="showForm=false">
+    <div class="flex justify-content-end gap-2">
+      <button type="button" pButton
+              label="Annuler" icon="pi pi-times"
+              class="p-button-outlined p-button-secondary p-button-sm"
+              (click)="showForm=false">
       </button>
-
-      <button 
-        type="button"
-        pButton 
-        label="Enregistrer"
-        icon="pi pi-check"
-        [disabled]="form.invalid"
-        [loading]="processing"
-        (click)="handleSubmit()"
-        class="p-button-success">
+      <button type="button" pButton
+              [label]="mode === 'create' ? 'Enregistrer' : 'Mettre à jour'"
+              icon="pi pi-check"
+              class="p-button-success p-button-sm"
+              [disabled]="form.invalid"
+              [loading]="processing"
+              (click)="handleSubmit()">
       </button>
     </div>
   </ng-template>

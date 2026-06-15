@@ -1,38 +1,63 @@
-<!-- Bouton Ajouter / Éditer -->
-<button *ngIf="mode === 'create'" pButton label="Ajouter fournisseur" icon="pi pi-plus"
-        class="p-button-success p-button-rounded" (click)="handleShow()">
+<!-- Bouton déclencheur create -->
+<button *ngIf="mode === 'create'"
+        pButton
+        label="Ajouter"
+        icon="pi pi-plus"
+        class="p-button-sm"
+        style="background: transparent; border: 2px solid white; color: white;"
+        (click)="handleShow()">
 </button>
 
-<button *ngIf="mode === 'edit'" pButton icon="pi pi-pencil"
-        class="p-button-rounded p-button-warning" (click)="handleShow()">
+<!-- Bouton déclencheur edit -->
+<button *ngIf="mode === 'edit'"
+        pButton
+        icon="pi pi-pencil"
+        class="p-button-rounded p-button-sm"
+        style="background: #16A34A; border-color: #16A34A; color: white;"
+        (click)="handleShow()">
 </button>
 
-<p-dialog header="{{ mode === 'create' ? 'Nouveau fournisseur' : 'Modifier fournisseur' }}"
-  [(visible)]="showForm"
-  [modal]="true"
-  [style]="{ width: '800px' }"
-  styleClass="large-dialog"
->
+<!-- Dialog -->
+<p-dialog
+    [header]="mode === 'create' ? 'Nouveau fournisseur' : 'Modifier fournisseur'"
+    [(visible)]="showForm"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{width: 'min(480px, 95vw)'}">
 
-  <form [formGroup]="form">
-    <div class="field mb-3">
-      <label for="nom">Nom</label>
-      <input id="nom" type="text" formControlName="nom" pInputText placeholder="Ex: Fournisseur A" />
+  <form [formGroup]="form" class="flex flex-column gap-3 pt-2">
+
+    <div class="flex flex-column gap-1">
+      <label for="nom" class="font-medium text-sm">Nom</label>
+      <input id="nom" type="text" formControlName="nom" pInputText
+             placeholder="Ex: Fournisseur A" class="w-full" />
     </div>
-    <div class="field mb-3">
-      <label for="contact">Contact</label>
-      <input id="contact" type="text" formControlName="contact" pInputText placeholder="Ex: 77 00 00 00" />
+
+    <div class="flex flex-column gap-1">
+      <label for="contact" class="font-medium text-sm">Contact</label>
+      <input id="contact" type="text" formControlName="contact" pInputText
+             placeholder="Ex: 77 00 00 00" class="w-full" />
     </div>
+
   </form>
 
   <ng-template pTemplate="footer">
-    <button type="button" pButton class="p-button-outlined p-button-danger mr-2" (click)="showForm=false">
-      Annuler
-    </button>
-    <button type="submit" pButton [disabled]="form.invalid" [loading]="processing"
-            class="p-button-success" (click)="handleSubmit()">
-      Enregistrer
-    </button>
+    <div class="flex justify-content-end gap-2">
+      <button type="button" pButton
+              label="Annuler" icon="pi pi-times"
+              class="p-button-outlined p-button-secondary p-button-sm"
+              (click)="showForm=false">
+      </button>
+      <button pButton
+              [label]="mode === 'create' ? 'Enregistrer' : 'Mettre à jour'"
+              icon="pi pi-check"
+              class="p-button-success p-button-sm"
+              [disabled]="form.invalid"
+              [loading]="processing"
+              (click)="handleSubmit()">
+      </button>
+    </div>
   </ng-template>
 
 </p-dialog>

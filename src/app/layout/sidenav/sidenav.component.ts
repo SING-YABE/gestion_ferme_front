@@ -105,7 +105,7 @@ private loadSettings(): void {
 
       // ✅ URL LOGO CORRIGÉE (API)
     this.logoUrl = data.logoPath
-  ? `http://localhost:8080/uploads/logos/${data.logoPath}`
+  ? `${environment.apiUrl}/uploads/logos/${data.logoPath}`
   : 'assets/default-logo.png';
 
     }

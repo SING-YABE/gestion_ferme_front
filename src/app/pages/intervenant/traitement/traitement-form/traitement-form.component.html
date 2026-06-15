@@ -1,55 +1,44 @@
+<!-- Dialog -->
 <p-dialog
-  header="{{ mode === 'create' ? '🧪 Nouveau traitement' : '✏️ Modifier traitement' }}"
-  [(visible)]="showForm"
-  [modal]="true"
-  [baseZIndex]="9000"
-  [style]="{ width: '900px' }"
-  styleClass="ultra-dialog"
-  appendTo="body"
-  (onHide)="closeDialog()"
->
+    [header]="mode === 'create' ? 'Nouveau traitement' : 'Modifier traitement'"
+    [(visible)]="showForm"
+    [modal]="true"
+    appendTo="body"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{width: 'min(480px, 95vw)'}"
+    (onHide)="closeDialog()">
 
-  <form [formGroup]="traitementForm" (ngSubmit)="handleSubmit()" class="form-grid">
+  <form [formGroup]="traitementForm" (ngSubmit)="handleSubmit()" class="flex flex-column gap-3 pt-2">
 
-    <div class="field">
-      <label>Nom du traitement</label>
-      <input
-        pInputText
-        formControlName="nom"
-        placeholder="Vaccination, Antibiothérapie..."
-      />
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Nom du traitement</label>
+      <input pInputText formControlName="nom"
+             placeholder="Vaccination, Antibiothérapie..." class="w-full" />
     </div>
 
-    <div class="field">
-      <label>Description</label>
-      <textarea
-        pInputTextarea
-        rows="5"
-        formControlName="description"
-        placeholder="Detail du traitement"
-      ></textarea>
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Description</label>
+      <textarea pInputTextarea rows="3" formControlName="description"
+                placeholder="Detail du traitement" class="w-full"></textarea>
     </div>
 
   </form>
 
   <ng-template pTemplate="footer">
-    <div class="dialog-footer">
-      <button
-        pButton
-        type="button"
-        label="Annuler"
-        class="p-button-outlined"
-        (click)="closeDialog()"
-      ></button>
-
-      <button
-        pButton
-        type="submit"
-        label="Enregistrer"
-        class="p-button-success"
-        [disabled]="traitementForm.invalid || processing"
-        (click)="handleSubmit()"
-      ></button>
+    <div class="flex justify-content-end gap-2">
+      <button type="button" pButton
+              label="Annuler" icon="pi pi-times"
+              class="p-button-outlined p-button-secondary p-button-sm"
+              (click)="closeDialog()">
+      </button>
+      <button pButton
+              [label]="mode === 'create' ? 'Enregistrer' : 'Mettre à jour'"
+              icon="pi pi-check"
+              class="p-button-success p-button-sm"
+              [disabled]="traitementForm.invalid || processing"
+              (click)="handleSubmit()">
+      </button>
     </div>
   </ng-template>
 

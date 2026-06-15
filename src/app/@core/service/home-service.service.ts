@@ -1,9 +1,10 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-const API = 'http://localhost:8080/api';
+const API = environment.apiUrl + '/api';
 
 export interface StatsReproductions {
   truiesGestantes: number;
@@ -103,7 +104,7 @@ export class HomeService {
   }
 
   getAdvisorAlerts(): Observable<AdvisorAlertsResponse> {
-    return this.http.get<AdvisorAlertsResponse>('http://localhost:8000/api/advisor/alerts').pipe(
+    return this.http.get<AdvisorAlertsResponse>('http://localhost:8001/api/advisor/alerts').pipe(
       catchError(() => of({ alerts: [], summary: { total_alerts: 0, by_level: { critical: 0, warning: 0 } } }))
     );
   }

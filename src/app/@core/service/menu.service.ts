@@ -84,7 +84,7 @@ const ALL_MENU: ShamsyMenu[] = [
     title: 'Utilisateurs',
     icon: faUsers,
     routerLink: '/gestion/utilisateurs',
-    roles: [Roles.ADMINISTRATEUR, Roles.RESPONSABLE]  // Responsable gère aussi les utilisateurs
+    roles: [Roles.ADMINISTRATEUR]  // Seul l'administrateur gère les utilisateurs
   },
   {
     title: 'Modèle prévisionnel',

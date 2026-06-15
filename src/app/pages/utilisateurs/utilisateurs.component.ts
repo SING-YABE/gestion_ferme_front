@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -139,7 +140,7 @@ export class UtilisateursComponent implements OnInit {
   }
 
   loadToutesPermissions() {
-    this.http.get<string[]>('http://localhost:8080/api/permissions/disponibles').subscribe({
+    this.http.get<string[]>(environment.apiUrl + '/api/permissions/disponibles').subscribe({
       next: (p) => this.toutesPermissions = p,
       error: () => {}
     });
@@ -217,7 +218,7 @@ export class UtilisateursComponent implements OnInit {
 
   chargerPermissions(id: number) {
     this.permLoading = true;
-    this.http.get<PermissionsData>(`http://localhost:8080/api/permissions/${id}`).subscribe({
+    this.http.get<PermissionsData>(`${environment.apiUrl}/api/permissions/${id}`).subscribe({
       next: (d) => { this.permissionsData = d; this.permLoading = false; },
       error: () => { this.permLoading = false; this.toast('error', 'Erreur permissions'); }
     });
@@ -226,7 +227,7 @@ export class UtilisateursComponent implements OnInit {
   ajouterOverride() {
     if (!this.newPermission || !this.selectedUtilisateur) return;
     this.http.post(
-      `http://localhost:8080/api/permissions/${this.selectedUtilisateur.idUtilisateur}`,
+      `${environment.apiUrl}/api/permissions/${this.selectedUtilisateur.idUtilisateur}`,
       { permission: this.newPermission, accorde: this.newAccorde }
     ).subscribe({
       next: () => { this.chargerPermissions(this.selectedUtilisateur!.idUtilisateur); this.newPermission = ''; this.toast('success', 'Permission mise à jour'); },
@@ -237,7 +238,7 @@ export class UtilisateursComponent implements OnInit {
   supprimerOverride(permission: string) {
     if (!this.selectedUtilisateur) return;
     this.http.delete(
-      `http://localhost:8080/api/permissions/${this.selectedUtilisateur.idUtilisateur}/${permission}`
+      `${environment.apiUrl}/api/permissions/${this.selectedUtilisateur.idUtilisateur}/${permission}`
     ).subscribe({
       next: () => { this.chargerPermissions(this.selectedUtilisateur!.idUtilisateur); this.toast('success', 'Override supprimé'); },
       error: () => this.toast('error', 'Erreur lors de la suppression')

@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -13,8 +14,8 @@ export interface ParametresEleveur {
 @Injectable({ providedIn: 'root' })
 export class ParametrageService {
 
-  private apiUrl = 'http://localhost:8080/api/settings';
-  private advisorUrl = 'http://localhost:8080/api/parametres-eleveur';
+  private apiUrl = environment.apiUrl + '/api/settings';
+  private advisorUrl = environment.apiUrl + '/api/parametres-eleveur';
 
   constructor(private http: HttpClient) { }
 

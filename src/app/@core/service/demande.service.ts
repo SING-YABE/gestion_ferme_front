@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 // src/app/@core/service/demande.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -45,7 +46,7 @@ export interface DemandeDTO {
   providedIn: 'root'
 })
 export class DemandeService {
-  private apiUrl = 'http://localhost:8080/api/demandes';
+  private apiUrl = environment.apiUrl + '/api/demandes';
 
   constructor(private http: HttpClient) { }
 

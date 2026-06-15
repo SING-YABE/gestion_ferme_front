@@ -1,31 +1,63 @@
-<!-- Bouton pour créer une nouvelle catégorie de risque -->
-<button (click)="handleShow()" pButton *ngIf="mode == 'create'" label="Type de risque" icon="pi pi-plus"></button>
+<!-- Bouton déclencheur create -->
+<button *ngIf="mode == 'create'"
+        pButton
+        label="Ajouter"
+        icon="pi pi-plus"
+        class="p-button-sm"
+        style="background: transparent; border: 2px solid white; color: white;"
+        (click)="handleShow()">
+</button>
 
-<!-- Bouton pour éditer une catégorie de risque -->
-<button (click)="handleShow()" pButton *ngIf="mode == 'edit'" icon="pi pi-pencil" class="p-button-rounded"></button>
+<!-- Bouton déclencheur edit -->
+<button *ngIf="mode == 'edit'"
+        pButton
+        icon="pi pi-pencil"
+        class="p-button-rounded p-button-sm"
+        style="background: #16A34A; border-color: #16A34A; color: white;"
+        (click)="handleShow()">
+</button>
 
-<p-dialog header="Nouveau type de risque" appendTo="body" [modal]="true" [style]="{width: '800px'}" [(visible)]="showForm">
+<!-- Dialog -->
+<p-dialog
+    [header]="mode === 'create' ? 'Nouveau type de risque' : 'Modifier type de risque'"
+    appendTo="body"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{width: 'min(480px, 95vw)'}"
+    [(visible)]="showForm">
 
-    <div>
-      <form id="categorieRisquesForm" [formGroup]="categorieRisquesForm" (ngSubmit)="handleSubmit()">
+  <form id="categorieRisquesForm" [formGroup]="categorieRisquesForm" (ngSubmit)="handleSubmit()" class="flex flex-column gap-3 pt-2">
 
-
-        <div class="field">
-          <label for="name">Type</label>
-          <input placeholder="ex : Risque moyene" formControlName="name" pInputText id="name" />
-        </div>
-
-        <div class="field">
-          <label for="description">Description</label>
-          <input placeholder="Description détaillée du type de risque" formControlName="description" pInputText id="description" />
-        </div>
-
-      </form>
+    <div class="flex flex-column gap-1">
+      <label for="name" class="font-medium text-sm">Type</label>
+      <input id="name" type="text" formControlName="name" pInputText
+             placeholder="ex : Risque moyen" class="w-full" />
     </div>
 
-    <ng-template pTemplate="footer">
-      <button (click)="showForm = false" pButton class="p-button-danger mr-2 p-button-outlined">Annuler</button>
-      <button type="submit" [disabled]="categorieRisquesForm.invalid" form="categorieRisquesForm" [loading]="processing" pButton>Enregistrer</button>
-    </ng-template>
+    <div class="flex flex-column gap-1">
+      <label for="description" class="font-medium text-sm">Description</label>
+      <input id="description" type="text" formControlName="description" pInputText
+             placeholder="Description détaillée du type de risque" class="w-full" />
+    </div>
 
-  </p-dialog>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end gap-2">
+      <button type="button" pButton
+              label="Annuler" icon="pi pi-times"
+              class="p-button-outlined p-button-secondary p-button-sm"
+              (click)="showForm=false">
+      </button>
+      <button type="submit" form="categorieRisquesForm" pButton
+              [label]="mode === 'create' ? 'Enregistrer' : 'Mettre à jour'"
+              icon="pi pi-check"
+              class="p-button-success p-button-sm"
+              [disabled]="categorieRisquesForm.invalid"
+              [loading]="processing">
+      </button>
+    </div>
+  </ng-template>
+
+</p-dialog>

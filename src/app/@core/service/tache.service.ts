@@ -1,8 +1,9 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-const BASE = 'http://localhost:8080';
+const BASE = environment.apiUrl + '';
 
 export interface TypeTache { id: number; nom: string; description: string; couleur: string; icone: string; }
 export interface TypeTacheCreateDTO { nom: string; description: string; couleur: string; icone: string; }

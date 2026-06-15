@@ -1,13 +1,25 @@
-<button *ngIf="mode === 'create'" pButton icon="pi pi-plus" label="Nouvelle alimentation"
-  class="p-button-success" style="background:#2E7D32; border-color:#2E7D32;" (click)="handleShow()">
+<!-- Bouton déclencheur create -->
+<button *ngIf="mode === 'create'"
+        pButton
+        icon="pi pi-plus"
+        label="Ajouter"
+        class="p-button-sm"
+        style="background: transparent; border: 2px solid white; color: white;"
+        (click)="handleShow()">
 </button>
 
-<p-dialog [(visible)]="showForm" [modal]="true" appendTo="body" 
-  [header]="'Gestion de l\'Alimentation'" [style]="{width: '850px', maxHeight: '90vh'}" 
-  [draggable]="false" [resizable]="false">
-  
+<!-- Dialog -->
+<p-dialog
+    [(visible)]="showForm"
+    [modal]="true"
+    appendTo="body"
+    [header]="'Gestion de l\'Alimentation'"
+    [style]="{width: 'min(850px, 95vw)', maxHeight: '90vh'}"
+    [draggable]="false"
+    [resizable]="false">
+
   <div class="text-center mb-4">
-    <p class="text-sm text-gray-600 m-0">
+    <p class="text-sm text-color-secondary m-0">
       Enregistrez vos achats d'ingrédients ou gérez la fabrication d'aliments sur place
     </p>
   </div>
@@ -16,8 +28,8 @@
   <div class="mb-4">
     <div class="grid">
       <div class="col-6">
-        <button type="button" pButton 
-          [label]="'Mode Achat'" 
+        <button type="button" pButton
+          [label]="'Mode Achat'"
           icon="pi pi-shopping-cart"
           [class]="modeGestion === 'achat' ? 'p-button-success w-full' : 'p-button-outlined w-full'"
           [style.background]="modeGestion === 'achat' ? '#2E7D32' : 'transparent'"
@@ -28,8 +40,8 @@
         </button>
       </div>
       <div class="col-6">
-        <button type="button" pButton 
-          [label]="'Mode Fabrication'" 
+        <button type="button" pButton
+          [label]="'Mode Fabrication'"
           icon="pi pi-cog"
           [class]="modeGestion === 'fabrication' ? 'p-button-success w-full' : 'p-button-outlined w-full'"
           [style.background]="modeGestion === 'fabrication' ? '#2E7D32' : 'transparent'"
@@ -46,40 +58,35 @@
 
     <!--MODE ACHAT-->
     <div *ngIf="modeGestion === 'achat'">
-      
-      <!-- Date d'entrée et Fournisseur -->
+
       <div class="grid mb-4">
         <div class="col-6">
           <label class="block font-semibold mb-2" style="font-size: 14px;">
             <i class="pi pi-calendar mr-1"></i> Date d'entrée <span style="color: red;">*</span>
           </label>
-          <p-calendar formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true" 
+          <p-calendar formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true"
             inputId="date" styleClass="w-full" [inputStyle]="{'height': '45px'}">
           </p-calendar>
         </div>
 
         <div class="col-6">
-          <label class="block font-semibold mb-2" style="font-size: 14px;">
-            Fournisseur
-          </label>
-          <p-dropdown formControlName="fournisseurId" [options]="fournisseurs" 
+          <label class="block font-semibold mb-2" style="font-size: 14px;">Fournisseur</label>
+          <p-dropdown formControlName="fournisseurId" [options]="fournisseurs"
             optionLabel="nom" optionValue="id" placeholder="Sélectionner un fournisseur"
             [filter]="true" [showClear]="true" styleClass="w-full" [style]="{'height': '45px'}">
           </p-dropdown>
         </div>
       </div>
 
-      <!-- Section: Ingrédients à acheter -->
       <div class="mb-4 p-3" style="background: #F9FAFB; border-radius: 8px; border: 1px solid #E5E7EB;">
         <h6 class="font-semibold mb-3" style="color: #374151;">INGRÉDIENTS À ACHETER</h6>
 
         <div formArrayName="ingredientsAchat">
-          <div *ngFor="let control of ingredientsAchatArray.controls; let i = index" 
+          <div *ngFor="let control of ingredientsAchatArray.controls; let i = index"
                [formGroupName]="i" class="mb-3">
             <div class="p-3" style="background: white; border-radius: 6px; border: 1px solid #E5E7EB;">
               <div class="mb-2 font-semibold text-sm" style="color: #6B7280;">INGRÉDIENT {{ i + 1 }}</div>
 
-              <!-- Type d'ingrédient, Nom, Quantité -->
               <div class="grid mb-3">
                 <div class="col-4">
                   <label class="block mb-2 text-sm font-semibold">Type d'ingrédient <span style="color: red;">*</span></label>
@@ -91,10 +98,10 @@
 
                 <div class="col-4">
                   <label class="block mb-2 text-sm font-semibold">Nom de l'ingrédient <span style="color: red;">*</span></label>
-                  <p-dropdown formControlName="ingredientId" 
-                    [options]="getIngredientsByTypeAchat(control.value.typeAlimentId)" 
+                  <p-dropdown formControlName="ingredientId"
+                    [options]="getIngredientsByTypeAchat(control.value.typeAlimentId)"
                     optionLabel="nom" optionValue="id"
-                    placeholder="Choisir l'ingrédient" [filter]="true" styleClass="w-full" 
+                    placeholder="Choisir l'ingrédient" [filter]="true" styleClass="w-full"
                     [style]="{'height': '45px'}">
                   </p-dropdown>
                 </div>
@@ -106,7 +113,6 @@
                 </div>
               </div>
 
-              <!-- Prix unitaire et Sous-total -->
               <div class="grid mb-3">
                 <div class="col-6">
                   <label class="block mb-2 text-sm font-semibold">Prix unitaire (FCFA/Kg) <span style="color: red;">*</span></label>
@@ -116,14 +122,13 @@
 
                 <div class="col-6">
                   <label class="block mb-2 text-sm font-semibold">Sous-total</label>
-                  <div class="w-full p-3 text-center font-bold" 
+                  <div class="w-full p-3 text-center font-bold"
                     style="background: #F3F4F6; border-radius: 6px; color: #374151;">
                     {{ getSousTotal(i, 'achat') | number:'1.2-2' }} FCFA
                   </div>
                 </div>
               </div>
 
-              <!-- Mode d'alimentation -->
               <div class="mb-3">
                 <label class="block mb-2 text-sm font-semibold">Mode d'alimentation</label>
                 <div class="flex gap-2 mb-3">
@@ -146,26 +151,23 @@
                   </button>
                 </div>
 
-                <!-- Dropdown pour type d'animal si mode Lot -->
                 <div *ngIf="control.value.modeAlimentation === 'lot'">
-                  <p-dropdown formControlName="typeAnimalId" [options]="typeAnimaux" 
+                  <p-dropdown formControlName="typeAnimalId" [options]="typeAnimaux"
                     optionLabel="nom" optionValue="id" placeholder="Sélectionner le type d'animal"
                     [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
                   </p-dropdown>
                 </div>
 
-                <!-- Dropdown pour animal si mode Individuel -->
                 <div *ngIf="control.value.modeAlimentation === 'individuel'">
-                  <p-dropdown formControlName="animalId" [options]="animaux" 
+                  <p-dropdown formControlName="animalId" [options]="animaux"
                     optionLabel="codeAnimal" optionValue="id" placeholder="Sélectionner un animal"
                     [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
                   </p-dropdown>
                 </div>
               </div>
 
-              <!-- Bouton supprimer -->
               <div class="text-right" *ngIf="ingredientsAchatArray.length > 1">
-                <button type="button" pButton icon="pi pi-trash" 
+                <button type="button" pButton icon="pi pi-trash"
                   class="p-button-text p-button-danger"
                   (click)="supprimerIngredientAchat(i)">
                 </button>
@@ -174,8 +176,7 @@
           </div>
         </div>
 
-        <!-- Bouton Ajouter un ingrédient -->
-        <button type="button" pButton label="Ajouter un ingrédient" 
+        <button type="button" pButton label="Ajouter un ingrédient"
           icon="pi pi-plus" class="p-button-text w-full"
           style="color: #2E7D32; border: 1px dashed #2E7D32; height: 42px;"
           (click)="ajouterIngredientAchat()">
@@ -183,28 +184,26 @@
       </div>
 
     </div>
-    
+
     <!-- ===================== MODE FABRICATION ===================== -->
     <div *ngIf="modeGestion === 'fabrication'">
-      
-      <!-- Date de fabrication -->
+
       <div class="grid mb-4">
         <div class="col-12">
           <label class="block font-semibold mb-2" style="font-size: 14px;">
             <i class="pi pi-calendar mr-1"></i> Date de fabrication <span style="color: red;">*</span>
           </label>
-          <p-calendar formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true" 
+          <p-calendar formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true"
             inputId="dateFabrication" styleClass="w-full" [inputStyle]="{'height': '45px'}">
           </p-calendar>
         </div>
       </div>
 
-      <!-- 🔥 CIBLAGE GLOBAL POUR FABRICATION -->
       <div class="mb-4 p-3" style="background: #FFF9E6; border-radius: 8px; border: 2px solid #FFB800;">
         <h6 class="font-semibold mb-3" style="color: #8B6914;">
           <i class="pi pi-users mr-2"></i>CIBLAGE DE LA FABRICATION (pour les 4 ingrédients)
         </h6>
-        
+
         <div class="flex gap-2 mb-3">
           <button type="button" pButton label="Individuel"
             [class]="form.value.modeAlimentationGlobal === 'individuel' ? 'p-button-success flex-1' : 'p-button-outlined flex-1'"
@@ -225,50 +224,44 @@
           </button>
         </div>
 
-        <!-- Dropdown Type d'animal (mode LOT) -->
         <div *ngIf="form.value.modeAlimentationGlobal === 'lot'">
           <label class="block mb-2 text-sm font-semibold">Type d'animal cible <span style="color: red;">*</span></label>
-          <p-dropdown formControlName="typeAnimalIdGlobal" [options]="typeAnimaux" 
+          <p-dropdown formControlName="typeAnimalIdGlobal" [options]="typeAnimaux"
             optionLabel="nom" optionValue="id" placeholder="Sélectionner le type d'animal"
             [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
           </p-dropdown>
         </div>
 
-        <!-- Dropdown Animal individuel (mode INDIVIDUEL) -->
         <div *ngIf="form.value.modeAlimentationGlobal === 'individuel'">
           <label class="block mb-2 text-sm font-semibold">Animal cible <span style="color: red;">*</span></label>
-          <p-dropdown formControlName="animalIdGlobal" [options]="animaux" 
+          <p-dropdown formControlName="animalIdGlobal" [options]="animaux"
             optionLabel="codeAnimal" optionValue="id" placeholder="Sélectionner un animal"
             [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
           </p-dropdown>
         </div>
       </div>
 
-      <!-- Section: Composition de l'aliment -->
       <div class="mb-4 p-3" style="background: #F9FAFB; border-radius: 8px; border: 1px solid #E5E7EB;">
         <h6 class="font-semibold mb-3" style="color: #374151;">COMPOSITION DE L'ALIMENT (4 ingrédients)</h6>
 
-        <!-- Liste des ingrédients par catégorie -->
         <div formArrayName="ingredientsFabrication">
-          <div *ngFor="let control of ingredientsFabricationArray.controls; let i = index" 
+          <div *ngFor="let control of ingredientsFabricationArray.controls; let i = index"
                [formGroupName]="i" class="mb-3">
             <div class="p-3" style="background: white; border-radius: 6px; border: 1px solid #E5E7EB;">
-              
-              <!-- En-tête de catégorie -->
+
               <div class="flex align-items-center justify-content-between mb-3">
                 <span class="font-semibold" style="color: #2E7D32;">
                   {{ control.value.categorie }}
                 </span>
               </div>
 
-              <!-- Nom, Quantité, Prix, Sous-total -->
               <div class="grid mb-3">
                 <div class="col-4">
                   <label class="block mb-2 text-sm font-semibold">
                     Ingrédient <span style="color: red;">*</span>
                   </label>
-                  <p-dropdown formControlName="ingredientId" 
-                    [options]="getIngredientsByCategorie(control.value.categorie)" 
+                  <p-dropdown formControlName="ingredientId"
+                    [options]="getIngredientsByCategorie(control.value.categorie)"
                     optionLabel="nom" optionValue="id" placeholder="Choisir l'ingrédient"
                     [filter]="true" styleClass="w-full" [style]="{'height': '45px'}">
                   </p-dropdown>
@@ -292,7 +285,7 @@
 
                 <div class="col-3">
                   <label class="block mb-2 text-sm font-semibold">Sous-total</label>
-                  <div class="w-full p-3 text-center font-bold" 
+                  <div class="w-full p-3 text-center font-bold"
                     style="background: #F3F4F6; border-radius: 6px; color: #374151; font-size: 13px;">
                     {{ getSousTotal(i, 'fabrication') | number:'1.0-0' }} FCFA
                   </div>
@@ -316,7 +309,7 @@
             {{ coutTotal | number:'1.2-2' }} FCFA
           </div>
         </div>
-        <button pButton type="submit" label="Enregistrer" 
+        <button pButton type="submit" label="Enregistrer"
           class="p-button-lg" [loading]="processing" [disabled]="!form.valid"
           style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 12px 32px;">
         </button>
@@ -332,5 +325,5 @@
       </button>
     </div>
   </ng-template>
+
 </p-dialog>
-`

@@ -131,7 +131,7 @@ export interface IssfDto {
 
 @Injectable({ providedIn: 'root' })
 export class KpiService {
-  private readonly pythonUrl = 'http://localhost:8000/api';
+  private readonly pythonUrl = 'http://127.0.0.1:8002/api';
   private readonly kotlinUrl = '/api';
 
   constructor(private http: HttpClient) {}
@@ -141,7 +141,7 @@ export class KpiService {
   getKpisRaw(): Observable<KpiRaw> {
     return this.http.get<KpiRaw>(`${this.pythonUrl}/kpi/raw`).pipe(
       catchError(err => throwError(() => new Error(
-        err.error?.detail || 'Backend Python indisponible (port 8000)'
+        err.error?.detail || 'Backend Python indisponible (port 8001)'
       )))
     );
   }

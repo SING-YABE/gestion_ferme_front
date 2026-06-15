@@ -1,57 +1,59 @@
-<button (click)="handleShow()" pButton class="p-button-success"
-        *ngIf="mode == 'create'" label="Nouvel Animal" icon="pi pi-plus">
+<!-- Bouton déclencheur create -->
+<button *ngIf="mode == 'create'"
+        pButton
+        label="Ajouter"
+        icon="pi pi-plus"
+        class="p-button-sm"
+        style="background: transparent; border: 2px solid white; color: white;"
+        (click)="handleShow()">
 </button>
 
-<button (click)="handleShow()" pButton *ngIf="mode == 'edit'"
-        icon="pi pi-pencil" class="p-button-rounded"
-        style="background:#16A34A; border-color:#16A34A; color:white; width:32px; height:32px;">
+<!-- Bouton déclencheur edit -->
+<button *ngIf="mode == 'edit'"
+        pButton
+        icon="pi pi-pencil"
+        class="p-button-rounded p-button-sm"
+        style="background: #16A34A; border-color: #16A34A; color: white; width:32px; height:32px;"
+        (click)="handleShow()">
 </button>
 
+<!-- Dialog -->
 <p-dialog [header]="dialogHeader" appendTo="body" [modal]="true"
-          [style]="{width:'700px'}" [(visible)]="showForm"
+          [style]="{width: 'min(700px, 95vw)'}" [(visible)]="showForm"
           [draggable]="false" [resizable]="false">
 
-  <form id="animalForm" [formGroup]="animalForm" (ngSubmit)="handleSubmit()">
+  <form id="animalForm" [formGroup]="animalForm" (ngSubmit)="handleSubmit()" class="flex flex-column gap-3 pt-2">
 
-    <!-- ══ PHOTO (mode edit) — affichage large en haut ══ -->
-    <div class="field mb-4" *ngIf="mode === 'edit'">
-      <label class="block font-semibold mb-2" style="font-size:14px;">📷 Photo de l'animal</label>
+    <!-- Photo (mode edit) -->
+    <div class="flex flex-column gap-1" *ngIf="mode === 'edit'">
+      <label class="font-medium text-sm">Photo de l'animal</label>
 
-      <!-- Layout : photo actuelle à gauche, upload à droite -->
       <div style="display:flex; gap:1.2rem; align-items:flex-start; flex-wrap:wrap;">
 
-        <!-- Photo actuelle OU aperçu nouvelle photo -->
         <div style="flex-shrink:0; text-align:center;">
-
-          <!-- Aperçu nouvelle photo sélectionnée -->
           <ng-container *ngIf="photoPreviewUrl">
             <img [src]="photoPreviewUrl"
                  style="width:140px; height:140px; object-fit:cover;
                         border-radius:12px; border:3px dashed #16A34A;
                         display:block; margin-bottom:6px;">
             <div style="font-size:0.78rem; color:#16A34A; font-weight:600; margin-bottom:4px;">
-              ✅ Nouvelle photo prête
+              Nouvelle photo prête
             </div>
             <button type="button" pButton
                     (click)="photoPreviewUrl=null; selectedPhoto=null"
                     label="Retirer" icon="pi pi-times"
-                    class="p-button-text p-button-danger p-button-sm"
-                    style="font-size:0.78rem;">
+                    class="p-button-text p-button-danger p-button-sm">
             </button>
           </ng-container>
 
-          <!-- Photo actuelle (si pas de nouvelle sélectionnée) -->
           <ng-container *ngIf="!photoPreviewUrl && target?.photoUrl">
             <img [src]="'http://localhost:8080' + target!.photoUrl"
                  style="width:140px; height:140px; object-fit:cover;
                         border-radius:12px; border:3px solid #16A34A;
                         display:block; margin-bottom:6px;">
-            <div style="font-size:0.78rem; color:#6b7280; text-align:center;">
-              Photo actuelle
-            </div>
+            <div style="font-size:0.78rem; color:#6b7280; text-align:center;">Photo actuelle</div>
           </ng-container>
 
-          <!-- Pas de photo du tout -->
           <ng-container *ngIf="!photoPreviewUrl && !target?.photoUrl">
             <div style="width:140px; height:140px; border-radius:12px;
                         background:#f3f4f6; border:3px dashed #d1d5db;
@@ -60,21 +62,16 @@
               {{ target?.typeAnimalNom === 'Truie' ? '🐷' :
                  target?.typeAnimalNom === 'Verrat' ? '🐗' : '🐽' }}
             </div>
-            <div style="font-size:0.78rem; color:#9ca3af; text-align:center;">
-              Aucune photo
-            </div>
+            <div style="font-size:0.78rem; color:#9ca3af; text-align:center;">Aucune photo</div>
           </ng-container>
-
         </div>
 
-        <!-- Zone d'upload -->
         <div style="flex:1; min-width:220px;">
           <label for="photoUpload"
                  style="display:flex; flex-direction:column; align-items:center;
                         justify-content:center; gap:8px; padding:24px 16px;
                         border:2px dashed #d1d5db; border-radius:12px;
-                        cursor:pointer; background:#f9fafb;
-                        transition:border-color .2s;"
+                        cursor:pointer; background:#f9fafb;"
                  onmouseover="this.style.borderColor='#16A34A'"
                  onmouseout="this.style.borderColor='#d1d5db'">
             <i class="pi pi-upload" style="font-size:1.6rem; color:#9ca3af;"></i>
@@ -91,11 +88,8 @@
       </div>
     </div>
 
-    <!-- Type d'Animal -->
-    <div class="field mb-4">
-      <label class="block font-semibold mb-2" style="font-size:14px;">
-        Type d'Animal <span style="color:red">*</span>
-      </label>
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Type d'Animal <span style="color:red">*</span></label>
       <p-dropdown formControlName="typeAnimalId"
                   [options]="typesAnimaux" optionLabel="nom" optionValue="id"
                   placeholder="Sélectionnez un type" styleClass="w-full"
@@ -103,44 +97,37 @@
       </p-dropdown>
     </div>
 
-    <!-- Date d'Entrée -->
-    <div class="field mb-4">
-      <label class="block font-semibold mb-2" style="font-size:14px;">
-        Date d'Entrée <span style="color:red">*</span>
-      </label>
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Date d'Entrée <span style="color:red">*</span></label>
       <p-calendar formControlName="dateEntree" dateFormat="dd/mm/yy"
                   [showIcon]="true" appendTo="body" styleClass="w-full"
                   [inputStyle]="{'height':'45px'}">
       </p-calendar>
     </div>
 
-    <!-- Poids + État santé -->
-    <div class="grid mb-4">
+    <div class="grid">
       <div class="col-6">
-        <label class="block font-semibold mb-2" style="font-size:14px;">
-          Poids Initial (kg) <span style="color:red">*</span>
-        </label>
-        <input type="number" step="0.1" min="0" placeholder="ex: 120"
-               formControlName="poidsInitial" pInputText class="w-full"
-               style="height:45px;" />
+        <div class="flex flex-column gap-1">
+          <label class="font-medium text-sm">Poids Initial (kg) <span style="color:red">*</span></label>
+          <input type="number" step="0.1" min="0" placeholder="ex: 120"
+                 formControlName="poidsInitial" pInputText class="w-full"
+                 style="height:45px;" />
+        </div>
       </div>
       <div class="col-6">
-        <label class="block font-semibold mb-2" style="font-size:14px;">
-          Etat de santé <span style="color:red">*</span>
-        </label>
-        <p-dropdown formControlName="etatSanteId"
-                    [options]="etatsSante" optionLabel="description" optionValue="id"
-                    placeholder="Sélectionnez un état" styleClass="w-full"
-                    [style]="{'height':'45px'}">
-        </p-dropdown>
+        <div class="flex flex-column gap-1">
+          <label class="font-medium text-sm">Etat de santé <span style="color:red">*</span></label>
+          <p-dropdown formControlName="etatSanteId"
+                      [options]="etatsSante" optionLabel="description" optionValue="id"
+                      placeholder="Sélectionnez un état" styleClass="w-full"
+                      [style]="{'height':'45px'}">
+          </p-dropdown>
+        </div>
       </div>
     </div>
 
-    <!-- Bâtiment -->
-    <div class="field mb-4">
-      <label class="block font-semibold mb-2" style="font-size:14px;">
-        Bâtiment <span style="color:red">*</span>
-      </label>
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Bâtiment <span style="color:red">*</span></label>
       <p-dropdown formControlName="batimentId"
                   [options]="batiments" optionLabel="nom" optionValue="id"
                   placeholder="Sélectionnez un bâtiment" styleClass="w-full"
@@ -155,11 +142,8 @@
       </p-dropdown>
     </div>
 
-    <!-- Box -->
-    <div class="field mb-4">
-      <label class="block font-semibold mb-2" style="font-size:14px;">
-        Box <span style="color:red">*</span>
-      </label>
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Box <span style="color:red">*</span></label>
       <p-dropdown formControlName="boxId"
                   [options]="boxesDisponibles" optionLabel="code" optionValue="id"
                   placeholder="Sélectionnez une box"
@@ -173,7 +157,7 @@
               ? 'color:#b91c1c; font-size:0.85rem;'
               : 'color:#15803d; font-size:0.85rem;'">
               {{ box.occupationActuelle }}/{{ box.capaciteMax }}
-              {{ box.occupationActuelle >= box.capaciteMax ? '🔴' : '🟢' }}
+              {{ box.occupationActuelle >= box.capaciteMax ? 'Plein' : 'Libre' }}
             </span>
           </div>
         </ng-template>
@@ -184,27 +168,28 @@
       </small>
     </div>
 
-    <!-- Observations -->
-    <div class="field mb-3">
-      <label class="block font-semibold mb-2" style="font-size:14px;">Observations</label>
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Observations</label>
       <textarea rows="3" placeholder="Observations sur l'animal..."
-                formControlName="observations" pInputTextarea class="w-full"
-                style="font-size:14px; padding:10px;">
+                formControlName="observations" pInputTextarea class="w-full">
       </textarea>
     </div>
 
   </form>
 
   <ng-template pTemplate="footer">
-    <div class="flex gap-3 w-full">
-      <button type="submit" [disabled]="animalForm.invalid"
-              form="animalForm" [loading]="processing"
-              pButton label="Enregistrer" class="p-button-success flex-1"
-              style="height:45px;">
+    <div class="flex justify-content-end gap-2">
+      <button type="button" pButton
+              label="Annuler" icon="pi pi-times"
+              class="p-button-outlined p-button-secondary p-button-sm"
+              (click)="showForm=false">
       </button>
-      <button (click)="showForm=false" pButton label="Annuler"
-              class="p-button-outlined"
-              style="color:#8B5E3C; border-color:#8B5E3C; height:45px; min-width:140px;">
+      <button type="submit" form="animalForm" pButton
+              [label]="mode === 'create' ? 'Enregistrer' : 'Mettre à jour'"
+              icon="pi pi-check"
+              class="p-button-success p-button-sm"
+              [disabled]="animalForm.invalid"
+              [loading]="processing">
       </button>
     </div>
   </ng-template>

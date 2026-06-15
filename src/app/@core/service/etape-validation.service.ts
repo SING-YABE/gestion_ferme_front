@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 // src/app/@core/service/etape-validation.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -22,7 +23,7 @@ export interface ValiderEtapeRequestDTO {
   providedIn: 'root'
 })
 export class EtapeValidationService {
-  private apiUrl = 'http://localhost:8080/api/etapes';
+  private apiUrl = environment.apiUrl + '/api/etapes';
 
   constructor(private http: HttpClient) { }
 

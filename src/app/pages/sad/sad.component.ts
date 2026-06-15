@@ -18,6 +18,7 @@ import { TagModule }             from 'primeng/tag';
 import { DividerModule }         from 'primeng/divider';
 import { ToastModule }           from 'primeng/toast';
 import { DialogModule }          from 'primeng/dialog';
+import { TooltipModule }         from 'primeng/tooltip';
 import { MessageService }        from 'primeng/api';
 
 import { HomeService, AdvisorAlert, AdvisorAlertsResponse } from '../../@core/service/home-service.service';
@@ -34,7 +35,7 @@ interface ChatMessage {
   selector: 'app-sad',
   standalone: true,
   imports: [CommonModule, FormsModule, ProgressSpinnerModule, TagModule,
-            DividerModule, ToastModule, DialogModule],
+            DividerModule, ToastModule, DialogModule, TooltipModule],
   providers: [MessageService],
   templateUrl: './sad.component.html',
   styleUrls: ['./sad.component.scss']

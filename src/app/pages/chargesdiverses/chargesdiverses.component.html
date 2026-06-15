@@ -1,33 +1,32 @@
-<div 
-  class="odyssey-shadow-low border-round" 
-  style="background:#F5F0E6; border:1px solid #D9D2C2;"
->
-  <div class="px-4 py-2 flex gap-3 align-items-center"
-       style="background:#2E7D32; color:white; border-radius:8px 8px 0 0;">
-    
-    <h5 class="m-0 flex-1">Gestion des charges diverses</h5>
+<div class="surface-card border-round-lg shadow-2 overflow-hidden">
 
-    <app-chargesdiverses-form 
-      mode="create"
-      (onUpdate)="loadData()"
-    ></app-chargesdiverses-form>
+  <!-- En-tête -->
+  <div class="flex align-items-center justify-content-between flex-wrap gap-2 px-4 py-3"
+       style="background: #2E7D32;">
+    <div class="flex align-items-center gap-2">
+      <i class="pi pi-file-edit text-white text-xl"></i>
+      <h5 class="m-0 text-white font-semibold">Gestion des charges diverses</h5>
+    </div>
+    <app-chargesdiverses-form mode="create" (onUpdate)="loadData()"></app-chargesdiverses-form>
   </div>
 
-
+  <!-- Table -->
   <p-table
     [value]="data"
     [loading]="loading"
     [rows]="pageSize"
     [paginator]="data.length > pageSize"
-    styleClass="p-datatable-sm"
-  >
+    [rowsPerPageOptions]="[5, 10, 30, 40]"
+    styleClass="p-datatable-sm p-datatable-hoverable-rows p-datatable-gridlines"
+    [tableStyle]="{'min-width': '30rem'}">
+
     <ng-template pTemplate="header">
-      <tr style="background:#DCFCE7;">
+      <tr>
         <th>Date</th>
         <th>Description</th>
         <th>Montant</th>
         <th>Mode de paiement</th>
-        <th style="text-align:center; width:150px">Actions</th>
+        <th style="width: 110px; text-align: center;">Actions</th>
       </tr>
     </ng-template>
 
@@ -38,20 +37,11 @@
         <td><strong>{{ row.montant }} FCFA</strong></td>
         <td>{{ row.modePaiement }}</td>
         <td>
-          <div class="flex justify-content-center gap-2">
-            
-            <app-chargesdiverses-form
-              [target]="row"
-              mode="edit"
-              (onUpdate)="loadData()"
-            ></app-chargesdiverses-form>
-
-            <button pButton 
-                    icon="pi pi-trash" 
-                    class="p-button-rounded"
-                    style="background:#B91C1C; border-color:#B91C1C;"
-                    (click)="confirmDelete(row)">
-            </button>
+          <div class="flex gap-1 justify-content-center">
+            <app-chargesdiverses-form [target]="row" mode="edit" (onUpdate)="loadData()"></app-chargesdiverses-form>
+            <button pButton icon="pi pi-trash"
+                    class="p-button-rounded p-button-sm p-button-danger"
+                    (click)="confirmDelete(row)"></button>
           </div>
         </td>
       </tr>
@@ -59,12 +49,16 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5" class="text-center py-4">
-          <i class="pi pi-inbox mr-2"></i> Aucune charge trouvée
+        <td [attr.colspan]="5">
+          <div class="flex flex-column align-items-center py-6 text-color-secondary">
+            <i class="pi pi-inbox text-5xl mb-3"></i>
+            <span>Aucune charge trouvée</span>
+          </div>
         </td>
       </tr>
     </ng-template>
+
   </p-table>
 </div>
 
-<p-confirmDialog></p-confirmDialog>
+<p-confirmDialog [style]="{width: 'min(450px, 95vw)'}"></p-confirmDialog>

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class PredictionService {
 
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = 'http://localhost:8001/api';
 
   constructor(private http: HttpClient) { }
 
@@ -162,7 +162,7 @@ export class PredictionService {
   // ========== HEALTH ==========
   
   healthCheck(): Observable<any> {
-    return this.http.get<any>('http://localhost:8000/');
+    return this.http.get<any>('http://localhost:8001/');
   }
 
 

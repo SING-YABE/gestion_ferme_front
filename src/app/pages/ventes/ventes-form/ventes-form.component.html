@@ -1,286 +1,194 @@
-<button
-  pButton
-  icon="pi pi-plus"
-  label="Nouvelle vente"
-  class="p-button-success"
-  style="background:#2E7D32; border-color:#2E7D32;"
-  (click)="handleShow()">
+<!-- Bouton déclencheur -->
+<button pButton
+        icon="pi pi-plus"
+        label="Ajouter"
+        class="p-button-sm"
+        style="background: transparent; border: 2px solid white; color: white;"
+        (click)="handleShow()">
 </button>
 
+<!-- Dialog -->
 <p-dialog
-  header="🐄 Nouvelle Vente"
-  [(visible)]="showForm"
-  [modal]="true"
-  [style]="{width: '95%', maxWidth: '700px'}"
-  [breakpoints]="{'960px': '95vw', '640px': '98vw'}"
-  appendTo="body"
-  [contentStyle]="{padding: '1.25rem'}">
+    header="Nouvelle Vente"
+    [(visible)]="showForm"
+    [modal]="true"
+    [style]="{width: 'min(700px, 95vw)'}"
+    appendTo="body"
+    [contentStyle]="{padding: '1.25rem'}">
 
-  <p style="color: #6b7280; margin: -0.5rem 0 1.5rem; font-size: 0.95rem;">
+  <p class="text-color-secondary mt-0 mb-3" style="font-size: 0.95rem;">
     Enregistrez la vente d'un ou plusieurs animaux
   </p>
 
-  <form [formGroup]="form">
+  <form [formGroup]="form" class="flex flex-column gap-3">
 
-    <!-- Section Client & Date -->
-    <div style="background: #f9fafb; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
-      
-      <!-- Date de vente -->
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-          📅 Date de vente <span style="color: #ef4444;">*</span>
-        </label>
-        <p-calendar
-          formControlName="dateVente"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          placeholder="Sélectionner"
-          styleClass="w-full"
-          [style]="{width: '100%'}"
+    <div class="p-3" style="background: #f9fafb; border-radius: 12px;">
+
+      <div class="flex flex-column gap-1 mb-3">
+        <label class="font-medium text-sm">Date de vente <span style="color: #ef4444;">*</span></label>
+        <p-calendar formControlName="dateVente" dateFormat="dd/mm/yy" [showIcon]="true"
+          placeholder="Sélectionner" styleClass="w-full"
           [inputStyle]="{height: '48px', fontSize: '1rem', borderRadius: '10px'}">
         </p-calendar>
       </div>
 
-      <!-- Client -->
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-          Client <span style="color: #ef4444;">*</span>
-        </label>
-        <input
-          pInputText
-          formControlName="client"
-          placeholder="Nom du client"
-          style="width: 100%; height: 48px; font-size: 1rem; border-radius: 10px;">
+      <div class="flex flex-column gap-1 mb-3">
+        <label class="font-medium text-sm">Client <span style="color: #ef4444;">*</span></label>
+        <input pInputText formControlName="client" placeholder="Nom du client"
+               class="w-full" style="height: 48px; font-size: 1rem; border-radius: 10px;" />
       </div>
 
-      <!-- Dates d'enlèvement (collapsible) -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-        <div>
-          <label style="display: block; margin-bottom: 0.5rem; color: #6b7280; font-weight: 500; font-size: 0.85rem;">
-          Enlèvement prévu
-          </label>
-          <p-calendar
-            formControlName="dateEnlevement"
-            dateFormat="dd/mm/yy"
-            [showIcon]="true"
-            placeholder="Optionnel"
-            styleClass="w-full"
-            [style]="{width: '100%'}"
-            [inputStyle]="{height: '45px', fontSize: '0.95rem', borderRadius: '8px'}">
-          </p-calendar>
+      <div class="grid">
+        <div class="col-6">
+          <div class="flex flex-column gap-1">
+            <label class="font-medium text-sm">Enlèvement prévu</label>
+            <p-calendar formControlName="dateEnlevement" dateFormat="dd/mm/yy" [showIcon]="true"
+              placeholder="Optionnel" styleClass="w-full"
+              [inputStyle]="{height: '45px', fontSize: '0.95rem', borderRadius: '8px'}">
+            </p-calendar>
+          </div>
         </div>
 
-        <div>
-          <label style="display: block; margin-bottom: 0.5rem; color: #6b7280; font-weight: 500; font-size: 0.85rem;">
-          Au plus tard
-          </label>
-          <p-calendar
-            formControlName="dateEnlevementAuPlusTard"
-            dateFormat="dd/mm/yy"
-            [showIcon]="true"
-            placeholder="Optionnel"
-            styleClass="w-full"
-            [style]="{width: '100%'}"
-            [inputStyle]="{height: '45px', fontSize: '0.95rem', borderRadius: '8px'}">
-          </p-calendar>
+        <div class="col-6">
+          <div class="flex flex-column gap-1">
+            <label class="font-medium text-sm">Au plus tard</label>
+            <p-calendar formControlName="dateEnlevementAuPlusTard" dateFormat="dd/mm/yy" [showIcon]="true"
+              placeholder="Optionnel" styleClass="w-full"
+              [inputStyle]="{height: '45px', fontSize: '0.95rem', borderRadius: '8px'}">
+            </p-calendar>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Section Animaux -->
-   <!-- Section Animaux -->
-<div style="margin-bottom: 1.5rem;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-    <label style="color: #374151; font-weight: 600; font-size: 1rem;">
-    Animaux à vendre
-    </label>
-    <button
-      pButton
-      type="button"
-      icon="pi pi-plus"
-      label="Ajouter"
-      class="p-button-sm"
-      style="background: #059669; border-color: #059669; border-radius: 8px; font-size: 0.9rem; padding: 0.5rem 1rem;"
-      (click)="ajouterAnimal()">
-    </button>
-  </div>
-
-  <div formArrayName="animaux">
-
-    <!-- Message vide -->
-    <div *ngIf="animaux.length === 0"
-         style="text-align: center; padding: 2rem; background: #f9fafb; border: 2px dashed #d1d5db; border-radius: 12px; color: #9ca3af;">
-      <i class="pi pi-info-circle" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
-      Aucun animal ajouté pour le moment
-    </div>
-
-    <!-- Liste des animaux -->
-    <div
-      *ngFor="let animal of animaux.controls; let i = index"
-      [formGroupName]="i"
-      style="background: #ffffff; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-
-      <!-- En-tête animal -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f3f4f6;">
-        <strong style="color: #059669; font-size: 1rem;">
-          🐄 Animal {{ i + 1 }}
-        </strong>
-        <button
-          pButton
-          type="button"
-          icon="pi pi-trash"
-          class="p-button-text p-button-sm p-button-danger"
-          style="padding: 0.4rem 0.6rem;"
-          (click)="supprimerAnimal(i)">
+    <div>
+      <div class="flex justify-content-between align-items-center mb-3">
+        <label class="font-semibold">Animaux à vendre</label>
+        <button pButton type="button" icon="pi pi-plus" label="Ajouter"
+                class="p-button-success p-button-sm"
+                (click)="ajouterAnimal()">
         </button>
       </div>
 
-      <!-- Code Animal -->
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-          Code Animal <span style="color: #ef4444;">*</span>
-        </label>
-        <p-dropdown
-          formControlName="codeAnimal"
-          [options]="animauxDisponibles"
-          optionLabel="codeAnimal"
-          optionValue="codeAnimal"
-          placeholder="Sélectionner un animal"
-          [filter]="true"
-          styleClass="w-full dropdown-custom"
-          [style]="{width: '100%'}">
-          <ng-template let-item pTemplate="item">
-            <div style="padding: 0.5rem 0;">
-              <div style="font-weight: 600; color: #059669; margin-bottom: 0.25rem;">
-                {{ item.codeAnimal }}
-              </div>
-              <div style="font-size: 0.85rem; color: #6b7280;">
-                {{ item.typeAnimal.nom }} • {{ item.poidsInitial }} kg
+      <div formArrayName="animaux">
+
+        <div *ngIf="animaux.length === 0"
+             class="flex flex-column align-items-center py-4 text-color-secondary"
+             style="background: #f9fafb; border: 2px dashed #d1d5db; border-radius: 12px;">
+          <i class="pi pi-info-circle text-4xl mb-2"></i>
+          Aucun animal ajouté pour le moment
+        </div>
+
+        <div *ngFor="let animal of animaux.controls; let i = index"
+             [formGroupName]="i"
+             class="p-3 mb-3"
+             style="background: #ffffff; border: 1.5px solid #e5e7eb; border-radius: 12px;">
+
+          <div class="flex justify-content-between align-items-center mb-3 pb-2"
+               style="border-bottom: 1px solid #f3f4f6;">
+            <strong style="color: #059669;">Animal {{ i + 1 }}</strong>
+            <button pButton type="button" icon="pi pi-trash"
+                    class="p-button-text p-button-sm p-button-danger"
+                    (click)="supprimerAnimal(i)">
+            </button>
+          </div>
+
+          <div class="flex flex-column gap-1 mb-3">
+            <label class="font-medium text-sm">Code Animal <span style="color: #ef4444;">*</span></label>
+            <p-dropdown formControlName="codeAnimal" [options]="animauxDisponibles"
+                        optionLabel="codeAnimal" optionValue="codeAnimal"
+                        placeholder="Sélectionner un animal" [filter]="true" styleClass="w-full">
+              <ng-template let-item pTemplate="item">
+                <div style="padding: 0.5rem 0;">
+                  <div style="font-weight: 600; color: #059669;">{{ item.codeAnimal }}</div>
+                  <div style="font-size: 0.85rem; color: #6b7280;">
+                    {{ item.typeAnimal.nom }} • {{ item.poidsInitial }} kg
+                  </div>
+                </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+
+          <div class="flex flex-column gap-1 mb-3">
+            <label class="font-medium text-sm">Type de vente <span style="color: #ef4444;">*</span></label>
+            <p-dropdown formControlName="typeVenteId" [options]="typesVente"
+                        optionLabel="nom" optionValue="id"
+                        placeholder="Sélectionner" styleClass="w-full">
+            </p-dropdown>
+          </div>
+
+          <div class="flex flex-column gap-1 mb-3">
+            <label class="font-medium text-sm">Mode de vente <span style="color: #ef4444;">*</span></label>
+            <p-selectButton formControlName="modeVente" [options]="modesVente"
+                            optionLabel="label" optionValue="value" styleClass="w-full">
+            </p-selectButton>
+          </div>
+
+          <div *ngIf="getModeVente(i) === 'AU_POIDS'" class="grid mb-3">
+            <div class="col-6">
+              <div class="flex flex-column gap-1">
+                <label class="font-medium text-sm">Poids (kg) <span style="color: #ef4444;">*</span></label>
+                <input pInputText type="number" step="0.1" formControlName="poidsVente"
+                       placeholder="0.0" class="w-full" style="height: 45px;" />
               </div>
             </div>
-          </ng-template>
-        </p-dropdown>
-      </div>
+            <div class="col-6">
+              <div class="flex flex-column gap-1">
+                <label class="font-medium text-sm">Prix/kg <span style="color: #ef4444;">*</span></label>
+                <input pInputText type="number" formControlName="prixUnitaire"
+                       placeholder="0" class="w-full" style="height: 45px;" />
+              </div>
+            </div>
+          </div>
 
-      <!-- Type de vente -->
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-          Type de vente <span style="color: #ef4444;">*</span>
-        </label>
-        <p-dropdown
-          formControlName="typeVenteId"
-          [options]="typesVente"
-          optionLabel="nom"
-          optionValue="id"
-          placeholder="Sélectionner"
-          styleClass="w-full dropdown-custom"
-          [style]="{width: '100%'}">
-        </p-dropdown>
-      </div>
+          <div *ngIf="getModeVente(i) === 'SANS_PESEE'" class="flex flex-column gap-1 mb-3">
+            <label class="font-medium text-sm">Prix négocié <span style="color: #ef4444;">*</span></label>
+            <input pInputText type="number" formControlName="prixNegocie"
+                   placeholder="0" class="w-full" style="height: 45px;" />
+          </div>
 
-      <!-- Choix du mode de vente -->
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500; font-size: 0.9rem;">
-          Mode de vente <span style="color: #ef4444;">*</span>
-        </label>
-        <p-selectButton
-          formControlName="modeVente"
-          [options]="modesVente"
-          optionLabel="label"
-          optionValue="value"
-          styleClass="w-full">
-        </p-selectButton>
-      </div>
+          <div style="background: #ecfdf5; padding: 0.75rem 1rem; border-radius: 8px; border-left: 3px solid #059669;">
+            <div class="flex justify-content-between align-items-center">
+              <span style="color: #047857; font-size: 0.9rem;">Montant</span>
+              <strong style="color: #059669; font-size: 1.1rem;">
+                {{ calculerMontantAnimal(i) | number:'1.0-0' }} FCFA
+              </strong>
+            </div>
+          </div>
 
-      <!-- Champs dynamiques selon le mode -->
-      <!-- AU_POIDS -->
-      <div *ngIf="getModeVente(i) === 'AU_POIDS'" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
-        <div>
-          <label>⚖️ Poids (kg) <span style="color: #ef4444;">*</span></label>
-          <input
-            pInputText
-            type="number"
-            step="0.1"
-            formControlName="poidsVente"
-            placeholder="0.0"
-            style="width: 100%; height: 45px; font-size: 1rem; border-radius: 8px;">
-        </div>
-        <div>
-          <label>💰 Prix/kg <span style="color: #ef4444;">*</span></label>
-          <input
-            pInputText
-            type="number"
-            formControlName="prixUnitaire"
-            placeholder="0"
-            style="width: 100%; height: 45px; font-size: 1rem; border-radius: 8px;">
         </div>
       </div>
-
-      <!-- SANS_PESEE -->
-      <div *ngIf="getModeVente(i) === 'SANS_PESEE'" style="margin-bottom: 1rem;">
-        <label>💰 Prix négocié <span style="color: #ef4444;">*</span></label>
-        <input
-          pInputText
-          type="number"
-          formControlName="prixNegocie"
-          placeholder="0"
-          style="width: 100%; height: 45px; font-size: 1rem; border-radius: 8px;">
-      </div>
-
-      <!-- Montant calculé -->
-      <div style="background: #ecfdf5; padding: 0.75rem 1rem; border-radius: 8px; border-left: 3px solid #059669;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span style="color: #047857; font-size: 0.9rem;">Montant</span>
-          <strong style="color: #059669; font-size: 1.1rem;">
-            {{ calculerMontantAnimal(i) | number:'1.0-0' }} FCFA
-          </strong>
-        </div>
-      </div>
-
     </div>
-  </div>
-</div>
 
     <!-- Montant total -->
-       <div style="padding: 1.25rem; border-radius: 12px; color: #111; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-
-      <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="p-3" style="background: #f9fafb; border-radius: 12px; border: 1px solid #e5e7eb;">
+      <div class="flex justify-content-between align-items-center">
         <div>
-          <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.25rem;">
-            MONTANT TOTAL
-          </div>
-          <div style="font-size: 1.5rem; font-weight: 700;">
-            {{ calculerMontantTotal() | number:'1.0-0' }} FCFA
-          </div>
+          <div class="text-sm text-color-secondary mb-1">MONTANT TOTAL</div>
+          <div class="text-2xl font-bold">{{ calculerMontantTotal() | number:'1.0-0' }} FCFA</div>
         </div>
-        <i class="pi pi-money-bill" style="font-size: 2.5rem; opacity: 0.3;"></i>
+        <i class="pi pi-money-bill text-4xl text-color-secondary"></i>
       </div>
     </div>
 
   </form>
 
   <ng-template pTemplate="footer">
-    <div style="display: flex; gap: 0.75rem; padding-top: 0.75rem;">
-      <button
-        pButton
-        label="Annuler"
-        class="p-button-text"
-        type="button"
-        (click)="showForm = false"
-        style="flex: 1; padding: 0.75rem; color: #6b7280;">
+    <div class="flex justify-content-end gap-2">
+      <button pButton label="Annuler" type="button"
+              class="p-button-outlined p-button-secondary p-button-sm"
+              (click)="showForm = false">
       </button>
-      <button
-        pButton
-        label="Enregistrer"
-        icon="pi pi-check"
-        class="p-button-success"
-        [loading]="processing"
-        [disabled]="form.invalid || animaux.length === 0"
-        style="flex: 2; background:#059669; border-color:#059669; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 500;"
-        (click)="handleSubmit()">
+      <button pButton
+              label="Enregistrer"
+              icon="pi pi-check"
+              class="p-button-success p-button-sm"
+              [loading]="processing"
+              [disabled]="form.invalid || animaux.length === 0"
+              (click)="handleSubmit()">
       </button>
     </div>
   </ng-template>
 
 </p-dialog>
-

@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap, switchMap } from 'rxjs';
 import { PermissionType } from '../security/permissions.constants';
 import { RoleType } from '../security/roles.constants';
+import { environment } from '../../../environments/environment';
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = environment.apiUrl;
 
 /** Réponse du backend au login */
 export interface LoginResponse {
@@ -37,7 +38,16 @@ export class AuthService {
   private sessionSubject = new BehaviorSubject<SessionData | null>(this.loadSession());
   session$ = this.sessionSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+    // Vérifie l'expiration du token toutes les 30 secondes.
+    // Si le token est expiré, déconnecte l'utilisateur immédiatement
+    // sans attendre une prochaine requête API.
+    setInterval(() => {
+      if (this.sessionSubject.value && !this.isLoggedIn()) {
+        this.logout();
+      }
+    }, 30_000);
+  }
 
   // ─── Authentification ────────────────────────────────────────────────────
 
@@ -79,7 +89,21 @@ export class AuthService {
   // ─── Accès à la session ───────────────────────────────────────────────────
 
   isLoggedIn(): boolean {
-    return !!this.sessionSubject.value?.token;
+    const token = this.sessionSubject.value?.token;
+    if (!token) return false;
+    return !this._isTokenExpired(token);
+  }
+
+  /** Décode le JWT et vérifie si le champ `exp` est dépassé. */
+  private _isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // `exp` est en secondes Unix, Date.now() en millisecondes
+      return payload.exp * 1000 < Date.now();
+    } catch {
+      // Token malformé → considéré expiré
+      return true;
+    }
   }
 
   getToken(): string | null {

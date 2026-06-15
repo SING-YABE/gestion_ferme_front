@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 // src/app/@core/service/assignation.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -26,7 +27,7 @@ export interface ChoisirGestionnaireRequest {
   providedIn: 'root'
 })
 export class AssignationService {
-  private apiUrl = 'http://localhost:8080/api/assignations';
+  private apiUrl = environment.apiUrl + '/api/assignations';
 
   constructor(private http: HttpClient) { }
 

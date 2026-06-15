@@ -13,6 +13,8 @@ import { ParametrageService, ParametresEleveur } from '../../../@core/service/pa
 })
 export class ParametragesComponent implements OnInit {
 
+  activeSection: 'ferme' | 'logo' | 'advisor' = 'ferme';
+
   settings: AppSettings = {
     id: 0,
     farmName: '',

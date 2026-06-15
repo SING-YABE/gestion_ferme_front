@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BatimentResponseDTO } from './batiment.service';
@@ -23,7 +24,7 @@ interface ApiResponse<T> {
 })
 export class TypeventeService {
 
-   private apiUrl = 'http://localhost:8080/api/typevente';
+   private apiUrl = environment.apiUrl + '/api/typevente';
   
     constructor(private http: HttpClient) {}
   

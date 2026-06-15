@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 // src/app/@core/service/equipement.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -30,7 +31,7 @@ export interface EquipementDTO {
   providedIn: 'root'
 })
 export class EquipementService {
-  private apiUrl = 'http://localhost:8080/api/admin/equipements';
+  private apiUrl = environment.apiUrl + '/api/admin/equipements';
 
   constructor(private http: HttpClient) { }
 

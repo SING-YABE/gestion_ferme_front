@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 // src/app/@core/service/categorie.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -17,7 +18,7 @@ export interface CategorieDTO {
   providedIn: 'root'
 })
 export class CategorieService {
-  private apiUrl = 'http://localhost:8080/api/admin/categories';
+  private apiUrl = environment.apiUrl + '/api/admin/categories';
 
   constructor(private http: HttpClient) { }
 

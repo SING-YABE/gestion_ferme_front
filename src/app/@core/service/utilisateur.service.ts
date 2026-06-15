@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -35,7 +36,7 @@ export interface AssignRoleDTO {
   providedIn: 'root'
 })
 export class UtilisateurService {
-  private apiUrl = 'http://localhost:8080/api/admin/utilisateurs';
+  private apiUrl = environment.apiUrl + '/api/admin/utilisateurs';
 
   constructor(private http: HttpClient) { }
 

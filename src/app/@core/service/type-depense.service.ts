@@ -12,7 +12,7 @@ export interface TypeDepenseDTO {
 })
 export class TypeDepenseService {
 
-  private apiUrl = 'http://localhost:8000/expenses/types/list';
+  private apiUrl = 'http://localhost:8001/expenses/types/list';
 
   constructor(private http: HttpClient) {}
   

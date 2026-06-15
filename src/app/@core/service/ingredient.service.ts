@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -19,7 +20,7 @@ export interface IngredientResponseDTO {
   providedIn: 'root'
 })
 export class IngredientService {
-  private apiUrl = 'http://localhost:8080/api/ingredients';
+  private apiUrl = environment.apiUrl + '/api/ingredients';
 
   constructor(private http: HttpClient) {}
 

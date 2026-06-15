@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 // src/app/@core/service/role-management.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -16,7 +17,7 @@ export interface RoleManagementDTO {
   providedIn: 'root'
 })
 export class RoleManagementService {
-  private apiUrl = 'http://localhost:8080/api/admin/roles';
+  private apiUrl = environment.apiUrl + '/api/admin/roles';
 
   constructor(private http: HttpClient) { }
 

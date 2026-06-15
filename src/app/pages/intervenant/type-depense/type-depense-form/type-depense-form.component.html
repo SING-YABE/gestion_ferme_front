@@ -1,46 +1,40 @@
-<p-dialog 
-  header="{{ mode === 'create' ? 'Nouveau type de dépense' : 'Modifier type de dépense' }}" 
-  appendTo="body" 
-  [modal]="true" 
-  [(visible)]="showForm"
-  [baseZIndex]="9000"
-  [style]="{width: '600px'}"
-  styleClass="farm-dialog"
->
-  <form [formGroup]="typeDepenseForm" (ngSubmit)="handleSubmit()">
-    <div class="field">
-      <label for="nom" class="block mb-2 font-medium" style="color: #1f2937; font-size: 1rem;">
-        Nom du type de dépense
-      </label>
-      <input 
-        id="nom"
-        placeholder="Pour consommation" 
-        formControlName="nom" 
-        pInputText
-        style="width: 100%; height: 50px; font-size: 1rem; padding: 0.875rem;"
-      />
+<!-- Dialog -->
+<p-dialog
+    [header]="mode === 'create' ? 'Nouveau type de dépense' : 'Modifier type de dépense'"
+    appendTo="body"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [baseZIndex]="9000"
+    [style]="{width: 'min(480px, 95vw)'}"
+    [(visible)]="showForm">
+
+  <form [formGroup]="typeDepenseForm" (ngSubmit)="handleSubmit()" class="flex flex-column gap-3 pt-2">
+
+    <div class="flex flex-column gap-1">
+      <label for="nom" class="font-medium text-sm">Nom du type de dépense</label>
+      <input id="nom" type="text" formControlName="nom" pInputText
+             placeholder="Pour consommation" class="w-full" />
     </div>
+
   </form>
 
-  <!-- Footer en dehors du form -->
   <ng-template pTemplate="footer">
-    <button 
-      (click)="showForm = false" 
-      pButton 
-      class="p-button-outlined mr-2" 
-      style="color:#8B5E3C; border-color:#8B5E3C; padding: 0.75rem 1.5rem; font-size: 0.95rem;">
-      Annuler
-    </button>
-
-    <button 
-      type="button"
-      [disabled]="typeDepenseForm.invalid" 
-      [loading]="processing" 
-      pButton 
-      class="p-button-success"
-      style="padding: 0.75rem 1.5rem; font-size: 0.95rem;"
-      (click)="handleSubmit()">
-      Enregistrer
-    </button>
+    <div class="flex justify-content-end gap-2">
+      <button type="button" pButton
+              label="Annuler" icon="pi pi-times"
+              class="p-button-outlined p-button-secondary p-button-sm"
+              (click)="showForm=false">
+      </button>
+      <button type="button" pButton
+              [label]="mode === 'create' ? 'Enregistrer' : 'Mettre à jour'"
+              icon="pi pi-check"
+              class="p-button-success p-button-sm"
+              [disabled]="typeDepenseForm.invalid"
+              [loading]="processing"
+              (click)="handleSubmit()">
+      </button>
+    </div>
   </ng-template>
+
 </p-dialog>

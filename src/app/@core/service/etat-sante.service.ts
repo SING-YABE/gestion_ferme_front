@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -29,7 +30,7 @@ interface ApiResponse<T> {
   providedIn: 'root'
 })
 export class EtatSanteService {
-  private apiUrl = 'http://localhost:8080/api/etat-sante';
+  private apiUrl = environment.apiUrl + '/api/etat-sante';
 
   constructor(private http: HttpClient) {}
 

@@ -1,15 +1,26 @@
-<button *ngIf="mode === 'create'" pButton icon="pi pi-plus" label="Nouveau soin" class="p-button-success"
-  style="background:#2E7D32; border-color:#2E7D32;" (click)="handleShow()">
+<!-- Bouton déclencheur create -->
+<button *ngIf="mode === 'create'"
+        pButton
+        icon="pi pi-plus"
+        label="Ajouter"
+        class="p-button-sm"
+        style="background: transparent; border: 2px solid white; color: white;"
+        (click)="handleShow()">
 </button>
 
-<button *ngIf="mode === 'edit'" pButton icon="pi pi-pencil" class="p-button-rounded"
-  style="background:#4CAF50; border-color:#4CAF50;" (click)="handleShow()">
+<!-- Bouton déclencheur edit -->
+<button *ngIf="mode === 'edit'"
+        pButton
+        icon="pi pi-pencil"
+        class="p-button-rounded p-button-sm"
+        style="background: #16A34A; border-color: #16A34A; color: white;"
+        (click)="handleShow()">
 </button>
 
-<p-dialog [(visible)]="showForm" [modal]="true" appendTo="body" [style]="{width: '700px'}" [draggable]="false"
-  [resizable]="false">
+<!-- Dialog -->
+<p-dialog [(visible)]="showForm" [modal]="true" appendTo="body"
+          [style]="{width: 'min(700px, 95vw)'}" [draggable]="false" [resizable]="false">
 
-  <!-- Header -->
   <ng-template pTemplate="header">
     <div class="flex align-items-center gap-2">
       <i class="pi pi-heart" style="font-size: 1.5rem;"></i>
@@ -17,17 +28,16 @@
     </div>
   </ng-template>
 
-  <form [formGroup]="form" id="soinsForm" (ngSubmit)="handleSubmit()">
+  <form [formGroup]="form" id="soinsForm" (ngSubmit)="handleSubmit()" class="flex flex-column gap-3 pt-2">
 
-    <!-- Type de soin -->
-    <div class="mb-4">
-      <label class="block font-semibold mb-3" style="font-size: 15px;">Type de soin</label>
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Type de soin</label>
       <div class="flex gap-4">
         <div class="flex align-items-center">
           <p-radioButton name="type" value="individuel" inputId="individuel" [(ngModel)]="typeSoin"
             [ngModelOptions]="{standalone: true}" (onClick)="onTypeSoinChange()">
           </p-radioButton>
-          <label for="individuel" class="ml-2 cursor-pointer" style="font-size: 14px;">
+          <label for="individuel" class="ml-2 cursor-pointer text-sm">
             <i class="pi pi-user mr-1"></i> Soin Individuel
           </label>
         </div>
@@ -36,29 +46,27 @@
           <p-radioButton name="type" value="collectif" inputId="collectif" [(ngModel)]="typeSoin"
             [ngModelOptions]="{standalone: true}" (onClick)="onTypeSoinChange()">
           </p-radioButton>
-          <label for="collectif" class="ml-2 cursor-pointer" style="font-size: 14px;">
+          <label for="collectif" class="ml-2 cursor-pointer text-sm">
             <i class="pi pi-users mr-1"></i> Soin Collectif
           </label>
         </div>
       </div>
     </div>
 
-    <!-- SOIN INDIVIDUEL -->
-    <div *ngIf="isIndividuel" class="mb-4">
-      <label class="block font-semibold mb-2" style="font-size: 15px;">Sélection de l'animal</label>
+    <div *ngIf="isIndividuel" class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Sélection de l'animal</label>
       <p-dropdown formControlName="codeAnimal" [options]="animals" optionLabel="label" optionValue="value"
         placeholder="Choisir un animal..." [filter]="true" filterBy="label" [showClear]="true" styleClass="w-full"
         [style]="{'height': '45px'}">
       </p-dropdown>
     </div>
 
-    <!-- SOIN COLLECTIF -->
-    <div *ngIf="isCollectif" class="mb-4">
-      <label class="block font-semibold mb-3" style="font-size: 15px;">Sélection des animaux</label>
+    <div *ngIf="isCollectif" class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Sélection des animaux</label>
 
-      <div class="flex align-items-center gap-2 mb-3">
+      <div class="flex align-items-center gap-2 mb-2">
         <p-checkbox formControlName="applyToAll" [binary]="true" inputId="applyToAll"></p-checkbox>
-        <label for="applyToAll" class="mb-0 cursor-pointer" style="font-size: 14px;">
+        <label for="applyToAll" class="mb-0 cursor-pointer text-sm">
           Appliquer à tous les animaux ({{ animals.length }} animaux)
         </label>
       </div>
@@ -69,83 +77,89 @@
       </p-multiSelect>
     </div>
 
-    <!-- Date et Vétérinaire -->
-    <div class="grid mb-4">
+    <div class="grid">
       <div class="col-6">
-        <label class="block mb-2 font-semibold" style="font-size: 14px;">Date du soin *</label>
-        <p-calendar formControlName="dateSoin" dateFormat="dd/mm/yy" [showIcon]="true" styleClass="w-full"
-          [inputStyle]="{'height': '45px'}">
-        </p-calendar>
+        <div class="flex flex-column gap-1">
+          <label class="font-medium text-sm">Date du soin *</label>
+          <p-calendar formControlName="dateSoin" dateFormat="dd/mm/yy" [showIcon]="true" styleClass="w-full"
+            [inputStyle]="{'height': '45px'}">
+          </p-calendar>
+        </div>
       </div>
 
       <div class="col-6">
-        <label class="block mb-2 font-semibold" style="font-size: 14px;">Vétérinaire</label>
-        <textarea pInputTextarea formControlName="veterinaire" rows="2" placeholder="Dr KABORE" class="w-full"
-          style="font-size: 10px; padding: 10px;"></textarea>
+        <div class="flex flex-column gap-1">
+          <label class="font-medium text-sm">Vétérinaire</label>
+          <textarea pInputTextarea formControlName="veterinaire" rows="2" placeholder="Dr KABORE" class="w-full"></textarea>
+        </div>
       </div>
     </div>
 
-    <!-- Motif -->
-    <div class="field mb-4">
-      <label class="block mb-2 font-semibold" style="font-size: 14px;">Motif *</label>
-      <textarea pInputTextarea formControlName="motif" rows="2" placeholder="Ex: Contrôle annuel, maladie..."
-        class="w-full" style="font-size: 14px; padding: 10px;"></textarea>
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Motif *</label>
+      <textarea pInputTextarea formControlName="motif" rows="2"
+                placeholder="Ex: Contrôle annuel, maladie..." class="w-full"></textarea>
     </div>
 
-    <!-- Traitement -->
-    <div class="field mb-4">
-      <label class="block mb-2 font-semibold" style="font-size: 14px;">Traitement *</label>
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Traitement *</label>
       <p-dropdown formControlName="traitement" [options]="traitements" optionLabel="nom" optionValue="nom"
         placeholder="Choisir un traitement..." [filter]="true" [showClear]="true" styleClass="w-full"
         [style]="{'height': '45px'}">
       </p-dropdown>
     </div>
 
-    <!-- Coûts -->
-    <div class="grid mb-4">
+    <div class="grid">
       <div class="col-6">
-        <label class="block mb-2 font-semibold" style="font-size: 19px;">Coût prestation (FCFA)</label>
-        <p-inputNumber formControlName="cout" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0"
-          placeholder="0.00" styleClass="w-full" [inputStyle]="{'height': '45px'}">
-        </p-inputNumber>
+        <div class="flex flex-column gap-1">
+          <label class="font-medium text-sm">Coût prestation (FCFA)</label>
+          <p-inputNumber formControlName="cout" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"
+                         [min]="0" placeholder="0.00" styleClass="w-full" [inputStyle]="{'height': '45px'}">
+          </p-inputNumber>
+        </div>
       </div>
 
       <div class="col-6">
-        <label class="block mb-2 font-semibold" style="font-size: 14px;">Coût médicament (FCFA)</label>
-        <p-inputNumber formControlName="coutMedicament" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"
-          [min]="0" placeholder="0.00" styleClass="w-full" [inputStyle]="{'height': '45px'}">
-        </p-inputNumber>
+        <div class="flex flex-column gap-1">
+          <label class="font-medium text-sm">Coût médicament (FCFA)</label>
+          <p-inputNumber formControlName="coutMedicament" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"
+                         [min]="0" placeholder="0.00" styleClass="w-full" [inputStyle]="{'height': '45px'}">
+          </p-inputNumber>
+        </div>
       </div>
     </div>
 
-    <!-- Total -->
-    <div class="field mb-4">
-      <label class="block mb-2 font-semibold" style="font-size: 14px;">Total (FCFA)</label>
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Total (FCFA)</label>
       <div class="w-full p-3 text-center font-bold"
         style="background: #e5e7eb; border-radius: 6px; font-size: 20px; padding: 12px;">
         {{ (form.get('cout')?.value || 0) + (form.get('coutMedicament')?.value || 0) | number:'1.2-2' }} FCFA
       </div>
     </div>
 
-    <!-- Observations -->
-    <div class="field mb-3">
-      <label class="block mb-2 font-semibold" style="font-size: 14px;">Observations</label>
-      <textarea pInputTextarea formControlName="observations" rows="3" placeholder="Notes additionnelles..."
-        class="w-full" style="font-size: 14px; padding: 10px;"></textarea>
+    <div class="flex flex-column gap-1">
+      <label class="font-medium text-sm">Observations</label>
+      <textarea pInputTextarea formControlName="observations" rows="3"
+                placeholder="Notes additionnelles..." class="w-full"></textarea>
     </div>
 
   </form>
 
   <ng-template pTemplate="footer">
-    <div class="flex gap-3 w-full">
-      <button pButton label="Enregistrer le soin" class="flex-1"
-        style="background: #1e293b; border-color: #1e293b; height: 45px; font-size: 14px; font-weight: 500;"
-        [disabled]="processing || !form.valid" [loading]="processing" (click)="handleSubmit()">
+    <div class="flex justify-content-end gap-2">
+      <button pButton label="Réinitialiser"
+              class="p-button-outlined p-button-secondary p-button-sm"
+              (click)="resetForm()">
       </button>
-
-      <button pButton label="Réinitialiser" class="p-button-outlined"
-        style="height: 45px; font-size: 14px; font-weight: 500; min-width: 140px;" (click)="resetForm()">
+      <button pButton
+              [label]="mode === 'create' ? 'Enregistrer' : 'Mettre à jour'"
+              icon="pi pi-check"
+              class="p-button-success p-button-sm"
+              [disabled]="processing || !form.valid"
+              [loading]="processing"
+              (click)="handleSubmit()">
       </button>
     </div>
   </ng-template>
+
 </p-dialog>

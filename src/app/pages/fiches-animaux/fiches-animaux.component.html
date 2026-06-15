@@ -1,49 +1,50 @@
-<div class="fa-shell">
+<div class="surface-card border-round-lg shadow-2 overflow-hidden">
 
-  <!-- ══════════════════════════════════════════
-       HEADER
-  ══════════════════════════════════════════ -->
-  <div class="fa-header">
-    <div class="fa-header-left">
-      <div class="fa-tab-group">
-        <button class="fa-tab" [class.active]="activeTab==='animaux'" (click)="activeTab='animaux'">
-          <span class="fa-tab-icon">🐾</span>
-          <span>Animaux</span>
+  <!-- En-tête -->
+  <div class="flex align-items-center justify-content-between flex-wrap gap-2 px-4 py-3"
+       style="background: #2E7D32;">
+    <div class="flex align-items-center gap-2">
+      <i class="pi pi-id-card text-white text-xl"></i>
+      <div class="flex gap-2">
+        <button class="p-button p-button-sm p-button-text"
+                style="color: white; border: 1px solid rgba(255,255,255,0.4); border-radius: 6px; padding: 4px 12px;"
+                [style.background]="activeTab==='animaux' ? 'rgba(255,255,255,0.2)' : 'transparent'"
+                (click)="activeTab='animaux'">
+          <i class="pi pi-list mr-1"></i> Animaux
         </button>
-        <button class="fa-tab" [class.active]="activeTab==='carriere'" (click)="activeTab='carriere'">
-          <span class="fa-tab-icon">🏆</span>
-          <span>Carrière &amp; Reproduction</span>
+        <button class="p-button p-button-sm p-button-text"
+                style="color: white; border: 1px solid rgba(255,255,255,0.4); border-radius: 6px; padding: 4px 12px;"
+                [style.background]="activeTab==='carriere' ? 'rgba(255,255,255,0.2)' : 'transparent'"
+                (click)="activeTab='carriere'">
+          <i class="pi pi-chart-bar mr-1"></i> Carrière &amp; Reproduction
         </button>
       </div>
     </div>
-    <div class="fa-header-right" *ngIf="activeTab==='animaux'">
+    <div *ngIf="activeTab==='animaux'">
       <app-fichesanimaux-form (onUpdate)="loadData()" mode="create"></app-fichesanimaux-form>
     </div>
   </div>
 
-
-  <!-- ══════════════════════════════════════════
-       ONGLET 1 — ANIMAUX
-  ══════════════════════════════════════════ -->
-  <div *ngIf="activeTab==='animaux'" class="fa-content">
+  <!-- ONGLET 1 — ANIMAUX -->
+  <div *ngIf="activeTab==='animaux'" class="fa-content p-3">
 
     <!-- FILTRES -->
-    <div class="fa-filters">
-      <div class="fa-filter-group">
+    <div class="fa-filters mb-3">
+      <div class="flex flex-wrap gap-3 align-items-center">
 
-        <div class="fa-filter-field">
-          <label class="fa-filter-label">Code Animal</label>
-          <div class="fa-input-wrap">
-            <i class="pi pi-search fa-input-icon"></i>
-            <input type="text" class="fa-input"
+        <div class="flex flex-column gap-1">
+          <label class="font-medium text-sm">Code Animal</label>
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText class="w-full"
                    [(ngModel)]="rechercheCode"
                    (ngModelChange)="onRechercheChange()"
-                   placeholder="Ex: P2, V5…" />
-          </div>
+                   placeholder="Ex: P2, V5..." />
+          </span>
         </div>
 
-        <div class="fa-filter-field">
-          <label class="fa-filter-label">Type d'Animal</label>
+        <div class="flex flex-column gap-1">
+          <label class="font-medium text-sm">Type d'Animal</label>
           <select class="fa-select"
                   [(ngModel)]="filtreTypeAnimal"
                   (ngModelChange)="onFiltreChange()">
@@ -52,8 +53,8 @@
           </select>
         </div>
 
-        <div class="fa-filter-field">
-          <label class="fa-filter-label">Bâtiment</label>
+        <div class="flex flex-column gap-1">
+          <label class="font-medium text-sm">Bâtiment</label>
           <select class="fa-select"
                   [(ngModel)]="filtreBatiment"
                   (ngModelChange)="onFiltreChange()">
@@ -62,167 +63,137 @@
           </select>
         </div>
 
-      </div>
-
-      <div class="fa-filter-meta">
-        <span class="fa-filter-count">{{ animalsFiltres.length }} animal(x)</span>
-        <button class="fa-btn-reset" (click)="resetFiltres()">
-          <i class="pi pi-refresh"></i> Réinitialiser
-        </button>
+        <div class="flex align-items-end gap-2">
+          <span class="text-color-secondary text-sm">{{ animalsFiltres.length }} animal(x)</span>
+          <button pButton label="Réinitialiser" icon="pi pi-refresh"
+                  class="p-button-outlined p-button-secondary p-button-sm"
+                  (click)="resetFiltres()">
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- TABLEAU -->
-    <div class="fa-table-wrap">
-      <p-table
-        [value]="animalsFiltres"
-        [paginator]="true"
-        [rows]="pageSize"
-        [showCurrentPageReport]="true"
-        currentPageReportTemplate="Page {currentPage} sur {totalPages} — {totalRecords} animaux"
-        styleClass="fa-ptable">
+    <p-table
+      [value]="animalsFiltres"
+      [paginator]="true"
+      [rows]="pageSize"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Page {currentPage} sur {totalPages} — {totalRecords} animaux"
+      styleClass="p-datatable-sm p-datatable-hoverable-rows p-datatable-gridlines"
+      [tableStyle]="{'min-width': '30rem'}">
 
-        <ng-template pTemplate="header">
-          <tr>
-            <th class="th-animal">Animal</th>
-            <th class="th-std">Type</th>
-            <th class="th-std">Date d'Entrée</th>
-            <th class="th-std">Poids</th>
-            <th class="th-std">État de Santé</th>
-            <th class="th-std">Bâtiment</th>
-            <th class="th-std">Box</th>
-            <th class="th-obs">Observations</th>
-            <th class="th-actions">Actions</th>
-          </tr>
-        </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Animal</th>
+          <th>Type</th>
+          <th>Date d'Entrée</th>
+          <th>Poids</th>
+          <th>État de Santé</th>
+          <th>Bâtiment</th>
+          <th>Box</th>
+          <th>Observations</th>
+          <th style="width: 110px; text-align: center;">Actions</th>
+        </tr>
+      </ng-template>
 
-        <ng-template pTemplate="body" let-animal>
-          <tr class="fa-row">
+      <ng-template pTemplate="body" let-animal>
+        <tr class="fa-row">
 
-            <!-- Animal -->
-            <td class="td-animal">
-              <div class="animal-cell">
-                <div class="animal-avatar">
-                  <img *ngIf="animal.photoUrl"
-                       [src]="'http://localhost:8080' + animal.photoUrl"
-                       class="avatar-img">
-                  <span *ngIf="!animal.photoUrl" class="avatar-emoji">
-                    {{ animal.typeAnimalNom === 'Truie' ? '🐷' :
-                       animal.typeAnimalNom === 'Verrat' ? '🐗' : '🐽' }}
-                  </span>
-                </div>
-                <span class="animal-code">{{ animal.codeAnimal }}</span>
+          <td>
+            <div class="flex align-items-center gap-2">
+              <div style="width:36px; height:36px; border-radius:50%; overflow:hidden; flex-shrink:0; background:#dcfce7; display:flex; align-items:center; justify-content:center;">
+                <img *ngIf="animal.photoUrl"
+                     [src]="'http://localhost:8080' + animal.photoUrl"
+                     style="width:100%; height:100%; object-fit:cover;">
+                <span *ngIf="!animal.photoUrl" style="font-size:1.2rem;">
+                  {{ animal.typeAnimalNom === 'Truie' ? '🐷' :
+                     animal.typeAnimalNom === 'Verrat' ? '🐗' : '🐽' }}
+                </span>
               </div>
-            </td>
+              <strong>{{ animal.codeAnimal }}</strong>
+            </div>
+          </td>
 
-            <td>
-              <span class="badge-type">{{ animal.typeAnimalNom }}</span>
-            </td>
+          <td><span class="badge-type">{{ animal.typeAnimalNom }}</span></td>
+          <td>{{ animal.dateEntree }}</td>
+          <td>{{ animal.poidsInitial }} <small>kg</small></td>
+          <td><span class="badge-sante" [attr.data-etat]="animal.etatSanteLibelle">{{ animal.etatSanteLibelle }}</span></td>
+          <td>{{ animal.batimentNom }}</td>
+          <td><span class="badge-box">{{ animal.boxCode }}</span></td>
+          <td>{{ animal.observations || '—' }}</td>
 
-            <td class="td-date">{{ animal.dateEntree }}</td>
+          <td class="td-actions">
+            <app-deplacement-form  #depForm  [animal]="animal" (onUpdate)="loadData(); closeMenu()" style="display:none;"></app-deplacement-form>
+            <app-animal-historique #histForm [animal]="animal" style="display:none;"></app-animal-historique>
+            <app-fichesanimaux-form #editForm [target]="animal" mode="edit" (onUpdate)="loadData(); closeMenu()" style="display:none;"></app-fichesanimaux-form>
 
-            <td>
-              <span class="td-poids">{{ animal.poidsInitial }} <small>kg</small></span>
-            </td>
+            <div class="action-menu-wrap">
+              <button class="action-trigger" (click)="toggleMenu(animal.id); $event.stopPropagation()">
+                <i class="pi pi-ellipsis-v"></i>
+              </button>
 
-            <td>
-              <span class="badge-sante" [attr.data-etat]="animal.etatSanteLibelle">
-                {{ animal.etatSanteLibelle }}
-              </span>
-            </td>
-
-            <td class="td-batiment">{{ animal.batimentNom }}</td>
-
-            <td>
-              <span class="badge-box">{{ animal.boxCode }}</span>
-            </td>
-
-            <td class="td-obs">{{ animal.observations || '—' }}</td>
-
-            <!-- ACTIONS — dropdown élégant -->
-            <td class="td-actions">
-
-              <!-- Composants enfants rendus invisibles : leurs dialogs restent fonctionnels -->
-              <app-deplacement-form  #depForm  [animal]="animal" (onUpdate)="loadData(); closeMenu()" style="display:none;"></app-deplacement-form>
-              <app-animal-historique #histForm [animal]="animal" style="display:none;"></app-animal-historique>
-              <app-fichesanimaux-form #editForm [target]="animal" mode="edit" (onUpdate)="loadData(); closeMenu()" style="display:none;"></app-fichesanimaux-form>
-
-              <div class="action-menu-wrap">
-                <button class="action-trigger" (click)="toggleMenu(animal.id); $event.stopPropagation()">
-                  <i class="pi pi-ellipsis-v"></i>
+              <div class="action-dropdown" [class.open]="openMenuId === animal.id">
+                <button class="action-item"
+                        (click)="depForm.ouvrirDeplacement(); closeMenu(); $event.stopPropagation()">
+                  <i class="pi pi-arrows-h action-item-icon icon-amber"></i>
+                  <span class="action-item-label">Déplacer</span>
                 </button>
 
-                <div class="action-dropdown" [class.open]="openMenuId === animal.id">
+                <button class="action-item"
+                        (click)="depForm.ouvrirHistorique(); closeMenu(); $event.stopPropagation()">
+                  <i class="pi pi-history action-item-icon icon-blue"></i>
+                  <span class="action-item-label">Historique déplacements</span>
+                </button>
 
-                  <!-- Déplacer -->
-                  <button class="action-item"
-                          (click)="depForm.ouvrirDeplacement(); closeMenu(); $event.stopPropagation()">
-                    <i class="pi pi-arrows-h action-item-icon icon-amber"></i>
-                    <span class="action-item-label">Déplacer</span>
-                  </button>
+                <button class="action-item"
+                        (click)="histForm.ouvrirHistorique(); closeMenu(); $event.stopPropagation()">
+                  <i class="pi pi-chart-bar action-item-icon icon-purple"></i>
+                  <span class="action-item-label">
+                    {{ animal.typeAnimalNom === 'Verrat' ? 'Performances' : 'Carrière' }}
+                  </span>
+                </button>
 
-                  <!-- Historique déplacements -->
-                  <button class="action-item"
-                          (click)="depForm.ouvrirHistorique(); closeMenu(); $event.stopPropagation()">
-                    <i class="pi pi-history action-item-icon icon-blue"></i>
-                    <span class="action-item-label">Historique déplacements</span>
-                  </button>
+                <div class="action-divider"></div>
 
-                  <!-- Carrière / Performances -->
-                  <button class="action-item"
-                          (click)="histForm.ouvrirHistorique(); closeMenu(); $event.stopPropagation()">
-                    <i class="pi pi-chart-bar action-item-icon icon-purple"></i>
-                    <span class="action-item-label">
-                      {{ animal.typeAnimalNom === 'Verrat' ? 'Performances' : 'Carrière' }}
-                    </span>
-                  </button>
+                <button class="action-item"
+                        (click)="editForm.handleShow(); closeMenu(); $event.stopPropagation()">
+                  <i class="pi pi-pencil action-item-icon icon-green"></i>
+                  <span class="action-item-label">Modifier</span>
+                </button>
 
-                  <div class="action-divider"></div>
-
-                  <!-- Modifier -->
-                  <button class="action-item"
-                          (click)="editForm.handleShow(); closeMenu(); $event.stopPropagation()">
-                    <i class="pi pi-pencil action-item-icon icon-green"></i>
-                    <span class="action-item-label">Modifier</span>
-                  </button>
-
-                  <!-- Supprimer -->
-                  <button class="action-item action-item-danger"
-                          (click)="deleteAnimal(animal.id); closeMenu(); $event.stopPropagation()">
-                    <i class="pi pi-trash action-item-icon"></i>
-                    <span class="action-item-label">Supprimer</span>
-                  </button>
-
-                </div>
+                <button class="action-item action-item-danger"
+                        (click)="deleteAnimal(animal.id); closeMenu(); $event.stopPropagation()">
+                  <i class="pi pi-trash action-item-icon"></i>
+                  <span class="action-item-label">Supprimer</span>
+                </button>
               </div>
-            </td>
+            </div>
+          </td>
 
-          </tr>
-        </ng-template>
+        </tr>
+      </ng-template>
 
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="9" class="fa-empty">
-              <div class="fa-empty-inner">
-                <span class="fa-empty-icon">🐾</span>
-                <p>Aucun animal trouvé</p>
-              </div>
-            </td>
-          </tr>
-        </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="9">
+            <div class="flex flex-column align-items-center py-6 text-color-secondary">
+              <i class="pi pi-inbox text-5xl mb-3"></i>
+              <span>Aucun animal trouvé</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
 
-      </p-table>
-    </div>
+    </p-table>
   </div>
 
 
-  <!-- ══════════════════════════════════════════
-       ONGLET 2 — CARRIÈRE & REPRODUCTION
-  ══════════════════════════════════════════ -->
-  <div *ngIf="activeTab==='carriere'" class="fa-content">
+  <!-- ONGLET 2 — CARRIÈRE & REPRODUCTION -->
+  <div *ngIf="activeTab==='carriere'" class="fa-content p-3">
 
     <!-- STATS -->
-    <div class="kpi-grid">
+    <div class="kpi-grid mb-4">
       <div class="kpi-card">
         <div class="kpi-icon">🐷</div>
         <div class="kpi-value">{{ totalTruies }}</div>
@@ -238,39 +209,37 @@
         <div class="kpi-value">{{ totalCycles }}</div>
         <div class="kpi-label">Cycles totaux</div>
       </div>
-      <div class="kpi-card kpi-card--accent">
-        <div class="kpi-icon">💚</div>
-        <div class="kpi-value kpi-value--green">{{ totalNesVivants }}</div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color: #16A34A;">{{ totalNesVivants }}</div>
         <div class="kpi-label">Nés vivants</div>
       </div>
     </div>
 
     <!-- FILTRES CARRIÈRE -->
-    <div class="fa-filters">
-      <div class="fa-filter-group">
-        <div class="fa-filter-field" style="flex:1; min-width:240px;">
-          <div class="fa-input-wrap">
-            <i class="pi pi-search fa-input-icon"></i>
-            <input type="text" class="fa-input"
-                   [(ngModel)]="rechercheCarriere"
-                   (ngModelChange)="onRechercheCarriereChange()"
-                   placeholder="Rechercher par code animal…" />
-          </div>
-        </div>
-        <div class="fa-filter-field">
-          <select class="fa-select"
-                  [(ngModel)]="filtreTypeCarriere"
-                  (ngModelChange)="onFiltreCarriereChange()">
-            <option value="tous">Tous les types</option>
-            <option value="truie">Truies</option>
-            <option value="verrat">Verrats</option>
-          </select>
-        </div>
+    <div class="flex flex-wrap gap-3 align-items-center mb-3">
+      <div class="flex-1" style="min-width:240px;">
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-search"></i>
+          <input type="text" pInputText class="w-full"
+                 [(ngModel)]="rechercheCarriere"
+                 (ngModelChange)="onRechercheCarriereChange()"
+                 placeholder="Rechercher par code animal..." />
+        </span>
       </div>
-      <div class="fa-filter-meta">
-        <span class="fa-filter-count">{{ carriereRowsFiltered.length }} animal(x)</span>
-        <button class="fa-btn-reset" (click)="resetFiltresCarriere()">
-          <i class="pi pi-refresh"></i> Réinitialiser
+      <div>
+        <select class="fa-select"
+                [(ngModel)]="filtreTypeCarriere"
+                (ngModelChange)="onFiltreCarriereChange()">
+          <option value="tous">Tous les types</option>
+          <option value="truie">Truies</option>
+          <option value="verrat">Verrats</option>
+        </select>
+      </div>
+      <div class="flex align-items-center gap-2">
+        <span class="text-color-secondary text-sm">{{ carriereRowsFiltered.length }} animal(x)</span>
+        <button pButton icon="pi pi-refresh" label="Réinitialiser"
+                class="p-button-outlined p-button-secondary p-button-sm"
+                (click)="resetFiltresCarriere()">
         </button>
       </div>
     </div>
@@ -319,14 +288,13 @@
             </div>
           </div>
 
-          <!-- Détail cycles -->
           <div *ngIf="row.expanded" class="carriere-body">
             <p-table [value]="row.cycles"
                      [paginator]="row.cycles.length > 5"
                      [rows]="5"
                      [showCurrentPageReport]="true"
                      currentPageReportTemplate="{currentPage}/{totalPages}"
-                     styleClass="fa-ptable fa-ptable--inner">
+                     styleClass="p-datatable-sm p-datatable-gridlines">
 
               <ng-template pTemplate="header">
                 <tr>
@@ -334,26 +302,26 @@
                   <th>{{ row.type === 'truie' ? 'Verrat' : 'Truie' }}</th>
                   <th>Date Saillie</th>
                   <th>Date Mise-Bas</th>
-                  <th class="th-green">Nés vivants</th>
-                  <th class="th-red">Morts-nés</th>
+                  <th>Nés vivants</th>
+                  <th>Morts-nés</th>
                   <th>Sevrés</th>
                 </tr>
               </ng-template>
 
               <ng-template pTemplate="body" let-cycle>
-                <tr class="fa-row">
+                <tr>
                   <td><span class="badge-rang">{{ cycle.rang }}</span></td>
-                  <td style="font-weight:600;">{{ cycle.partenaireCode }}</td>
-                  <td class="td-date">{{ cycle.dateSaillie }}</td>
-                  <td class="td-date">{{ cycle.dateMiseBasReelle }}</td>
-                  <td class="td-green">{{ cycle.nbNesVivants }}</td>
-                  <td class="td-red">{{ cycle.nbMortsNes }}</td>
+                  <td><strong>{{ cycle.partenaireCode }}</strong></td>
+                  <td>{{ cycle.dateSaillie }}</td>
+                  <td>{{ cycle.dateMiseBasReelle }}</td>
+                  <td>{{ cycle.nbNesVivants }}</td>
+                  <td>{{ cycle.nbMortsNes }}</td>
                   <td>{{ cycle.nbSevres }}</td>
                 </tr>
               </ng-template>
 
               <ng-template pTemplate="emptymessage">
-                <tr><td colspan="7" class="fa-empty">Aucun cycle enregistré</td></tr>
+                <tr><td [attr.colspan]="7" class="text-center py-3">Aucun cycle enregistré</td></tr>
               </ng-template>
             </p-table>
           </div>
@@ -361,20 +329,20 @@
         </div>
       </ng-container>
 
-      <div *ngIf="carriereRowsFiltered.length === 0" class="fa-empty">
-        <div class="fa-empty-inner">
-          <span class="fa-empty-icon">🐾</span>
-          <p>Aucun animal trouvé</p>
+      <div *ngIf="carriereRowsFiltered.length === 0">
+        <div class="flex flex-column align-items-center py-6 text-color-secondary">
+          <i class="pi pi-inbox text-5xl mb-3"></i>
+          <span>Aucun animal trouvé</span>
         </div>
       </div>
     </div>
 
     <!-- PAGINATION CARRIÈRE -->
-    <div *ngIf="carriereRowsFiltered.length > carrierePageSize" class="fa-pagination">
-      <span class="fa-page-info">
+    <div *ngIf="carriereRowsFiltered.length > carrierePageSize" class="flex justify-content-between align-items-center mt-3">
+      <span class="text-color-secondary text-sm">
         Page {{ carrierePage }} / {{ carrierePageCount }} — {{ carriereRowsFiltered.length }} animaux
       </span>
-      <div class="fa-page-btns">
+      <div class="flex gap-2">
         <button pButton icon="pi pi-chevron-left" label="Précédent"
                 class="p-button-outlined p-button-sm"
                 [disabled]="carrierePage <= 1"
@@ -382,12 +350,12 @@
         </button>
         <ng-container *ngFor="let p of carrierePageNumbers">
           <button *ngIf="p !== -1" pButton [label]="p.toString()"
-                  class="p-button-sm fa-page-num"
+                  class="p-button-sm"
                   [class.p-button-success]="p === carrierePage"
                   [class.p-button-outlined]="p !== carrierePage"
                   (click)="goToCarrierePage(p)">
           </button>
-          <span *ngIf="p === -1" class="fa-page-ellipsis">…</span>
+          <span *ngIf="p === -1" class="px-2">…</span>
         </ng-container>
         <button pButton icon="pi pi-chevron-right" label="Suivant" iconPos="right"
                 class="p-button-outlined p-button-sm"

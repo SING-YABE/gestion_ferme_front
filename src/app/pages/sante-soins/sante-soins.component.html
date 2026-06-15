@@ -1,81 +1,79 @@
-<div class="odyssey-shadow-low border-round" style="background:#F5F0E6; border:1px solid #D9D2C2;">
-    <div class="px-4 py-2 flex gap-3 align-items-center"
-        style="background:#2E7D32; color:white; border-radius:8px 8px 0 0;">
+<div class="surface-card border-round-lg shadow-2 overflow-hidden">
 
-        <h5 class="m-0 flex-1">Gestion des Soins de Santé</h5>
-
-        <app-santesoins-form mode="create" (onUpdate)="loadData()"></app-santesoins-form>
+  <!-- En-tête -->
+  <div class="flex align-items-center justify-content-between flex-wrap gap-2 px-4 py-3"
+       style="background: #2E7D32;">
+    <div class="flex align-items-center gap-2">
+      <i class="pi pi-heart-fill text-white text-xl"></i>
+      <h5 class="m-0 text-white font-semibold">Gestion des Soins de Santé</h5>
     </div>
+    <app-santesoins-form mode="create" (onUpdate)="loadData()"></app-santesoins-form>
+  </div>
 
+  <!-- Table -->
+  <p-table
+    [value]="data"
+    [loading]="loading"
+    [rows]="pageSize"
+    [paginator]="data.length > pageSize"
+    [rowsPerPageOptions]="[5, 10, 30, 40]"
+    styleClass="p-datatable-sm p-datatable-hoverable-rows p-datatable-gridlines"
+    [tableStyle]="{'min-width': '30rem'}">
 
-    <p-table [value]="data" [loading]="loading" [rows]="pageSize" [paginator]="data.length > pageSize"
-        styleClass="p-datatable-sm">
-        <ng-template pTemplate="header">
-            <tr style="background:#DCFCE7;">
-                <th>Date</th>
-                <th>Code Animal</th>
-                <th>Motif</th>
-                <th>Vétérinaire</th>
-                <th>Traitement</th>
-                <th>Coût prestation</th>
-                <th>Coût medicament</th>
-                <th>Total</th>
-                <th style="text-align:center; width:150px">Actions</th>
-            </tr>
-        </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Date</th>
+        <th>Code Animal</th>
+        <th>Motif</th>
+        <th>Vétérinaire</th>
+        <th>Traitement</th>
+        <th>Coût prestation</th>
+        <th>Coût medicament</th>
+        <th>Total</th>
+        <th style="width: 110px; text-align: center;">Actions</th>
+      </tr>
+    </ng-template>
 
-        <ng-template pTemplate="body" let-row>
-            <tr>
-                <td>{{ row.dateSoin }}</td>
-                <td>
-                    <!-- Soin individuel -->
-                    <span *ngIf="!row.soinCollectif">
-                        {{ row.animalCode }}
-                    </span>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.dateSoin }}</td>
+        <td>
+          <span *ngIf="!row.soinCollectif">{{ row.animalCode }}</span>
+          <span *ngIf="row.soinCollectif && row.applyToAll" style="color:#F59E0B; font-weight:600;">TOUS</span>
+          <span *ngIf="row.soinCollectif && !row.applyToAll && row.animalCodes?.length">
+            {{ row.animalCodes.join(', ') }}
+          </span>
+          <span *ngIf="row.soinCollectif && !row.applyToAll && !row.animalCodes">{{ row.animalCode }}</span>
+        </td>
+        <td>{{ row.motif }}</td>
+        <td>{{ row.veterinaire }}</td>
+        <td>{{ row.traitement }}</td>
+        <td><strong>{{ row.cout }} FCFA</strong></td>
+        <td><strong>{{ row.coutMedicament }} FCFA</strong></td>
+        <td><strong>{{ row.totalPrestation }} FCFA</strong></td>
+        <td>
+          <div class="flex gap-1 justify-content-center">
+            <app-santesoins-form [target]="row" mode="edit" (onUpdate)="loadData()"></app-santesoins-form>
+            <button pButton icon="pi pi-trash"
+                    class="p-button-rounded p-button-sm p-button-danger"
+                    (click)="confirmDelete(row)"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
 
-                    <!-- Soin collectif : tous -->
-                    <span *ngIf="row.soinCollectif && row.applyToAll" style="color:#F59E0B; font-weight:600;">
-                        TOUS
-                    </span>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="9">
+          <div class="flex flex-column align-items-center py-6 text-color-secondary">
+            <i class="pi pi-inbox text-5xl mb-3"></i>
+            <span>Aucun soin trouvé</span>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
 
-                    <!-- collectif selection -->
-                    <span *ngIf="row.soinCollectif && !row.applyToAll && row.animalCodes?.length">
-                        {{ row.animalCodes.join(', ') }}
-                    </span>
-
-                    <span *ngIf="row.soinCollectif && !row.applyToAll && !row.animalCodes">
-                        {{ row.animalCode }}
-                    </span>
-                </td>
-
-                <td>{{ row.motif }}</td>
-                <td>{{ row.veterinaire }}</td>
-                <td>{{ row.traitement }}</td>
-
-                <td><strong>{{ row.cout }} FCFA</strong></td>
-                <td><strong>{{ row.coutMedicament }} FCFA</strong></td>
-                <td><strong>{{ row.totalPrestation }} FCFA</strong></td>
-                <td>
-                    <div class="flex justify-content-center gap-2">
-
-                        <app-santesoins-form [target]="row" mode="edit" (onUpdate)="loadData()"></app-santesoins-form>
-
-                        <button pButton icon="pi pi-trash" class="p-button-rounded"
-                            style="background:#B91C1C; border-color:#B91C1C;" (click)="confirmDelete(row)">
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        </ng-template>
-
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="7" class="text-center py-4">
-                    <i class="pi pi-inbox mr-2"></i> Aucun soin trouvé
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
+  </p-table>
 </div>
 
-<p-confirmDialog></p-confirmDialog>
+<p-confirmDialog [style]="{width: 'min(450px, 95vw)'}"></p-confirmDialog>

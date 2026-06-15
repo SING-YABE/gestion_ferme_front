@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 // src/app/@core/service/emplacement.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -16,7 +17,7 @@ export interface EmplacementDTO {
   providedIn: 'root'
 })
 export class EmplacementService {
-  private apiUrl = 'http://localhost:8080/api/admin/emplacements';
+  private apiUrl = environment.apiUrl + '/api/admin/emplacements';
 
   constructor(private http: HttpClient) { }
 

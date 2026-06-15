@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -15,7 +16,7 @@ export interface TypeAlimentResponseDTO {
   providedIn: 'root'
 })
 export class TypeAlimentService {
-  private apiUrl = 'http://localhost:8080/api/type-aliment';
+  private apiUrl = environment.apiUrl + '/api/type-aliment';
 
   constructor(private http: HttpClient) {}
 
