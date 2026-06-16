@@ -1,0 +1,154 @@
+<div class="register-container">
+
+  <!-- ══ Panneau gauche ════════════════════════════════════════════════════ -->
+  <div class="form-panel">
+    <div class="form-inner">
+
+      <!-- Logo -->
+      <div class="logo-bar">
+        <div class="logo-square">S</div>
+        <span class="logo-text">SOFT FORGE BURKINA</span>
+      </div>
+
+      <!-- Écran de succès -->
+      <div *ngIf="successCode" class="success-screen">
+        <h1>Ferme créée !</h1>
+        <p>Votre espace est prêt. Connectez-vous avec le code :</p>
+        <div class="code-box">
+          <span class="code-label">CODE FERME</span>
+          <strong class="code-value">{{ successCode }}</strong>
+        </div>
+        <p class="hint">Conservez ce code — il sera demandé à chaque connexion.</p>
+        <button class="btn-submit" (click)="goToLogin()">Aller à la connexion →</button>
+      </div>
+
+      <!-- Formulaire -->
+      <form *ngIf="!successCode" [formGroup]="form" (ngSubmit)="handleSubmit()" novalidate>
+
+        <h1 class="page-title">Inscrire votre ferme</h1>
+        <p class="page-sub">Rejoignez la nouvelle génération d'éleveurs burkinabè avec des outils de précision.</p>
+
+        <!-- Section 1 -->
+        <div class="section-header">
+          <span class="step-badge active">1</span>
+          <span class="section-label">INFORMATIONS DE LA FERME</span>
+        </div>
+
+        <div class="field-group">
+          <label>NOM DE LA FERME</label>
+          <input
+            type="text"
+            formControlName="nomFerme"
+            placeholder="ex: Ferme Wend-Panga"
+            [class.error]="isInvalid('nomFerme')"
+          />
+          <span class="field-error" *ngIf="isInvalid('nomFerme')">Minimum 3 caractères.</span>
+        </div>
+
+        <div class="field-group">
+          <label>CODE DE LA FERME <span class="field-hint-inline">Unique ID</span></label>
+          <input
+            type="text"
+            formControlName="fermeCode"
+            placeholder="WEND-PANGA-01"
+            [class.error]="isInvalid('fermeCode')"
+            (input)="onCodeChange()"
+          />
+          <span class="field-error" *ngIf="isInvalid('fermeCode')">
+            Lettres, chiffres et _ uniquement (3–50 caractères).
+          </span>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="section-header">
+          <span class="step-badge">2</span>
+          <span class="section-label">COMPTE ADMINISTRATEUR</span>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>PRÉNOM</label>
+            <input type="text" formControlName="adminPrenom" [class.error]="isInvalid('adminPrenom')" />
+            <span class="field-error" *ngIf="isInvalid('adminPrenom')">Obligatoire.</span>
+          </div>
+          <div class="field-group">
+            <label>NOM</label>
+            <input type="text" formControlName="adminNom" [class.error]="isInvalid('adminNom')" />
+            <span class="field-error" *ngIf="isInvalid('adminNom')">Obligatoire.</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>EMAIL PROFESSIONNEL</label>
+          <input
+            type="email"
+            formControlName="adminEmail"
+            [class.error]="isInvalid('adminEmail')"
+          />
+          <span class="field-error" *ngIf="isInvalid('adminEmail')">Email invalide.</span>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>MOT DE PASSE</label>
+            <input type="password" formControlName="adminPassword" [class.error]="isInvalid('adminPassword')" />
+            <span class="field-error" *ngIf="isInvalid('adminPassword')">Minimum 6 caractères.</span>
+          </div>
+          <div class="field-group">
+            <label>CONFIRMATION</label>
+            <input type="password" formControlName="confirmPassword"
+              [class.error]="form.errors?.['passwordMismatch'] && field('confirmPassword')?.touched" />
+            <span class="field-error"
+              *ngIf="form.errors?.['passwordMismatch'] && field('confirmPassword')?.touched">
+              Non identiques.
+            </span>
+          </div>
+        </div>
+
+        <!-- Erreur globale -->
+        <div class="global-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+        <button type="submit" class="btn-submit" [disabled]="processing">
+          {{ processing ? 'Création en cours…' : 'Créer mon espace →' }}
+        </button>
+
+        <p class="login-link">
+          Déjà inscrit ? <a routerLink="/login">Se connecter</a>
+        </p>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ══ Panneau droit ══════════════════════════════════════════════════════ -->
+  <div class="visual-panel">
+    <div class="visual-inner">
+      <p class="visual-title"><em>Optimisez chaque cycle<br>de production.</em></p>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-num">01</div>
+          <div class="feature-body">
+            <strong>Suivi de croissance</strong>
+            <p>Suivez le gain de poids quotidien et optimisez les dates d'abattage.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">02</div>
+          <div class="feature-body">
+            <strong>Rations Intelligentes</strong>
+            <p>Calcul automatique des besoins alimentaires selon le stade de vie.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">03</div>
+          <div class="feature-body">
+            <strong>Alertes Santé & IA</strong>
+            <p>Détection précoce des anomalies via nos modèles d'analyse locale.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

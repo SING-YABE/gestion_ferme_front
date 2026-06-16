@@ -23,6 +23,14 @@ export const authGuard: CanActivateFn = (
     return false;
   }
 
+  // Super Admin ne peut pas accéder aux routes de ferme — redirection automatique
+  const isSuperAdmin = authService.getRole() === 'ROLE_SUPER_ADMIN';
+  const isSuperAdminRoute = state.url.startsWith('/super-admin');
+  if (isSuperAdmin && !isSuperAdminRoute) {
+    router.navigate(['/super-admin']);
+    return false;
+  }
+
   // Vérification des rôles requis
   const requiredRoles: string[] = route.data?.['roles'] ?? [];
   if (requiredRoles.length > 0 && !authService.hasAnyRole(requiredRoles)) {

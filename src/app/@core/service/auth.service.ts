@@ -62,18 +62,20 @@ export class AuthService {
       .pipe(
         switchMap((loginRes) => {
           // Sauvegarde le token en session avant d'appeler /api/me
-          // L'intercepteur le récupère automatiquement via getToken()
           this.saveSession({ token: loginRes.token, profile: null as any });
 
-          return this.http.get<UserProfile>(`${BASE_URL}/api/me`).pipe(
+          // Super Admin → endpoint dédié ; utilisateur normal → /api/me
+          const meUrl = loginRes.role === 'ROLE_SUPER_ADMIN'
+            ? `${BASE_URL}/api/super-admin/me`
+            : `${BASE_URL}/api/me`;
+
+          return this.http.get<UserProfile>(meUrl).pipe(
             tap((profile) => {
-              // Met à jour la session avec le profil complet
               this.saveSession({ token: loginRes.token, profile });
             })
           );
         }),
-        // Retourne la SessionData finale
-        switchMap((profile) => {
+        switchMap((_profile) => {
           const session = this.sessionSubject.value!;
           return new Observable<SessionData>(obs => { obs.next(session); obs.complete(); });
         })

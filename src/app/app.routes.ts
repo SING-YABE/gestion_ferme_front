@@ -6,6 +6,7 @@ import { intervenantsRoutes } from './pages/intervenant/intervenants.routes';
 import { authGuard } from './@core/security/guard/auth.guard';
 import { Roles } from './@core/security/roles.constants';
 import { Permissions } from './@core/security/permissions.constants';
+// note: SuperAdminComponent importé en lazy load ci-dessous
 
 export const routes: Routes = [
   {
@@ -162,11 +163,30 @@ export const routes: Routes = [
     ],
   },
 
+  // ─── Console Super Admin (route standalone, hors AppLayout) ────────
+  {
+    path: 'super-admin',
+    title: 'Super Admin — PigFarm SaaS',
+    canActivate: [authGuard],
+    data: { roles: [Roles.SUPER_ADMIN] },
+    loadComponent: () => import('./pages/super-admin/super-admin.component').then(m => m.SuperAdminComponent)
+  },
+
   // ─── Pages publiques ──────────────────────────────────────────────
   {
     path: 'login',
     loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent),
     title: 'Gestion de la ferme - Connexion'
+  },
+  {
+    path: 'inscription',
+    loadComponent: () => import('./pages/register-ferme/register-ferme.component').then(m => m.RegisterFermeComponent),
+    title: 'Inscrire ma ferme'
+  },
+  {
+    path: 'invitation',
+    loadComponent: () => import('./pages/invitation/invitation.component').then(m => m.InvitationComponent),
+    title: 'Activer mon compte'
   },
   {
     path: 'unauthorized',

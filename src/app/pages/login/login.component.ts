@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { InputTextModule } from "primeng/inputtext";
 import { ButtonDirective } from "primeng/button";
 import { ToastrService } from "ngx-toastr";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { CommonModule } from '@angular/common';
 import { PasswordModule } from 'primeng/password';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -22,7 +22,8 @@ import { AuthService, SessionData } from '../../@core/service/auth.service';
     ButtonDirective,
     PasswordModule,
     CheckboxModule,
-    FormsModule
+    FormsModule,
+    RouterModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -77,7 +78,12 @@ export class LoginComponent implements OnInit {
     this.authService.login(email, password).subscribe({
       next: (session: SessionData) => {
         this.processing = false;
-        this.router.navigateByUrl(this.returnUrl).then(() => {
+        // Super Admin → console dédiée ; utilisateur normal → returnUrl ou dashboard
+        const target = session.profile.role === 'ROLE_SUPER_ADMIN'
+          ? '/super-admin'
+          : this.returnUrl;
+
+        this.router.navigateByUrl(target).then(() => {
           const nomComplet = session.profile.prenom && session.profile.nom
             ? `${session.profile.prenom} ${session.profile.nom}`
             : session.profile.email;

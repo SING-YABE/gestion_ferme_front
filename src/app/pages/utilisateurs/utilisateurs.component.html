@@ -115,10 +115,11 @@
       <label>Téléphone</label>
       <input pInputText [(ngModel)]="form.telephone" placeholder="+226 00 00 00 00" />
     </div>
-    <div class="form-field">
-      <label>{{ isEditMode ? 'Nouveau mot de passe' : 'Mot de passe *' }}</label>
+    <!-- Mot de passe uniquement en mode édition -->
+    <div class="form-field" *ngIf="isEditMode">
+      <label>Nouveau mot de passe</label>
       <input pInputText type="password" [(ngModel)]="form.password"
-        [placeholder]="isEditMode ? 'Laisser vide = inchangé' : 'Mot de passe'" />
+        placeholder="Laisser vide = inchangé" />
     </div>
     <div class="form-field">
       <label>Rôle</label>
@@ -130,11 +131,22 @@
     </div>
   </div>
 
+  <!-- Info invitation (mode création uniquement) -->
+  <div *ngIf="!isEditMode" class="invitation-info">
+    <i class="pi pi-send"></i>
+    Un email d'invitation sera envoyé à l'adresse indiquée.
+    L'utilisateur cliquera le lien pour définir son mot de passe et accéder directement à son espace.
+  </div>
+
   <ng-template pTemplate="footer">
     <p-button label="Annuler" severity="secondary" (click)="displayFormModal=false"></p-button>
-    <p-button [label]="isEditMode ? 'Enregistrer' : 'Créer'"
-      icon="pi pi-check" (click)="soumettre()"
-      [disabled]="!form.prenom || !form.nom || !form.email || (!isEditMode && !form.password)">
+    <p-button
+      [label]="isEditMode ? 'Enregistrer' : 'Envoyer l\'invitation'"
+      [icon]="isEditMode ? 'pi pi-check' : 'pi pi-send'"
+      [severity]="isEditMode ? 'primary' : 'success'"
+      (click)="soumettre()"
+      [loading]="invitationLoading"
+      [disabled]="!form.prenom || !form.nom || !form.email || !form.roleId || invitationLoading">
     </p-button>
   </ng-template>
 </p-dialog>

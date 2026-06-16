@@ -1,0 +1,76 @@
+<div class="invitation-container">
+
+  <div class="card">
+
+    <!-- Token absent -->
+    <ng-container *ngIf="tokenInvalid">
+      <div class="state-icon">❌</div>
+      <h2>Lien invalide</h2>
+      <p class="text-muted">Ce lien d'invitation est incorrect ou incomplet.</p>
+      <a href="/login" class="btn-back">Retour à la connexion</a>
+    </ng-container>
+
+    <!-- Erreur après soumission -->
+    <ng-container *ngIf="!tokenInvalid && errorMsg && !processing">
+      <div class="state-icon">⚠️</div>
+      <h2>Lien expiré ou déjà utilisé</h2>
+      <p class="text-muted">{{ errorMsg }}</p>
+      <p class="text-muted small">Contactez l'administrateur de votre ferme pour recevoir un nouveau lien.</p>
+      <a href="/login" class="btn-back">Retour à la connexion</a>
+    </ng-container>
+
+    <!-- Formulaire d'activation -->
+    <ng-container *ngIf="!tokenInvalid && !errorMsg">
+      <div class="header">
+        <div class="logo">🐷</div>
+        <h1>Activez votre compte</h1>
+        <p class="text-muted">Choisissez un mot de passe pour accéder à votre espace.</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="handleSubmit()" novalidate>
+
+        <div class="field-group">
+          <label>Mot de passe <span class="required">*</span></label>
+          <p-password
+            formControlName="newPassword"
+            placeholder="Minimum 6 caractères"
+            [feedback]="true"
+            [toggleMask]="true"
+            styleClass="w-full"
+          ></p-password>
+          <div class="field-error" *ngIf="isInvalid('newPassword')">
+            <span *ngIf="field('newPassword')?.errors?.['required']">Obligatoire.</span>
+            <span *ngIf="field('newPassword')?.errors?.['minlength']">Minimum 6 caractères.</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Confirmer le mot de passe <span class="required">*</span></label>
+          <p-password
+            formControlName="confirmPassword"
+            placeholder="Répétez votre mot de passe"
+            [feedback]="false"
+            [toggleMask]="true"
+            styleClass="w-full"
+          ></p-password>
+          <div class="field-error"
+               *ngIf="form.errors?.['mismatch'] && field('confirmPassword')?.touched">
+            Les mots de passe ne correspondent pas.
+          </div>
+        </div>
+
+        <button
+          pButton
+          type="submit"
+          label="Activer mon compte et me connecter"
+          icon="pi pi-check"
+          class="p-button-success submit-btn"
+          [loading]="processing"
+          [disabled]="processing">
+        </button>
+
+      </form>
+    </ng-container>
+
+  </div>
+</div>

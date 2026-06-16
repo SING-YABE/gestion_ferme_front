@@ -1,0 +1,114 @@
+$green: #4a7c2c;
+$green-dark: #2d5016;
+$error: #dc2626;
+
+.invitation-container {
+  min-height: 100vh;
+  background: linear-gradient(160deg, $green-dark 0%, $green 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.logo {
+  font-size: 56px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $green-dark;
+  margin: 0 0 8px;
+}
+
+h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: $green-dark;
+  margin: 12px 0 8px;
+}
+
+.state-icon {
+  font-size: 56px;
+  margin-bottom: 8px;
+}
+
+.text-muted {
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.small { font-size: 0.8rem; }
+
+.field-group {
+  text-align: left;
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+
+  ::ng-deep .p-password {
+    width: 100%;
+    display: block;
+    .p-password-input { width: 100%; height: 46px; }
+  }
+}
+
+.required { color: $error; }
+
+.field-error {
+  color: $error;
+  font-size: 0.78rem;
+  margin-top: 4px;
+  text-align: left;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 48px;
+  background: $green !important;
+  border-color: $green !important;
+  border-radius: 8px !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  margin-top: 8px;
+
+  &:hover:not(:disabled) {
+    background: $green-dark !important;
+    border-color: $green-dark !important;
+  }
+}
+
+.btn-back {
+  display: inline-block;
+  margin-top: 20px;
+  color: $green;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.9rem;
+
+  &:hover { text-decoration: underline; }
+}

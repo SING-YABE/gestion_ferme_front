@@ -1,0 +1,343 @@
+// ── Variables ─────────────────────────────────────────────────────────────────
+$green:       #2d4a1e;
+$green-light: #3a5f28;
+$red:         #8b2c2c;
+$cream:       #f7f5f0;
+$text:        #1a1a1a;
+$muted:       #888;
+$border:      #d0cec9;
+$error-color: #c0392b;
+
+// ── Layout ────────────────────────────────────────────────────────────────────
+.register-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Georgia', serif;
+}
+
+// ── Panneau gauche ────────────────────────────────────────────────────────────
+.form-panel {
+  flex: 1;
+  background: $cream;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 32px;
+  overflow-y: auto;
+}
+
+.form-inner {
+  width: 100%;
+  max-width: 480px;
+}
+
+// ── Logo ──────────────────────────────────────────────────────────────────────
+.logo-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.logo-square {
+  width: 32px;
+  height: 32px;
+  background: $red;
+  color: #fff;
+  font-family: 'Georgia', serif;
+  font-size: 1.1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.logo-text {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: $text;
+  text-transform: uppercase;
+}
+
+// ── Titre ─────────────────────────────────────────────────────────────────────
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $text;
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+.page-sub {
+  font-size: 0.9rem;
+  color: $muted;
+  margin: 0 0 36px;
+  line-height: 1.6;
+  font-family: 'Arial', sans-serif;
+}
+
+// ── Sections ──────────────────────────────────────────────────────────────────
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 28px 0 20px;
+}
+
+.step-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid $muted;
+  color: $muted;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &.active {
+    background: $red;
+    border-color: $red;
+    color: #fff;
+  }
+}
+
+.section-label {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: $red;
+  text-transform: uppercase;
+}
+
+// ── Champs ────────────────────────────────────────────────────────────────────
+.field-group {
+  margin-bottom: 20px;
+
+  label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Arial', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: $muted;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid $border;
+    padding: 8px 0;
+    font-size: 0.95rem;
+    font-family: 'Arial', sans-serif;
+    color: $text;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+
+    &::placeholder { color: #bbb; }
+
+    &:focus { border-bottom-color: $green; }
+
+    &.error { border-bottom-color: $error-color; }
+  }
+}
+
+.field-hint-inline {
+  font-size: 0.65rem;
+  color: $muted;
+  font-style: italic;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 24px;
+}
+
+.field-error {
+  display: block;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.72rem;
+  color: $error-color;
+  margin-top: 4px;
+}
+
+// ── Erreur globale ────────────────────────────────────────────────────────────
+.global-error {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.8rem;
+  color: $error-color;
+  background: #fdf0f0;
+  border-left: 3px solid $error-color;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border-radius: 2px;
+}
+
+// ── Bouton ────────────────────────────────────────────────────────────────────
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  background: $green;
+  color: #fff;
+  border: none;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  margin-top: 24px;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) { background: $green-light; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.login-link {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.8rem;
+  color: $muted;
+  text-align: center;
+  margin-top: 16px;
+
+  a { color: $green; font-weight: 700; text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+// ── Succès ────────────────────────────────────────────────────────────────────
+.success-screen {
+  padding: 20px 0;
+
+  h1 { font-size: 2rem; color: $green; margin: 0 0 12px; }
+  p { font-family: 'Arial', sans-serif; font-size: 0.9rem; color: $muted; }
+}
+
+.code-box {
+  background: #fff;
+  border: 1.5px solid $border;
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin: 20px 0 8px;
+  text-align: center;
+
+  .code-label {
+    display: block;
+    font-family: 'Arial', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: $muted;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .code-value {
+    font-family: 'Courier New', monospace;
+    font-size: 1.3rem;
+    color: $green;
+    letter-spacing: 0.05em;
+  }
+}
+
+.hint {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.78rem;
+  color: $muted;
+}
+
+// ── Panneau droit ─────────────────────────────────────────────────────────────
+.visual-panel {
+  width: 420px;
+  flex-shrink: 0;
+  background: $green;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 48px;
+}
+
+.visual-inner {
+  color: rgba(#fff, 0.9);
+}
+
+.visual-title {
+  font-size: 1.6rem;
+  font-style: italic;
+  font-weight: 400;
+  color: #fff;
+  margin: 0 0 48px;
+  line-height: 1.4;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.feature-item {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.feature-num {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(#fff, 0.35);
+  color: rgba(#fff, 0.6);
+  font-family: 'Arial', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-body {
+  strong {
+    display: block;
+    font-family: 'Arial', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  p {
+    font-family: 'Arial', sans-serif;
+    font-size: 0.8rem;
+    color: rgba(#fff, 0.65);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 860px) {
+  .register-container { flex-direction: column; }
+  .visual-panel { width: 100%; padding: 40px 32px; order: -1; }
+  .visual-title { font-size: 1.3rem; margin-bottom: 32px; }
+  .feature-list { gap: 20px; }
+}
+
+@media (max-width: 480px) {
+  .field-row { grid-template-columns: 1fr; }
+  .page-title { font-size: 1.6rem; }
+}

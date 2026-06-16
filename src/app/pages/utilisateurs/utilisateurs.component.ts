@@ -16,6 +16,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
 import { UtilisateurService, Utilisateur, UtilisateurDTO } from '../../@core/service/utilisateur.service';
 import { RoleManagementService, RoleManagement } from '../../@core/service/role-management.service';
+import { InvitationService } from '../../@core/service/invitation.service';
 
 interface PermissionsData {
   utilisateurId: number;
@@ -90,12 +91,16 @@ export class UtilisateursComponent implements OnInit {
   // Recherche
   termeRecherche = '';
 
+  // true pendant l'envoi de l'invitation
+  invitationLoading = false;
+
   constructor(
     private utilisateurService: UtilisateurService,
     private roleService: RoleManagementService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private http: HttpClient
+    private http: HttpClient,
+    private invitationService: InvitationService
   ) {}
 
   ngOnInit() {
@@ -172,14 +177,41 @@ export class UtilisateursComponent implements OnInit {
 
   soumettre() {
     if (this.isEditMode && this.selectedUtilisateur) {
+      // ── Modification : comportement inchangé ──────────────────────────────
       this.utilisateurService.update(this.selectedUtilisateur.idUtilisateur, this.form).subscribe({
         next: (u) => { this.remplacer(u); this.displayFormModal = false; this.toast('success', 'Utilisateur modifié'); },
         error: () => this.toast('error', 'Erreur lors de la modification')
       });
     } else {
-      this.utilisateurService.create(this.form).subscribe({
-        next: (u) => { this.utilisateurs.push(u); this.filtrer(); this.displayFormModal = false; this.toast('success', 'Utilisateur créé'); },
-        error: () => this.toast('error', 'Erreur lors de la création')
+      // ── Création : envoyer une invitation par email ───────────────────────
+      if (!this.form.roleId) {
+        this.toast('error', 'Veuillez sélectionner un rôle.');
+        return;
+      }
+      this.invitationLoading = true;
+      this.invitationService.createInvitation({
+        prenom:    this.form.prenom,
+        nom:       this.form.nom,
+        email:     this.form.email,
+        poste:     this.form.poste,
+        telephone: this.form.telephone,
+        roleId:    this.form.roleId as number
+      }).subscribe({
+        next: (res) => {
+          this.invitationLoading = false;
+          this.displayFormModal = false;
+          this.loadUtilisateurs(); // recharger la liste (le compte existe mais est inactif)
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Invitation envoyée ✉️',
+            detail: res.message,
+            life: 6000
+          });
+        },
+        error: (err) => {
+          this.invitationLoading = false;
+          this.toast('error', err.error?.error ?? 'Erreur lors de l\'envoi de l\'invitation');
+        }
       });
     }
   }

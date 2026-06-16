@@ -3,6 +3,7 @@
  * Correspondent exactement aux noms définis dans le backend (DataInitializer).
  */
 export const Roles = {
+  SUPER_ADMIN    : 'ROLE_SUPER_ADMIN',
   ADMINISTRATEUR : 'ROLE_ADMINISTRATEUR',
   GERANT         : 'ROLE_GERANT',
   RESPONSABLE    : 'ROLE_RESPONSABLE',

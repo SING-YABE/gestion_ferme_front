@@ -293,6 +293,21 @@
   color: #a0aec0;
 }
 
+.register-prompt {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #718096;
+  margin-bottom: 12px;
+}
+
+.register-link {
+  color: #4a7c2c;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover { text-decoration: underline; }
+}
+
 /* SECTION DROITE - IMAGE */
 .login-right {
   flex: 1;
