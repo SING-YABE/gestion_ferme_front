@@ -1,446 +1,550 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ─────────────────────────────────────────────────────────────
+   LOGIN PAGE — Dark Split Premium
+   Logique Angular intacte, seul le visuel change.
+───────────────────────────────────────────────────────────── */
 
-.login-container {
+// ── Variables ──────────────────────────────────────────────
+$dark:      #071a0b;
+$dark2:     #0d2910;
+$green:     #1a5c34;
+$green2:    #2d8a4e;
+$accent:    #5cc47a;
+$white:     #ffffff;
+$off-white: #f7f9f7;
+$text:      #111827;
+$muted:     #6b7280;
+$border:    #e5e7eb;
+$danger:    #dc2626;
+
+// ── Reset minimal ──────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+// ════════════════════════════════════════════════════════════
+// CONTENEUR PRINCIPAL
+// ════════════════════════════════════════════════════════════
+.lp {
   display: flex;
   min-height: 100vh;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #2d5016 0%, #4a7c2c 100%);
 }
 
-/* SECTION GAUCHE - FORMULAIRE */
-.login-left {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background: #ffffff;
+// ════════════════════════════════════════════════════════════
+// PANNEAU VISUEL (GAUCHE, 58%)
+// ════════════════════════════════════════════════════════════
+.lp__visual {
+  flex: 0 0 58%;
   position: relative;
-}
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 56px 44px;
+  background: $dark;
+  overflow: hidden;
 
-.login-card {
-  width: 100%;
-  max-width: 440px;
-  animation: slideInLeft 0.6s ease-out;
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+  // Grain subtil
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
   }
 }
 
-/* HEADER */
-.header-section {
-  text-align: center;
-  margin-bottom: 2.5rem;
-}
-
-.logo-circle {
-  width: 70px;
-  height: 70px;
-  margin: 0 auto 1.5rem;
-  background: linear-gradient(135deg, #2d5016 0%, #4a7c2c 100%);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 30px rgba(45, 80, 22, 0.3);
-}
-
-
-.logo-circle svg {
-  width: 35px;
-  height: 35px;
-  color: #ffffff;
-}
-
-.title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1a202c;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.5px;
-}
-
-.subtitle {
-  font-size: 0.95rem;
-  color: #718096;
-  font-weight: 400;
-}
-
-/* CHAMPS DE FORMULAIRE */
-.field {
-  margin-bottom: 1.5rem;
-}
-
-.field label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 0.5rem;
-}
-
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-icon {
+// ── Décorations géométriques ──────────────────────────────
+.deco {
   position: absolute;
-  left: 1rem;
-  width: 20px;
-  height: 20px;
-  color: #a0aec0;
-  z-index: 1;
+  border-radius: 50%;
   pointer-events: none;
+  z-index: 0;
 }
 
-.input-wrapper input {
+.deco--ring1 {
+  width: 520px;
+  height: 520px;
+  top: -160px;
+  right: -160px;
+  border: 1.5px solid rgba(92, 196, 122, 0.12);
+  background: radial-gradient(circle at center, rgba(45, 138, 78, 0.08) 0%, transparent 70%);
+}
+
+.deco--ring2 {
+  width: 360px;
+  height: 360px;
+  top: -80px;
+  right: -80px;
+  border: 1px solid rgba(92, 196, 122, 0.18);
+}
+
+.deco--blob {
+  width: 300px;
+  height: 300px;
+  bottom: -80px;
+  left: -60px;
+  background: radial-gradient(circle at center, rgba(45, 138, 78, 0.14) 0%, transparent 70%);
+}
+
+// ── Marque ────────────────────────────────────────────────
+.lp__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.lp__brand-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, $green, $green2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(45, 138, 78, 0.35);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: $white;
+    stroke: $white;
+  }
+}
+
+.lp__brand-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: $white;
+  letter-spacing: 0.5px;
+}
+
+// ── Hero ──────────────────────────────────────────────────
+.lp__hero {
+  position: relative;
+  z-index: 1;
+  animation: heroIn 0.8s ease-out both;
+}
+
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lp__eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: $accent;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+}
+
+.lp__headline {
+  font-size: clamp(2.4rem, 3.5vw, 3.2rem);
+  font-weight: 800;
+  color: $white;
+  line-height: 1.12;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+}
+
+.lp__headline--accent {
+  color: $accent;
+}
+
+.lp__tagline {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.65;
+  max-width: 420px;
+  margin-bottom: 36px;
+}
+
+// ── Pills ─────────────────────────────────────────────────
+.lp__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(4px);
+  transition: background 0.2s;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    stroke: $accent;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// ── Stats ─────────────────────────────────────────────────
+.lp__stats {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  position: relative;
+  z-index: 1;
+  animation: heroIn 0.8s ease-out 0.2s both;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.stat__num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: $white;
+  line-height: 1;
+}
+
+.stat__lbl {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat__sep {
+  width: 1px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+// ════════════════════════════════════════════════════════════
+// PANNEAU FORMULAIRE (DROITE, 42%)
+// ════════════════════════════════════════════════════════════
+.lp__form-panel {
+  flex: 0 0 42%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  background: $off-white;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 15%;
+    bottom: 15%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, $border, transparent);
+  }
+}
+
+.lp__form-wrap {
   width: 100%;
-  height: 50px;
-  padding: 0.875rem 1rem 0.875rem 3rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  background: #f7fafc;
-  box-sizing: border-box;
+  max-width: 380px;
+  animation: formIn 0.7s ease-out 0.1s both;
 }
 
-.input-wrapper input:focus {
-  outline: none;
-  border-color: #4a7c2c;
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(74, 124, 44, 0.1);
+@keyframes formIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.input-wrapper input::placeholder {
-  color: #cbd5e0;
+// ── En-tête formulaire ────────────────────────────────────
+.lp__form-header {
+  margin-bottom: 36px;
 }
 
-/* PASSWORD FIELD */
-.input-wrapper ::ng-deep .p-password {
-  width: 100%;
+.lp__form-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: $text;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
 }
 
-.input-wrapper ::ng-deep .p-password input {
-  width: 100%;
-  padding: 0.875rem 1rem 0.875rem 3rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  background: #f7fafc;
-  font-size: 0.95rem;
+.lp__form-sub {
+  font-size: 0.875rem;
+  color: $muted;
 }
 
-.input-wrapper ::ng-deep .p-password input:focus {
-  border-color: #4a7c2c;
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(74, 124, 44, 0.1);
+// ════════════════════════════════════════════════════════════
+// CHAMPS DU FORMULAIRE
+// ════════════════════════════════════════════════════════════
+.f-group {
+  margin-bottom: 20px;
 }
-.input-wrapper ::ng-deep .p-password .p-inputtext {
-  height: 50px !important;
-  padding: 0.875rem 1rem 0.875rem 3rem !important;
-  box-sizing: border-box !important;
+
+.f-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+  letter-spacing: 0.2px;
 }
-/* OPTIONS ROW */
-.options-row {
+
+.f-label-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.75rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  margin-bottom: 8px;
+
+  .f-label { margin-bottom: 0; }
 }
 
-.remember-row {
+// ── Input box (conteneur icône + champ) ──────────────────
+.f-input-box {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
 }
 
-.remember-row label {
-  font-size: 0.875rem;
-  color: #4a5568;
-  cursor: pointer;
-  user-select: none;
-}
-
-.forgot-link {
-  font-size: 0.875rem;
-  color: #4a7c2c;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-
-.forgot-link:hover {
-  color: #2d5016;
-}
-
-/* ERROR */
-.error {
-  display: block;
-  color: #e53e3e;
-  font-size: 0.8rem;
-  margin-top: 0.4rem;
-  font-weight: 500;
-}
-
-.error-box {
+.f-ico {
+  position: absolute;
+  left: 14px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
-  background: #fff5f5;
-  border: 1px solid #feb2b2;
+  pointer-events: none;
+  z-index: 2;
+
+  svg {
+    width: 17px;
+    height: 17px;
+    stroke: #9ca3af;
+    transition: stroke 0.2s;
+  }
+}
+
+.f-input-box:focus-within .f-ico svg {
+  stroke: $green2;
+}
+
+.f-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px 0 44px;
+  border: 1.5px solid $border;
   border-radius: 12px;
-  color: #c53030;
-  font-size: 0.875rem;
-  margin-bottom: 1.5rem;
-  animation: shake 0.4s;
+  font-size: 0.93rem;
+  color: $text;
+  background: $white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+
+  &::placeholder { color: #c4cad4; }
+
+  &:focus {
+    border-color: $green2;
+    box-shadow: 0 0 0 4px rgba(45, 138, 78, 0.1);
+  }
 }
 
-.error-box svg {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
+// ── Champ password PrimeNG ────────────────────────────────
+::ng-deep .f-ppassword {
+  width: 100%;
+
+  .p-inputtext {
+    width: 100% !important;
+    height: 52px !important;
+    padding: 0 48px 0 44px !important;
+    border: 1.5px solid $border !important;
+    border-radius: 12px !important;
+    font-size: 0.93rem !important;
+    color: $text !important;
+    background: $white !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+    box-shadow: none !important;
+    outline: none !important;
+
+    &::placeholder { color: #c4cad4 !important; }
+
+    &:focus {
+      border-color: $green2 !important;
+      box-shadow: 0 0 0 4px rgba(45, 138, 78, 0.1) !important;
+    }
+  }
+
+  // Bouton œil
+  .p-password-toggle-icon,
+  .p-icon-field > .p-icon-wrapper {
+    right: 14px;
+    color: #9ca3af;
+
+    &:hover { color: $green2; }
+  }
+}
+
+// ── Lien oublié ───────────────────────────────────────────
+.f-forgot {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: $green2;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover { color: $green; }
+}
+
+// ── Erreur inline ─────────────────────────────────────────
+.f-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  color: $danger;
+  font-weight: 500;
+  margin-top: 6px;
+
+  svg { width: 13px; height: 13px; stroke: $danger; flex-shrink: 0; }
+}
+
+// ── Alerte globale ────────────────────────────────────────
+.f-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 10px;
+  color: $danger;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 18px;
+  animation: shake 0.35s;
+
+  svg { width: 18px; height: 18px; flex-shrink: 0; }
 }
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-10px); }
-  75% { transform: translateX(10px); }
+  20%       { transform: translateX(-6px); }
+  60%       { transform: translateX(6px); }
 }
 
-/* BUTTON */
-.btn-login {
-  width: 100%;
-  padding: 0.95rem;
-  background: linear-gradient(135deg, #2d5016 0%, #4a7c2c 100%);
-  border: none;
-  border-radius: 12px;
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 600;
+// ── Bouton connexion ──────────────────────────────────────
+.f-btn {
+  width: 100% !important;
+  height: 52px !important;
+  border: none !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, $green 0%, $green2 100%) !important;
+  color: $white !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px !important;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(45, 80, 22, 0.4);
-  margin-bottom: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s !important;
+  box-shadow: 0 4px 18px rgba(26, 92, 52, 0.35) !important;
+  margin-top: 8px;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(26, 92, 52, 0.42) !important;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0) !important;
+  }
+
+  &:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  // Spinner PrimeNG
+  ::ng-deep .p-button-loading-icon {
+    color: $white;
+  }
 }
 
-.btn-login:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(45, 80, 22, 0.5);
-}
-
-.btn-login:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.btn-login:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* FOOTER */
-.footer {
-  margin-top: 2.5rem;
-  padding-top: 2rem;
-}
-
-.divider {
-  position: relative;
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.divider::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: #e2e8f0;
-}
-
-.divider span {
-  position: relative;
-  background: #ffffff;
-  padding: 0 1rem;
-  font-size: 0.75rem;
-  color: #a0aec0;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.footer-text {
-  text-align: center;
-  font-size: 0.8rem;
-  color: #a0aec0;
-}
-
-.register-prompt {
-  text-align: center;
-  font-size: 0.875rem;
-  color: #718096;
-  margin-bottom: 12px;
-}
-
-.register-link {
-  color: #4a7c2c;
-  font-weight: 600;
-  text-decoration: none;
-
-  &:hover { text-decoration: underline; }
-}
-
-/* SECTION DROITE - IMAGE */
-.login-right {
-  flex: 1;
-  position: relative;
+// ── Pied du formulaire ────────────────────────────────────
+.lp__form-footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  background: linear-gradient(135deg, #2d5016 0%, #4a7c2c 100%);
+  gap: 8px;
+  margin-top: 28px;
+  font-size: 0.85rem;
+  color: $muted;
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(45, 80, 22, 0.9) 0%, rgba(74, 124, 44, 0.85) 100%);
-  z-index: 1;
+.f-register {
+  font-weight: 700;
+  color: $green2;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover { color: $green; }
 }
 
-.farm-image {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.15;
-}
-
-.right-content {
-  position: relative;
-  z-index: 2;
-  padding: 3rem;
-  max-width: 550px;
+.lp__copyright {
   text-align: center;
-  animation: fadeIn 1s ease-out 0.3s both;
+  font-size: 0.72rem;
+  color: #d1d5db;
+  margin-top: 32px;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+// ════════════════════════════════════════════════════════════
+// RESPONSIVE
+// ════════════════════════════════════════════════════════════
+@media (max-width: 1024px) {
+  .lp__visual { flex: 0 0 52%; padding: 36px 40px; }
+  .lp__form-panel { flex: 0 0 48%; }
 }
 
-.slogan {
-  font-size: 2.75rem;
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 20px;
-  line-height: 1.2;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-}
-
-.slogan-subtitle {
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 3rem;
-  line-height: 1.6;
-}
-
-.features {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  align-items: flex-start;
-  max-width: 350px;
-  margin: 0 auto;
-}
-
-.feature-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.feature-item svg {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 4px;
-}
-
-/* RESPONSIVE */
-@media (max-width: 968px) {
-  .login-container {
+@media (max-width: 768px) {
+  .lp {
     flex-direction: column;
   }
-  
-  .login-right {
-    min-height: 300px;
-    order: -1;
+
+  .lp__visual {
+    flex: none;
+    min-height: 280px;
+    padding: 32px 28px 36px;
+
+    .lp__hero { display: none; }
+    .lp__stats { display: none; }
   }
-  
-  .slogan {
-    font-size: 2rem;
+
+  .lp__form-panel {
+    flex: none;
+    padding: 32px 24px;
+
+    &::before { display: none; }
   }
-  
-  .features {
-    display: none;
-  }
+
+  .deco--ring1 { width: 260px; height: 260px; top: -80px; right: -80px; }
+  .deco--ring2 { width: 180px; height: 180px; top: -40px; right: -40px; }
 }
 
 @media (max-width: 480px) {
-  .login-left {
-    padding: 1.5rem;
-  }
-  
-  .title {
-    font-size: 1.75rem;
-  }
-  
-  .logo-circle {
-    width: 60px;
-    height: 60px;
-  }
-}
-/* FORCE ÉGALITÉ DES CHAMPS */
-input[type="email"],
-input[type="password"],
-.p-password input,
-.p-inputtext {
-  height: 50px !important;
-  min-height: 50px !important;
-  max-height: 50px !important;
-  padding: 0.875rem 1rem 0.875rem 3rem !important;
-  box-sizing: border-box !important;
-  line-height: normal !important;
+  .lp__visual { min-height: 200px; }
+
+  .lp__brand-name { font-size: 1rem; }
+
+  .lp__form-wrap { max-width: 100%; }
 }

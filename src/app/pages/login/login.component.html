@@ -1,81 +1,159 @@
-<div class="login-container">
-  <!-- SECTION FORMULAIRE -->
-  <div class="login-left">
-    <div class="login-card">
-      <!-- Header avec icône -->
-      <div class="header-section">
-        <div class="logo-circle">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
+<div class="lp">
+
+  <!-- ═══════════════════════════════════════════
+       PANNEAU GAUCHE — visuel
+  ════════════════════════════════════════════ -->
+  <div class="lp__visual">
+
+    <!-- Formes décoratives CSS -->
+    <div class="deco deco--ring1"></div>
+    <div class="deco deco--ring2"></div>
+    <div class="deco deco--blob"></div>
+
+    <!-- Marque -->
+    <div class="lp__brand">
+      <div class="lp__brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <span class="lp__brand-name">FarmPro</span>
+    </div>
+
+    <!-- Contenu central -->
+    <div class="lp__hero">
+      <p class="lp__eyebrow">Plateforme SaaS · Burkina Faso</p>
+      <h1 class="lp__headline">
+        Gérez votre élevage.<br/>
+        <span class="lp__headline--accent">Intelligemment.</span>
+      </h1>
+      <p class="lp__tagline">
+        Suivi en temps réel, analyses IA et gestion complète
+        de votre parc porcin — depuis n'importe où.
+      </p>
+
+      <!-- Feature pills -->
+      <div class="lp__pills">
+        <div class="pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
           </svg>
+          Suivi en temps réel
         </div>
-        <h1 class="title">Bienvenue</h1>
-        <p class="subtitle">Connectez-vous à votre espace de gestion</p>
+        <div class="pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            <path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>
+          </svg>
+          Recommandations IA
+        </div>
+        <div class="pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+          </svg>
+          Multi-appareils
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="lp__stats">
+      <div class="stat">
+        <span class="stat__num">500+</span>
+        <span class="stat__lbl">Fermes actives</span>
+      </div>
+      <div class="stat__sep"></div>
+      <div class="stat">
+        <span class="stat__num">12k+</span>
+        <span class="stat__lbl">Animaux suivis</span>
+      </div>
+      <div class="stat__sep"></div>
+      <div class="stat">
+        <span class="stat__num">98%</span>
+        <span class="stat__lbl">Satisfaction</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PANNEAU DROIT — formulaire
+  ════════════════════════════════════════════ -->
+  <div class="lp__form-panel">
+    <div class="lp__form-wrap">
+
+      <!-- En-tête -->
+      <div class="lp__form-header">
+        <h2 class="lp__form-title">Connexion</h2>
+        <p class="lp__form-sub">Accédez à votre espace de gestion</p>
       </div>
 
-      <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
+      <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()" autocomplete="off">
+
         <!-- EMAIL -->
-        <div class="field">
-          <label for="username">Adresse email</label>
-          <div class="input-wrapper">
-            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-              <polyline points="22,6 12,13 2,6"/>
-            </svg>
+        <div class="f-group">
+          <label class="f-label" for="username">Adresse email</label>
+          <div class="f-input-box">
+            <span class="f-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </span>
             <input
               id="username"
               type="email"
-              pInputText
+              class="f-input"
               formControlName="username"
-              placeholder="votre@email.com"
+              placeholder="vous@exemple.com"
+              autocomplete="email"
             />
           </div>
           @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
-            <small class="error">Veuillez entrer un email valide</small>
+            <span class="f-error">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Email invalide
+            </span>
           }
         </div>
 
-        <!-- PASSWORD -->
-        <div class="field">
-          <label for="password">Mot de passe</label>
-          <div class="input-wrapper">
-            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
+        <!-- MOT DE PASSE -->
+        <div class="f-group">
+          <div class="f-label-row">
+            <label class="f-label" for="password">Mot de passe</label>
+            <a href="#" class="f-forgot">Oublié ?</a>
+          </div>
+          <div class="f-input-box">
+            <span class="f-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </span>
             <p-password
               id="password"
               formControlName="password"
               [toggleMask]="true"
               [feedback]="false"
               placeholder="••••••••"
-              styleClass="w-full"
+              styleClass="f-ppassword"
             ></p-password>
           </div>
           @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-            <small class="error">Le mot de passe est requis</small>
+            <span class="f-error">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Mot de passe requis
+            </span>
           }
         </div>
 
-        <!-- REMEMBER ME & FORGOT PASSWORD -->
-        <div class="options-row">
-          <div class="remember-row">
-            <p-checkbox
-              [(ngModel)]="checked"
-              binary
-              id="rememberme"
-              [ngModelOptions]="{ standalone: true }"
-            ></p-checkbox>
-            <label for="rememberme">Se souvenir de moi</label>
-          </div>
-          <a href="#" class="forgot-link">Mot de passe oublié ?</a>
-        </div>
-
-        <!-- ERROR MESSAGE -->
+        <!-- ERREUR GLOBALE -->
         @if (errorMsg) {
-          <div class="error-box">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <div class="f-alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -84,58 +162,27 @@
           </div>
         }
 
-        <!-- BUTTON -->
+        <!-- BOUTON -->
         <button
           type="submit"
           pButton
-          class="btn-login"
+          class="f-btn"
           label="Se connecter"
           [loading]="processing"
           [disabled]="loginForm.invalid"
         ></button>
+
       </form>
 
-      <!-- FOOTER -->
-      <div class="footer">
-        <div class="divider">
-          <span>Gestion de la ferme</span>
-        </div>
-        <p class="register-prompt">
-          Pas encore de compte ?
-          <a routerLink="/inscription" class="register-link">Inscrire ma ferme</a>
-        </p>
-        <p class="footer-text">© 2025 Farm Pro - Tous droits réservés</p>
+      <!-- PIED -->
+      <div class="lp__form-footer">
+        <span>Pas encore de compte ?</span>
+        <a routerLink="/inscription" class="f-register">Inscrire ma ferme →</a>
       </div>
+
+      <p class="lp__copyright">© 2025 FarmPro · Tous droits réservés</p>
+
     </div>
   </div>
 
-  <!-- SECTION IMAGE -->
-  <div class="login-right">
-    <div class="overlay"></div>
-    <img src="assets/image/farm.png" class="farm-image" alt="Ferme" />
-    <div class="right-content">
-      <h2 class="slogan">Gérez votre exploitation agricole</h2>
-      <p class="slogan-subtitle"></p>
-      <div class="features">
-        <div class="feature-item">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          <span>Suivi en temps réel</span>
-        </div>
-        <div class="feature-item">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          <span>Gestion des ressources</span>
-        </div>
-        <div class="feature-item">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          <span>Analyses et rapports</span>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
