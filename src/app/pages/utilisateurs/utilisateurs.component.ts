@@ -16,7 +16,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
 import { UtilisateurService, Utilisateur, UtilisateurDTO } from '../../@core/service/utilisateur.service';
 import { RoleManagementService, RoleManagement } from '../../@core/service/role-management.service';
-import { InvitationService } from '../../@core/service/invitation.service';
+import { InvitationService, CreateDirectResponse } from '../../@core/service/invitation.service';
 
 interface PermissionsData {
   utilisateurId: number;
@@ -94,6 +94,14 @@ export class UtilisateursComponent implements OnInit {
   // true pendant l'envoi de l'invitation
   invitationLoading = false;
 
+  // Mode de création : 'email' = invitation par email, 'direct' = mot de passe temporaire
+  creationMode: 'email' | 'direct' = 'email';
+
+  // Mot de passe temporaire saisi ou auto-généré, affiché après création
+  directPassword = '';
+  tempPasswordGenerated = '';   // affiché dans le dialogue de confirmation
+  displayTempPasswordModal = false;
+
   constructor(
     private utilisateurService: UtilisateurService,
     private roleService: RoleManagementService,
@@ -156,6 +164,8 @@ export class UtilisateursComponent implements OnInit {
   ouvrirCreation() {
     this.isEditMode = false;
     this.form = this.emptyForm();
+    this.creationMode = 'email';
+    this.directPassword = '';
     this.displayFormModal = true;
   }
 
@@ -183,36 +193,49 @@ export class UtilisateursComponent implements OnInit {
         error: () => this.toast('error', 'Erreur lors de la modification')
       });
     } else {
-      // ── Création : envoyer une invitation par email ───────────────────────
-      if (!this.form.roleId) {
-        this.toast('error', 'Veuillez sélectionner un rôle.');
-        return;
+      if (!this.form.roleId) { this.toast('error', 'Veuillez sélectionner un rôle.'); return; }
+
+      if (this.creationMode === 'email') {
+        // ── Mode 1 : invitation par email ──────────────────────────────────
+        this.invitationLoading = true;
+        this.invitationService.createInvitation({
+          prenom: this.form.prenom, nom: this.form.nom, email: this.form.email,
+          poste: this.form.poste, telephone: this.form.telephone,
+          roleId: this.form.roleId as number
+        }).subscribe({
+          next: (res) => {
+            this.invitationLoading = false;
+            this.displayFormModal = false;
+            this.loadUtilisateurs();
+            this.messageService.add({ severity: 'success', summary: 'Invitation envoyée ✉️', detail: res.message, life: 6000 });
+          },
+          error: (err) => {
+            this.invitationLoading = false;
+            this.toast('error', err.error?.error ?? 'Erreur lors de l\'envoi de l\'invitation');
+          }
+        });
+      } else {
+        // ── Mode 2 : création directe avec mot de passe temporaire ─────────
+        this.invitationLoading = true;
+        this.invitationService.createDirect({
+          prenom: this.form.prenom, nom: this.form.nom, email: this.form.email,
+          poste: this.form.poste, telephone: this.form.telephone,
+          roleId: this.form.roleId as number,
+          temporaryPassword: this.directPassword || undefined
+        }).subscribe({
+          next: (res: CreateDirectResponse) => {
+            this.invitationLoading = false;
+            this.displayFormModal = false;
+            this.loadUtilisateurs();
+            this.tempPasswordGenerated = res.temporaryPassword;
+            this.displayTempPasswordModal = true;   // afficher le mot de passe à copier
+          },
+          error: (err) => {
+            this.invitationLoading = false;
+            this.toast('error', err.error?.error ?? 'Erreur lors de la création');
+          }
+        });
       }
-      this.invitationLoading = true;
-      this.invitationService.createInvitation({
-        prenom:    this.form.prenom,
-        nom:       this.form.nom,
-        email:     this.form.email,
-        poste:     this.form.poste,
-        telephone: this.form.telephone,
-        roleId:    this.form.roleId as number
-      }).subscribe({
-        next: (res) => {
-          this.invitationLoading = false;
-          this.displayFormModal = false;
-          this.loadUtilisateurs(); // recharger la liste (le compte existe mais est inactif)
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Invitation envoyée ✉️',
-            detail: res.message,
-            life: 6000
-          });
-        },
-        error: (err) => {
-          this.invitationLoading = false;
-          this.toast('error', err.error?.error ?? 'Erreur lors de l\'envoi de l\'invitation');
-        }
-      });
     }
   }
 

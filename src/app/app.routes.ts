@@ -172,6 +172,14 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/super-admin/super-admin.component').then(m => m.SuperAdminComponent)
   },
 
+  // ─── Changement de mot de passe obligatoire (après login direct) ──
+  {
+    path: 'change-password',
+    title: 'Changer mon mot de passe',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/change-password/change-password.component').then(m => m.ChangePasswordComponent)
+  },
+
   // ─── Pages publiques ──────────────────────────────────────────────
   {
     path: 'login',

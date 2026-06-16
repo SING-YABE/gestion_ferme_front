@@ -24,6 +24,7 @@ export interface UserProfile {
   poste: string;
   role: string;
   permissions: string[];   // permissions effectives (rôle + overrides)
+  mustChangePassword?: boolean;
 }
 
 /** Données stockées en session */

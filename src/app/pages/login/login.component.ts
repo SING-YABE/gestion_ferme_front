@@ -78,10 +78,12 @@ export class LoginComponent implements OnInit {
     this.authService.login(email, password).subscribe({
       next: (session: SessionData) => {
         this.processing = false;
-        // Super Admin → console dédiée ; utilisateur normal → returnUrl ou dashboard
+        // Priorité : super admin → console, mustChangePassword → changer mdp, sinon → returnUrl
         const target = session.profile.role === 'ROLE_SUPER_ADMIN'
           ? '/super-admin'
-          : this.returnUrl;
+          : session.profile.mustChangePassword
+            ? '/change-password'
+            : this.returnUrl;
 
         this.router.navigateByUrl(target).then(() => {
           const nomComplet = session.profile.prenom && session.profile.nom

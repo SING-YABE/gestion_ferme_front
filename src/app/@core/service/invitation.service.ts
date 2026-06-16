@@ -14,6 +14,21 @@ export interface CreateInvitationRequest {
   roleId: number;
 }
 
+export interface CreateDirectRequest {
+  prenom: string;
+  nom: string;
+  email: string;
+  poste?: string;
+  telephone?: string;
+  roleId: number;
+  temporaryPassword?: string;
+}
+
+export interface CreateDirectResponse {
+  message: string;
+  temporaryPassword: string;
+}
+
 export interface ValidateInvitationRequest {
   token: string;
   newPassword: string;
@@ -39,5 +54,10 @@ export class InvitationService {
   /** Public : valide le token + définit le mot de passe → retourne JWT */
   validateInvitation(req: ValidateInvitationRequest): Observable<ValidateInvitationResponse> {
     return this.http.post<ValidateInvitationResponse>(`${BASE_URL}/api/invitations/validate`, req);
+  }
+
+  /** Admin : création directe avec mot de passe temporaire (sans email) */
+  createDirect(req: CreateDirectRequest): Observable<CreateDirectResponse> {
+    return this.http.post<CreateDirectResponse>(`${BASE_URL}/api/invitations/create-direct`, req);
   }
 }

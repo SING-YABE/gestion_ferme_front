@@ -131,23 +131,76 @@
     </div>
   </div>
 
-  <!-- Info invitation (mode création uniquement) -->
-  <div *ngIf="!isEditMode" class="invitation-info">
-    <i class="pi pi-send"></i>
-    Un email d'invitation sera envoyé à l'adresse indiquée.
-    L'utilisateur cliquera le lien pour définir son mot de passe et accéder directement à son espace.
+  <!-- Toggle mode création (uniquement en mode création) -->
+  <div *ngIf="!isEditMode" class="creation-mode-toggle">
+    <span class="toggle-label">Mode de création :</span>
+    <div class="toggle-buttons">
+      <button class="toggle-btn" [class.active]="creationMode === 'email'"
+        (click)="creationMode = 'email'">
+        <i class="pi pi-envelope"></i> Invitation par email
+      </button>
+      <button class="toggle-btn" [class.active]="creationMode === 'direct'"
+        (click)="creationMode = 'direct'">
+        <i class="pi pi-key"></i> Mot de passe temporaire
+      </button>
+    </div>
+
+    <!-- Info mode email -->
+    <div *ngIf="creationMode === 'email'" class="mode-info mode-email">
+      <i class="pi pi-send"></i>
+      Un email d'invitation sera envoyé. L'utilisateur clique le lien pour définir son mot de passe.
+    </div>
+
+    <!-- Mode direct : champ mot de passe optionnel -->
+    <div *ngIf="creationMode === 'direct'" class="mode-info mode-direct">
+      <i class="pi pi-info-circle"></i>
+      Le compte est créé immédiatement. L'utilisateur devra changer son mot de passe à la première connexion.
+      <div class="direct-password-field">
+        <label>Mot de passe temporaire <span class="optional">(optionnel — auto-généré si vide)</span></label>
+        <input pInputText [(ngModel)]="directPassword" placeholder="ex: Ferme@1234" />
+      </div>
+    </div>
   </div>
 
   <ng-template pTemplate="footer">
     <p-button label="Annuler" severity="secondary" (click)="displayFormModal=false"></p-button>
     <p-button
-      [label]="isEditMode ? 'Enregistrer' : 'Envoyer l\'invitation'"
-      [icon]="isEditMode ? 'pi pi-check' : 'pi pi-send'"
+      [label]="isEditMode ? 'Enregistrer' : (creationMode === 'email' ? 'Envoyer l\'invitation' : 'Créer le compte')"
+      [icon]="isEditMode ? 'pi pi-check' : (creationMode === 'email' ? 'pi pi-send' : 'pi pi-user-plus')"
       [severity]="isEditMode ? 'primary' : 'success'"
       (click)="soumettre()"
       [loading]="invitationLoading"
       [disabled]="!form.prenom || !form.nom || !form.email || !form.roleId || invitationLoading">
     </p-button>
+  </ng-template>
+</p-dialog>
+
+<!-- ════════════════════════════════════════════════════════════
+     MODAL — Mot de passe temporaire généré
+═════════════════════════════════════════════════════════════ -->
+<p-dialog [(visible)]="displayTempPasswordModal"
+  header="✅ Compte créé avec succès"
+  [style]="{width:'480px'}" [modal]="true" [closable]="true"
+  [draggable]="false" [resizable]="false">
+  <div class="temp-password-panel">
+    <p>Le compte a été créé. Communiquez ces identifiants à l'utilisateur par téléphone ou WhatsApp :</p>
+    <div class="credential-box">
+      <div class="credential-row">
+        <span class="cred-label"><i class="pi pi-envelope"></i> Email</span>
+        <span class="cred-value">{{ form.email }}</span>
+      </div>
+      <div class="credential-row">
+        <span class="cred-label"><i class="pi pi-key"></i> Mot de passe temporaire</span>
+        <span class="cred-value cred-password">{{ tempPasswordGenerated }}</span>
+      </div>
+    </div>
+    <p class="temp-pw-note">
+      <i class="pi pi-exclamation-triangle"></i>
+      L'utilisateur sera obligé de changer ce mot de passe à la première connexion.
+    </p>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button label="Fermer" (click)="displayTempPasswordModal=false"></p-button>
   </ng-template>
 </p-dialog>
 
