@@ -1,0 +1,421 @@
+<div class="sa-shell">
+
+  <!-- ══════════════════════ TOPBAR ══════════════════════ -->
+  <header class="sa-topbar">
+    <div class="sa-logo">
+      <span class="sa-logo-icon">⚡</span>
+      <div>
+        <div class="sa-logo-title">FarmPro SaaS</div>
+        <div class="sa-logo-sub">Console Super Admin</div>
+      </div>
+    </div>
+    <div class="sa-topbar-right">
+      <div class="sa-admin-badge">
+        <div class="sa-admin-avatar">{{ initiales }}</div>
+        <div>
+          <div class="sa-admin-name">{{ profile?.prenom }} {{ profile?.nom }}</div>
+          <div class="sa-admin-role">Super Administrateur</div>
+        </div>
+      </div>
+      <button class="sa-logout-btn" (click)="logout()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Déconnexion
+      </button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════ NAV TABS ══════════════════════ -->
+  <nav class="sa-nav">
+    <button class="sa-nav-btn" [class.active]="activeTab === 'overview'" (click)="activeTab = 'overview'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Vue d'ensemble
+    </button>
+    <button class="sa-nav-btn" [class.active]="activeTab === 'fermes'" (click)="switchTab('fermes')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Fermes <span class="nav-count">{{ fermes.length }}</span>
+    </button>
+    <button class="sa-nav-btn" [class.active]="activeTab === 'plans'" (click)="switchTab('plans')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Plans <span class="nav-count">{{ plans.length }}</span>
+    </button>
+    <button class="sa-nav-btn" [class.active]="activeTab === 'transactions'" (click)="switchTab('transactions')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      Transactions
+    </button>
+  </nav>
+
+  <!-- ══════════════════════ CONTENT ══════════════════════ -->
+  <main class="sa-main">
+
+    @if (loading) {
+      <div class="sa-loading">
+        <div class="sa-spinner"></div>
+        <p>Chargement...</p>
+      </div>
+    }
+
+    <!-- ── TAB : Vue d'ensemble ────────────────────────────── -->
+    @if (!loading && activeTab === 'overview') {
+
+      <div class="sa-section-header">
+        <h2 class="sa-section-title">Vue d'ensemble</h2>
+        <button class="sa-refresh-btn" (click)="loadOverview()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Actualiser
+        </button>
+      </div>
+
+      @if (stats) {
+        <div class="sa-kpi-grid">
+          <div class="sa-kpi-card accent-blue">
+            <div class="sa-kpi-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div class="sa-kpi-value">{{ stats.totalFermes }}</div>
+            <div class="sa-kpi-label">Fermes inscrites</div>
+            <div class="sa-kpi-detail">{{ stats.fermesActives }} actives</div>
+          </div>
+          <div class="sa-kpi-card accent-green">
+            <div class="sa-kpi-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg></div>
+            <div class="sa-kpi-value">{{ stats.abonnementsActifs }}</div>
+            <div class="sa-kpi-label">Abonnements actifs</div>
+            <div class="sa-kpi-detail">{{ stats.abonnementsEssai }} en essai · {{ stats.abonnementsExpires }} expirés</div>
+          </div>
+          <div class="sa-kpi-card accent-violet">
+            <div class="sa-kpi-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+            <div class="sa-kpi-value">{{ stats.totalUtilisateurs }}</div>
+            <div class="sa-kpi-label">Utilisateurs</div>
+            <div class="sa-kpi-detail">Toutes fermes</div>
+          </div>
+          <div class="sa-kpi-card accent-orange">
+            <div class="sa-kpi-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <div class="sa-kpi-value">{{ stats.totalAnimaux }}</div>
+            <div class="sa-kpi-label">Animaux gérés</div>
+            <div class="sa-kpi-detail">{{ tauxActivite }}% taux activité</div>
+          </div>
+        </div>
+      }
+
+      @if (fermes.length) {
+        <div class="sa-card">
+          <div class="sa-card-header">
+            <span class="sa-card-title">Aperçu des fermes</span>
+            <button class="sa-link-btn" (click)="switchTab('fermes')">Voir toutes →</button>
+          </div>
+          @for (f of fermes.slice(0, 5); track f.fermeCode) {
+            <div class="sa-farm-row">
+              <div class="sa-farm-avatar" [style.background]="farmColor(f.fermeCode)">{{ f.nomFerme.charAt(0).toUpperCase() }}</div>
+              <div class="sa-farm-info">
+                <div class="sa-farm-name">{{ f.nomFerme }}</div>
+                <div class="sa-farm-meta">{{ f.nbUtilisateurs }} utilisateurs · {{ f.nbAnimaux }} animaux</div>
+              </div>
+              <span class="sa-badge" [class]="subBadgeClass(f.subscriptionStatut)">
+                {{ f.subscriptionStatut ?? 'Aucun' }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- ── TAB : Fermes ───────────────────────────────────── -->
+    @if (!loading && activeTab === 'fermes') {
+      <div class="sa-section-header">
+        <h2 class="sa-section-title">Gestion des fermes</h2>
+        <span class="nav-count-label">{{ fermes.length }} ferme{{ fermes.length > 1 ? 's' : '' }}</span>
+      </div>
+
+      <div class="sa-search-bar">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" [(ngModel)]="searchFerme" placeholder="Rechercher par nom ou code..." class="sa-search-input" />
+      </div>
+
+      <div class="sa-table-wrap">
+        <table class="sa-table">
+          <thead>
+            <tr>
+              <th>Ferme</th>
+              <th>Code</th>
+              <th class="c">Animaux</th>
+              <th class="c">Abonnement</th>
+              <th class="c">Fin</th>
+              <th class="c">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (f of filteredFermes; track f.fermeCode) {
+              <tr [class.row-suspended]="!f.active">
+                <td>
+                  <div class="cell-farm">
+                    <div class="sa-farm-avatar sm" [style.background]="farmColor(f.fermeCode)">{{ f.nomFerme.charAt(0).toUpperCase() }}</div>
+                    <div>
+                      <div class="cell-farm-name">{{ f.nomFerme }}</div>
+                      <div class="cell-farm-sub">{{ f.active ? 'Active' : 'Suspendue' }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td><code class="sa-code">{{ f.fermeCode }}</code></td>
+                <td class="c">{{ f.nbAnimaux }}</td>
+                <td class="c">
+                  <span class="sa-badge" [class]="subBadgeClass(f.subscriptionStatut)">
+                    {{ f.subscriptionStatut ?? '—' }}
+                  </span>
+                </td>
+                <td class="c">
+                  <span class="date-val">{{ f.endDate ? (f.endDate | date:'dd/MM/yy') : '—' }}</span>
+                </td>
+                <td class="c">
+                  <div class="cell-actions">
+                    <button class="sa-action-btn assign" (click)="openAssignModal(f)" title="Attribuer un plan">
+                      Plan
+                    </button>
+                    <button
+                      class="sa-action-btn"
+                      [class.suspend-btn]="f.subscriptionStatut !== 'SUSPENDED'"
+                      [class.activate-btn]="f.subscriptionStatut === 'SUSPENDED'"
+                      [disabled]="suspendingFerme === f.fermeCode"
+                      (click)="toggleSuspendSub(f)"
+                      title="{{ f.subscriptionStatut === 'SUSPENDED' ? 'Lever la suspension' : 'Suspendre' }}">
+                      {{ f.subscriptionStatut === 'SUSPENDED' ? '▶' : '⏸' }}
+                    </button>
+                    <button
+                      class="sa-action-btn"
+                      [class.suspend-btn]="f.active"
+                      [class.activate-btn]="!f.active"
+                      [disabled]="togglingFerme === f.fermeCode"
+                      (click)="toggleFerme(f)"
+                      title="{{ f.active ? 'Suspendre la ferme' : 'Activer la ferme' }}">
+                      {{ f.active ? '🔒' : '🔓' }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (!filteredFermes.length) {
+              <tr><td colspan="6" class="sa-empty">Aucune ferme trouvée</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- ── TAB : Plans CRUD ──────────────────────────────── -->
+    @if (!loading && activeTab === 'plans') {
+      <div class="sa-section-header">
+        <h2 class="sa-section-title">Plans & Tarification</h2>
+        <button class="sa-create-btn" (click)="openCreatePlan()">
+          + Nouveau plan
+        </button>
+      </div>
+
+      <div class="plans-grid">
+        @for (plan of plans; track plan.id) {
+          <div class="plan-admin-card" [class.inactive]="!plan.actif">
+            <div class="plan-admin-head">
+              <div>
+                <div class="plan-admin-name">{{ plan.nom }}</div>
+                <div class="plan-admin-price">{{ formatPrix(plan.prixFcfa) }} <span>/ {{ formatDuree(plan.dureeDays) }}</span></div>
+              </div>
+              <span class="sa-badge" [class]="plan.actif ? 'active' : 'expired'">
+                {{ plan.actif ? 'Actif' : 'Désactivé' }}
+              </span>
+            </div>
+
+            @if (plan.description) {
+              <p class="plan-admin-desc">{{ plan.description }}</p>
+            }
+
+            <div class="plan-admin-limits">
+              <span>🐷 {{ formatLimit(plan.maxAnimaux) }}</span>
+              <span>👥 {{ formatLimit(plan.maxUtilisateurs) }}</span>
+              <span>🏠 {{ formatLimit(plan.maxBatiments) }}</span>
+              @if (plan.hasAssistantIA)  { <span class="feat-on">IA</span> }
+              @if (plan.hasAlertesSms)   { <span class="feat-on">SMS</span> }
+              @if (plan.hasExportPdf)    { <span class="feat-on">PDF</span> }
+              @if (plan.hasPrevisionPrix){ <span class="feat-on">Prév.</span> }
+            </div>
+
+            <div class="plan-admin-actions">
+              <button class="sa-action-btn assign" (click)="openEditPlan(plan)">Modifier</button>
+              <button
+                class="sa-action-btn"
+                [class.suspend-btn]="plan.actif"
+                [class.activate-btn]="!plan.actif"
+                [disabled]="togglingPlan === plan.id"
+                (click)="togglePlanActif(plan)">
+                {{ plan.actif ? 'Désactiver' : 'Activer' }}
+              </button>
+              <button
+                class="sa-action-btn suspend-btn"
+                [disabled]="deletingPlan === plan.id"
+                (click)="deletePlan(plan)">
+                Supprimer
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ── TAB : Transactions ────────────────────────────── -->
+    @if (activeTab === 'transactions') {
+
+      @if (loading) {
+        <div class="sa-loading"><div class="sa-spinner"></div><p>Chargement...</p></div>
+      } @else {
+        <div class="sa-section-header">
+          <h2 class="sa-section-title">Historique des paiements</h2>
+          <span class="nav-count-label">Revenu validé : {{ txRevenuTotal.toLocaleString('fr-FR') }} FCFA</span>
+        </div>
+
+        <div class="sa-search-bar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" [(ngModel)]="searchTx" placeholder="Ferme, plan, statut..." class="sa-search-input" />
+        </div>
+
+        <div class="sa-table-wrap">
+          <table class="sa-table">
+            <thead>
+              <tr>
+                <th>Ferme</th>
+                <th>Plan</th>
+                <th class="c">Montant</th>
+                <th class="c">Téléphone</th>
+                <th class="c">Statut</th>
+                <th class="c">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (tx of filteredTx; track tx.createdAt + tx.fermeCode) {
+                <tr>
+                  <td>
+                    <div class="cell-farm">
+                      <div class="sa-farm-avatar sm" [style.background]="farmColor(tx.fermeCode)">{{ tx.nomFerme.charAt(0).toUpperCase() }}</div>
+                      <div>
+                        <div class="cell-farm-name">{{ tx.nomFerme }}</div>
+                        <div class="cell-farm-sub">{{ tx.fermeCode }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{ tx.planNom }}</td>
+                  <td class="c"><strong>{{ tx.montantAttendu?.toLocaleString('fr-FR') }}</strong></td>
+                  <td class="c"><code class="sa-code">{{ tx.phoneNumber }}</code></td>
+                  <td class="c"><span class="sa-badge" [class]="txBadgeClass(tx.statut)">{{ tx.statut }}</span></td>
+                  <td class="c"><span class="date-val">{{ tx.createdAt | date:'dd/MM/yy HH:mm' }}</span></td>
+                </tr>
+              }
+              @if (!filteredTx.length) {
+                <tr><td colspan="6" class="sa-empty">Aucune transaction trouvée</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+
+  </main>
+</div>
+
+<!-- ══════════════════════ MODAL PLAN ══════════════════════ -->
+@if (showPlanModal) {
+  <div class="modal-overlay" (click)="showPlanModal = false">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ editingPlan ? 'Modifier le plan' : 'Nouveau plan' }}</h3>
+        <button class="modal-close" (click)="showPlanModal = false">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="f-row">
+          <div class="f-group">
+            <label>Nom</label>
+            <input type="text" [(ngModel)]="planForm.nom" class="f-input" placeholder="Starter, Pro, Elite..." />
+          </div>
+          <div class="f-group">
+            <label>Prix (FCFA)</label>
+            <input type="number" [(ngModel)]="planForm.prixFcfa" class="f-input" min="0" />
+          </div>
+        </div>
+        <div class="f-group">
+          <label>Description</label>
+          <input type="text" [(ngModel)]="planForm.description" class="f-input" placeholder="Description courte..." />
+        </div>
+        <div class="f-row">
+          <div class="f-group">
+            <label>Durée (jours)</label>
+            <input type="number" [(ngModel)]="planForm.dureeDays" class="f-input" min="1" />
+          </div>
+          <div class="f-group">
+            <label>Essai gratuit (jours)</label>
+            <input type="number" [(ngModel)]="planForm.trialDays" class="f-input" min="0" />
+          </div>
+          <div class="f-group">
+            <label>Ordre</label>
+            <input type="number" [(ngModel)]="planForm.ordre" class="f-input" min="1" />
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-group">
+            <label>Max animaux (-1 = ∞)</label>
+            <input type="number" [(ngModel)]="planForm.maxAnimaux" class="f-input" min="-1" />
+          </div>
+          <div class="f-group">
+            <label>Max utilisateurs</label>
+            <input type="number" [(ngModel)]="planForm.maxUtilisateurs" class="f-input" min="-1" />
+          </div>
+          <div class="f-group">
+            <label>Max bâtiments</label>
+            <input type="number" [(ngModel)]="planForm.maxBatiments" class="f-input" min="-1" />
+          </div>
+        </div>
+        <div class="f-checkboxes">
+          <label class="f-check"><input type="checkbox" [(ngModel)]="planForm.hasAssistantIA" /> Assistant IA</label>
+          <label class="f-check"><input type="checkbox" [(ngModel)]="planForm.hasAlertesSms" /> Alertes SMS</label>
+          <label class="f-check"><input type="checkbox" [(ngModel)]="planForm.hasSyntheseComplete" /> Synthèse complète</label>
+          <label class="f-check"><input type="checkbox" [(ngModel)]="planForm.hasExportPdf" /> Export PDF</label>
+          <label class="f-check"><input type="checkbox" [(ngModel)]="planForm.hasPrevisionPrix" /> Prévision des prix</label>
+          <label class="f-check"><input type="checkbox" [(ngModel)]="planForm.actif" /> Actif (visible)</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="showPlanModal = false">Annuler</button>
+        <button class="btn-primary" (click)="savePlan()" [disabled]="savingPlan || !planForm.nom">
+          {{ savingPlan ? 'Sauvegarde...' : (editingPlan ? 'Mettre à jour' : 'Créer le plan') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════ MODAL ASSIGN PLAN ══════════════════════ -->
+@if (showAssignModal && assignFerme) {
+  <div class="modal-overlay" (click)="showAssignModal = false">
+    <div class="modal-box sm" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Attribuer un plan à {{ assignFerme.nomFerme }}</h3>
+        <button class="modal-close" (click)="showAssignModal = false">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="f-group">
+          <label>Plan</label>
+          <select [(ngModel)]="assignPlanId" class="f-input">
+            @for (p of plans; track p.id) {
+              <option [value]="p.id">{{ p.nom }} — {{ formatPrix(p.prixFcfa) }}</option>
+            }
+          </select>
+        </div>
+        <div class="f-group">
+          <label>Durée (jours)</label>
+          <input type="number" [(ngModel)]="assignDuree" class="f-input" min="1" />
+        </div>
+        <div class="f-group">
+          <label>Notes (facultatif)</label>
+          <input type="text" [(ngModel)]="assignNotes" class="f-input" placeholder="Ex: Partenariat test..." />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="showAssignModal = false">Annuler</button>
+        <button class="btn-primary" (click)="submitAssign()" [disabled]="assigningFerme === assignFerme.fermeCode">
+          {{ assigningFerme ? 'Attribution...' : 'Confirmer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

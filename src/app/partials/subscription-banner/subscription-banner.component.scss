@@ -1,0 +1,67 @@
+$warn:   #f59e0b;
+$danger: #ef4444;
+$bg:     #1c1a14;
+$white:  #f0f6fc;
+
+.sub-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.84rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  border-bottom: 1px solid;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  &.warn {
+    background: rgba($warn, .12);
+    border-color: rgba($warn, .35);
+    color: mix($warn, $white, 40%);
+    .banner-cta { background: $warn; color: #000; }
+  }
+
+  &.danger {
+    background: rgba($danger, .12);
+    border-color: rgba($danger, .35);
+    color: mix($danger, $white, 30%);
+    .banner-cta { background: $danger; color: #fff; }
+  }
+}
+
+.banner-icon { font-size: 1rem; flex-shrink: 0; }
+
+.banner-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  flex-wrap: wrap;
+}
+
+.banner-msg { line-height: 1.4; }
+
+.banner-cta {
+  padding: 0.3rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .2s;
+  &:hover { opacity: .85; }
+}
+
+.banner-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  opacity: .6;
+  padding: 0.25rem;
+  flex-shrink: 0;
+  &:hover { opacity: 1; }
+}

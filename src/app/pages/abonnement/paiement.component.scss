@@ -1,0 +1,549 @@
+// ══════════════════════════════════════════════════════════════════════════════
+// Palette (cohérente avec login.component.scss)
+// ══════════════════════════════════════════════════════════════════════════════
+$bg:     #0d1117;
+$bg2:    #161b22;
+$bg3:    #1c2333;
+$border: #30363d;
+$accent: #22c55e;
+$white:  #f0f6fc;
+$muted:  #8b949e;
+$warn:   #f59e0b;
+$danger: #ef4444;
+$om:     #ff6600;   // couleur Orange Money
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Layout principal
+// ══════════════════════════════════════════════════════════════════════════════
+.pay-wrap {
+  min-height: 100vh;
+  background: $bg;
+  color: $white;
+  font-family: 'Inter', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Header
+// ══════════════════════════════════════════════════════════════════════════════
+.pay-header {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid $border;
+}
+
+.pay-back {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: $muted;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color .2s;
+  &:hover { color: $white; }
+}
+
+.pay-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: $accent;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Stepper
+// ══════════════════════════════════════════════════════════════════════════════
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 2rem 1.5rem 0;
+  width: 100%;
+  max-width: 560px;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+
+  span {
+    font-size: 0.72rem;
+    color: $muted;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  &.active {
+    .step-circle { background: $accent; color: $bg; border-color: $accent; }
+    span { color: $white; font-weight: 600; }
+  }
+
+  &.done {
+    .step-circle { background: $accent; color: $bg; border-color: $accent; }
+    span { color: $accent; }
+  }
+}
+
+.step-circle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid $border;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: $muted;
+  background: $bg2;
+  transition: all .25s;
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: $border;
+  margin-bottom: 1.4rem;
+  transition: background .25s;
+  &.done { background: $accent; }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Contenu principal
+// ══════════════════════════════════════════════════════════════════════════════
+.pay-content {
+  width: 100%;
+  max-width: 900px;
+  padding: 2.5rem 1.5rem 4rem;
+
+  &.narrow { max-width: 540px; }
+}
+
+.pay-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  &.sm { font-size: 1.35rem; }
+}
+
+.pay-sub {
+  color: $muted;
+  font-size: 0.9rem;
+  margin: 0 0 2rem;
+  line-height: 1.6;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Chargement
+// ══════════════════════════════════════════════════════════════════════════════
+.pay-loading {
+  display: flex; align-items: center; gap: 1rem;
+  color: $muted; font-size: 0.9rem;
+  padding: 3rem 0;
+}
+
+.spinner {
+  width: 28px; height: 28px;
+  border: 3px solid $border;
+  border-top-color: $accent;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Grille des plans (étape 1)
+// ══════════════════════════════════════════════════════════════════════════════
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.plan-card {
+  background: $bg2;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 1.5rem;
+  cursor: pointer;
+  position: relative;
+  transition: border-color .2s, transform .15s, box-shadow .2s;
+
+  &:hover {
+    border-color: rgba($accent, .5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  }
+
+  &.popular {
+    border-color: $accent;
+    background: linear-gradient(160deg, rgba($accent, .06) 0%, $bg2 100%);
+  }
+}
+
+.popular-badge {
+  position: absolute;
+  top: -10px; left: 50%;
+  transform: translateX(-50%);
+  background: $accent;
+  color: $bg;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  letter-spacing: .04em;
+}
+
+.plan-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+
+  .price-num {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: $accent;
+  }
+  .price-unit {
+    font-size: 0.75rem;
+    color: $muted;
+    font-weight: 600;
+  }
+  .price-per {
+    font-size: 0.75rem;
+    color: $muted;
+  }
+}
+
+.plan-desc {
+  font-size: 0.8rem;
+  color: $muted;
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+.plan-feats {
+  list-style: none;
+  padding: 0; margin: 0 0 1.25rem;
+  display: flex; flex-direction: column; gap: 0.35rem;
+
+  li {
+    font-size: 0.8rem;
+    color: $muted;
+    padding-left: 1rem;
+    position: relative;
+    &::before { content: '✓'; position: absolute; left: 0; color: $accent; font-size: 0.7rem; }
+  }
+}
+
+.plan-select-btn {
+  width: 100%;
+  padding: 0.65rem;
+  background: transparent;
+  border: 1px solid $border;
+  border-radius: 8px;
+  color: $muted;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover, &.accent {
+    background: $accent;
+    border-color: $accent;
+    color: $bg;
+    font-weight: 600;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Récapitulatif du plan sélectionné (étapes 2 & 3)
+// ══════════════════════════════════════════════════════════════════════════════
+.recap-box {
+  background: $bg3;
+  border: 1px solid $border;
+  border-left: 3px solid $accent;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.recap-label {
+  font-size: 0.7rem;
+  color: $muted;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 0.25rem;
+}
+
+.recap-plan {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.recap-price {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $accent;
+  margin-top: 0.15rem;
+  span { color: $muted; font-size: 0.8rem; font-weight: 400; }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Instructions Orange Money (étape 2)
+// ══════════════════════════════════════════════════════════════════════════════
+.instructions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.instruction-step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: $bg2;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+}
+
+.inst-num {
+  width: 28px; height: 28px;
+  min-width: 28px;
+  background: $om;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.inst-body { flex: 1; }
+
+.inst-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.inst-desc {
+  font-size: 0.8rem;
+  color: $muted;
+  line-height: 1.5;
+}
+
+.inst-number {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: $om;
+  letter-spacing: .05em;
+  margin-top: 0.25rem;
+}
+
+.inst-amount {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: $accent;
+  margin-top: 0.25rem;
+  span { font-size: 0.9rem; color: $muted; font-weight: 400; margin-left: 0.25rem; }
+}
+
+.inst-warn {
+  font-size: 0.78rem;
+  color: $warn;
+  margin-top: 0.4rem;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Formulaire OTP (étape 3)
+// ══════════════════════════════════════════════════════════════════════════════
+.otp-form { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.f-group { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.f-label {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: $white;
+}
+
+.f-input-wrap {
+  position: relative;
+  svg {
+    position: absolute;
+    left: 0.85rem; top: 50%;
+    transform: translateY(-50%);
+    color: $muted;
+    pointer-events: none;
+  }
+}
+
+.f-input {
+  width: 100%;
+  background: $bg3;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem 0.75rem 2.6rem;
+  color: $white;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color .2s;
+
+  &::placeholder { color: $muted; }
+  &:focus { border-color: $accent; }
+
+  &.otp-input {
+    letter-spacing: 0.25em;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+}
+
+.f-err {
+  font-size: 0.75rem;
+  color: $danger;
+}
+
+.pay-error {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba($danger, .1);
+  border: 1px solid rgba($danger, .3);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  color: $danger;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Boutons d'action
+// ══════════════════════════════════════════════════════════════════════════════
+.pay-actions {
+  display: flex;
+  gap: 0.875rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  flex: 1;
+  padding: 0.8rem 1.5rem;
+  background: $accent;
+  border: none;
+  border-radius: 10px;
+  color: $bg;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  transition: opacity .2s, transform .15s;
+
+  &:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); }
+  &:disabled { opacity: .4; cursor: not-allowed; }
+  &.full { width: 100%; flex: none; }
+}
+
+.btn-secondary {
+  flex: 0 0 auto;
+  padding: 0.8rem 1.25rem;
+  background: transparent;
+  border: 1px solid $border;
+  border-radius: 10px;
+  color: $muted;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+  &:hover { border-color: $white; color: $white; }
+}
+
+.spin-sm {
+  width: 16px; height: 16px;
+  border: 2px solid rgba($bg, .3);
+  border-top-color: $bg;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+  display: inline-block;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Écran de succès (étape 4)
+// ══════════════════════════════════════════════════════════════════════════════
+.success-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 4rem;
+}
+
+.success-icon {
+  width: 80px; height: 80px;
+  background: rgba($accent, .15);
+  border: 2px solid $accent;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.5rem;
+  color: $accent;
+  animation: pop .4s cubic-bezier(.34,1.56,.64,1);
+}
+
+@keyframes pop {
+  from { transform: scale(.6); opacity: 0; }
+  to   { transform: scale(1);  opacity: 1; }
+}
+
+.success-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0 0 0.75rem;
+}
+
+.success-sub {
+  color: $muted;
+  line-height: 1.7;
+  font-size: 0.95rem;
+  margin: 0 0 1.5rem;
+  strong { color: $white; }
+}
+
+.refund-notice {
+  background: rgba($warn, .1);
+  border: 1px solid rgba($warn, .3);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  color: $warn;
+  margin-bottom: 1.5rem;
+  max-width: 420px;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Responsive
+// ══════════════════════════════════════════════════════════════════════════════
+@media (max-width: 640px) {
+  .pay-title { font-size: 1.35rem; }
+  .plans-grid { grid-template-columns: 1fr; }
+  .pay-actions { flex-direction: column; }
+  .btn-secondary { width: 100%; text-align: center; }
+  .stepper span { display: none; }
+}

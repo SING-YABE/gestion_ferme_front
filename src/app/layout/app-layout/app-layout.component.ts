@@ -6,6 +6,7 @@ import {MatDrawer, MatDrawerContainer, MatDrawerContent} from "@angular/material
 import {HeaderComponent} from "../header/header.component";
 import {AppService} from "../../@core/service/app.service";
 import {AsyncPipe, NgIf} from "@angular/common";
+import {SubscriptionBannerComponent} from "../../partials/subscription-banner/subscription-banner.component";
 
 @Component({
   selector: 'app-app-layout',
@@ -19,7 +20,8 @@ import {AsyncPipe, NgIf} from "@angular/common";
     MatDrawer,
     MatDrawerContent,
     AsyncPipe,
-    NgIf
+    NgIf,
+    SubscriptionBannerComponent,
   ],
   templateUrl: './app-layout.component.html',
   styleUrl: './app-layout.component.scss'

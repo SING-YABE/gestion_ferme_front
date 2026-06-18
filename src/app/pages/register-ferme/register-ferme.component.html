@@ -28,6 +28,36 @@
         <h1 class="page-title">Inscrire votre ferme</h1>
         <p class="page-sub">Rejoignez la nouvelle génération d'éleveurs burkinabè avec des outils innovants.</p>
 
+        <!-- Plan choisi (toujours visible) -->
+        <!-- Cas 1 : plan dynamique (ID + nom)  → badge vert "Plan sélectionné" -->
+        <!-- Cas 2 : plan statique (nom seul)   → badge vert "Plan choisi" avec avertissement -->
+        <!-- Cas 3 : aucun plan                 → badge bleu "Essai gratuit" -->
+        <div class="plan-badge-selected"
+             [class.plan-badge-free]="!selectedPlanId && !selectedPlanNom">
+          @if (selectedPlanId) {
+            <!-- Plan dynamique backend -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              Plan sélectionné : <strong>{{ selectedPlanNom }}</strong>
+              <span class="badge-hint">Vous serez redirigé vers le paiement Orange Money après inscription</span>
+            </div>
+          } @else if (selectedPlanNom) {
+            <!-- Plan statique (backend offline) — pas d'ID mais nom connu -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              Plan souhaité : <strong>{{ selectedPlanNom }}</strong>
+              <span class="badge-hint">Le paiement sera finalisé après votre connexion</span>
+            </div>
+          } @else {
+            <!-- Aucun plan → essai gratuit -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>
+              <strong>Essai gratuit — 14 jours offerts</strong>
+              <span class="badge-hint">Accès complet pendant 14 jours, sans paiement requis</span>
+            </div>
+          }
+        </div>
+
         <!-- Section 1 -->
         <div class="section-header">
           <span class="step-badge active">1</span>
@@ -45,18 +75,13 @@
           <span class="field-error" *ngIf="isInvalid('nomFerme')">Minimum 3 caractères.</span>
         </div>
 
-        <div class="field-group">
-          <label>CODE DE LA FERME <span class="field-hint-inline">Unique ID</span></label>
-          <input
-            type="text"
-            formControlName="fermeCode"
-            placeholder="WEND-PANGA-01"
-            [class.error]="isInvalid('fermeCode')"
-            (input)="onCodeChange()"
-          />
-          <span class="field-error" *ngIf="isInvalid('fermeCode')">
-            Lettres, chiffres et _ uniquement (3–50 caractères).
-          </span>
+        <!-- Code ferme auto-généré — lecture seule -->
+        <div class="field-group" *ngIf="field('fermeCode')?.value">
+          <label>CODE FERME <span class="field-hint-inline">généré automatiquement</span></label>
+          <div class="code-display">
+            <span class="code-display-value">{{ field('fermeCode')?.value }}</span>
+            <span class="code-display-hint">Identifiant unique de votre ferme</span>
+          </div>
         </div>
 
         <!-- Section 2 -->

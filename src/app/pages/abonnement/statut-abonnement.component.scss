@@ -1,0 +1,190 @@
+$bg:     #0d1117;
+$bg2:    #161b22;
+$bg3:    #1c2333;
+$border: #30363d;
+$accent: #22c55e;
+$white:  #f0f6fc;
+$muted:  #8b949e;
+$warn:   #f59e0b;
+$danger: #ef4444;
+
+.statut-wrap {
+  min-height: 100vh;
+  background: $bg;
+  color: $white;
+  font-family: 'Inter', system-ui, sans-serif;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.statut-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.statut-title { font-size: 1.5rem; font-weight: 700; margin: 0; }
+
+.back-link {
+  color: $muted; font-size: 0.875rem; text-decoration: none;
+  &:hover { color: $white; }
+}
+
+// Loading / erreur
+.loading-state {
+  display: flex; align-items: center; gap: 1rem; color: $muted;
+  padding: 3rem 0;
+}
+.spinner {
+  width: 24px; height: 24px;
+  border: 3px solid $border; border-top-color: $accent;
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-state {
+  background: rgba($danger, .1);
+  border: 1px solid rgba($danger, .3);
+  border-radius: 10px;
+  padding: 1rem;
+  color: $danger;
+  font-size: 0.875rem;
+}
+
+// Carte plan principal
+.plan-card {
+  background: $bg2;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+
+  &.active  { border-color: rgba($accent, .5); background: linear-gradient(135deg, rgba($accent, .05) 0%, $bg2 100%); }
+  &.trial   { border-color: rgba(#60a5fa, .5); }
+  &.grace   { border-color: rgba($warn, .5); }
+  &.expired, &.suspended, &.cancelled { border-color: rgba($danger, .4); }
+}
+
+.plan-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 0.6rem;
+
+  &.badge-active    { background: rgba($accent, .15); color: $accent; }
+  &.badge-trial     { background: rgba(#60a5fa, .15); color: #60a5fa; }
+  &.badge-grace     { background: rgba($warn, .15);   color: $warn; }
+  &.badge-expired,
+  &.badge-suspended,
+  &.badge-cancelled { background: rgba($danger, .12); color: $danger; }
+}
+
+.plan-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+}
+
+.days-left {
+  font-size: 0.875rem;
+  color: $warn;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.plan-meta {
+  font-size: 0.8rem;
+  color: $muted;
+}
+
+.btn-pay {
+  padding: 0.75rem 1.25rem;
+  background: $accent;
+  border: none; border-radius: 10px;
+  color: #0d1117; font-size: 0.875rem; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity .2s;
+  &:hover { opacity: .88; }
+}
+
+// Sections
+.section-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: $muted;
+  font-weight: 700;
+  margin-bottom: 0.875rem;
+}
+
+// Limites
+.limits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.limit-item {
+  background: $bg3;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.limit-num {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: $accent;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.limit-label { font-size: 0.8rem; color: $muted; }
+
+// Fonctionnalités
+.features-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.feat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: $bg2;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-size: 0.875rem;
+  color: $muted;
+  opacity: .55;
+
+  &.on {
+    color: $white;
+    opacity: 1;
+    .feat-state { color: $accent; }
+  }
+
+  .feat-icon { font-size: 1rem; }
+  .feat-state { margin-left: auto; font-weight: 700; font-size: 0.9rem; color: $danger; }
+}
+
+@media (max-width: 480px) {
+  .limits-grid { grid-template-columns: 1fr 1fr; }
+  .plan-card { flex-direction: column; }
+  .btn-pay { width: 100%; text-align: center; }
+}

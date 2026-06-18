@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -9,7 +9,7 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { TenantService } from '../../@core/service/tenant.service';
 
@@ -49,7 +49,11 @@ function slugValidator(control: AbstractControl): ValidationErrors | null {
   templateUrl: './register-ferme.component.html',
   styleUrl: './register-ferme.component.scss'
 })
-export class RegisterFermeComponent {
+export class RegisterFermeComponent implements OnInit {
+
+  /** Plan pré-sélectionné depuis la landing (null = essai gratuit) */
+  selectedPlanId: number | null = null;
+  selectedPlanNom: string | null = null;
 
   form: FormGroup = this.fb.group({
     // ── Section 1 : Ferme ──────────────────────────────────────────────
@@ -73,6 +77,7 @@ export class RegisterFermeComponent {
     private tenantService: TenantService,
     private toastr: ToastrService,
     private router: Router,
+    private route: ActivatedRoute,
   ) {
     // Auto-génère le fermeCode à partir du nom de la ferme
     this.form.get('nomFerme')!.valueChanges.subscribe((nom: string) => {
@@ -83,13 +88,29 @@ export class RegisterFermeComponent {
     });
   }
 
-  /** L'utilisateur a modifié le code manuellement → ne plus l'auto-générer */
-  private _codeEdited = false;
-  onCodeChange(): void {
-    this._codeEdited = true;
+  ngOnInit(): void {
+    // Lire le planId depuis l'URL (?planId=2) ou le sessionStorage (depuis la landing)
+    const paramId  = this.route.snapshot.queryParamMap.get('planId');
+    const storedId = sessionStorage.getItem('selectedPlanId');
+    const planId   = paramId ?? storedId;
+
+    if (planId && Number(planId) > 0) {
+      // Plan dynamique (backend en ligne) — on a l'ID et le nom
+      this.selectedPlanId  = Number(planId);
+      this.selectedPlanNom = sessionStorage.getItem('selectedPlanNom') ?? `Plan #${this.selectedPlanId}`;
+    } else {
+      // Plan statique (backend offline) — on a seulement le nom stocké
+      const nomStored = sessionStorage.getItem('selectedPlanNom');
+      if (nomStored) {
+        this.selectedPlanId  = null;   // pas d'ID réel
+        this.selectedPlanNom = nomStored;
+      }
+    }
   }
 
-  /** Remet l'auto-génération active */
+  // Méthodes conservées pour rétro-compatibilité (code désormais en lecture seule)
+  private _codeEdited = false;
+  onCodeChange(): void { this._codeEdited = true; }
   resetCodeEdit(): void {
     this._codeEdited = false;
     const slug = this._toSlug(this.form.get('nomFerme')?.value ?? '');
@@ -123,6 +144,9 @@ export class RegisterFermeComponent {
           'Inscription réussie',
           { timeOut: 6000, progressBar: true, positionClass: 'toast-bottom-left' }
         );
+        // Nettoyer le sessionStorage du plan sélectionné
+        sessionStorage.removeItem('selectedPlanId');
+        sessionStorage.removeItem('selectedPlanNom');
       },
       error: (err) => {
         this.processing = false;
@@ -132,8 +156,15 @@ export class RegisterFermeComponent {
     });
   }
 
+  /** Après inscription réussie : paiement si plan choisi, sinon login */
   goToLogin(): void {
-    this.router.navigate(['/login']);
+    if (this.selectedPlanId) {
+      this.router.navigate(['/login'], {
+        queryParams: { planId: this.selectedPlanId, returnUrl: `/abonnement/payer?planId=${this.selectedPlanId}` }
+      });
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 
   /** Convertit un texte en slug valide pour PostgreSQL schema name */

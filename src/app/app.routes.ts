@@ -148,6 +148,27 @@ export const routes: Routes = [
           },
 
           ...intervenantsRoutes,
+
+          // ─── Abonnement (dans le layout principal) ──────────────────
+          {
+            path: 'abonnement',
+            redirectTo: 'abonnement/statut',
+            pathMatch: 'full'
+          },
+          {
+            path: 'abonnement/statut',
+            title: 'Mon abonnement',
+            canActivate: [authGuard],
+            data: { roles: [Roles.ADMINISTRATEUR] },
+            loadComponent: () => import('./pages/abonnement/statut-abonnement.component').then(m => m.StatutAbonnementComponent)
+          },
+          {
+            path: 'abonnement/payer',
+            title: 'Souscrire un abonnement',
+            canActivate: [authGuard],
+            data: { roles: [Roles.ADMINISTRATEUR] },
+            loadComponent: () => import('./pages/abonnement/paiement.component').then(m => m.PaiementComponent)
+          },
         ]
       },
 

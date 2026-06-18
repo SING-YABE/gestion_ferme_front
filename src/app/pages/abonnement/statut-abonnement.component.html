@@ -1,0 +1,100 @@
+<div class="statut-wrap">
+
+  <div class="statut-header">
+    <h1 class="statut-title">Mon abonnement</h1>
+    <a routerLink="/dashboard" class="back-link">← Tableau de bord</a>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Chargement...</span>
+    </div>
+  }
+
+  @if (error) {
+    <div class="error-state">{{ error }}</div>
+  }
+
+  @if (status && !loading) {
+
+    <!-- Carte principale : plan + statut -->
+    <div class="plan-card" [class]="statutColor(status.statut)">
+      <div class="plan-card-left">
+        <div class="plan-badge" [class]="'badge-' + statutColor(status.statut)">
+          {{ statutLabel(status.statut) }}
+        </div>
+        <div class="plan-name">{{ status.planNom ?? 'Aucun plan actif' }}</div>
+
+        @if (status.daysLeft !== null && status.daysLeft >= 0) {
+          <div class="days-left">
+            @if (status.statut === 'TRIAL') { {{ status.daysLeft }} jour(s) d'essai restant(s) }
+            @else if (status.statut === 'GRACE') { ⚠️ {{ status.daysLeft }} jour(s) de grâce restant(s) }
+            @else { {{ status.daysLeft }} jour(s) restant(s) }
+          </div>
+        }
+
+        @if (status.endDate) {
+          <div class="plan-meta">Expire le {{ status.endDate | date:'dd/MM/yyyy' }}</div>
+        }
+        @if (status.trialEndsAt && status.statut === 'TRIAL') {
+          <div class="plan-meta">Fin d'essai : {{ status.trialEndsAt | date:'dd/MM/yyyy' }}</div>
+        }
+      </div>
+
+      @if (showPayCta(status.statut)) {
+        <button class="btn-pay" (click)="goToPay()">
+          {{ status.statut === 'TRIAL' ? 'Passer à un plan payant' : 'Renouveler mon abonnement' }}
+        </button>
+      }
+    </div>
+
+    <!-- Limites -->
+    <div class="section-title">Limites de votre plan</div>
+    <div class="limits-grid">
+      <div class="limit-item">
+        <div class="limit-num">{{ formatLimit(status.limits.maxAnimaux) }}</div>
+        <div class="limit-label">Animaux</div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-num">{{ formatLimit(status.limits.maxUtilisateurs) }}</div>
+        <div class="limit-label">Utilisateurs</div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-num">{{ formatLimit(status.limits.maxBatiments) }}</div>
+        <div class="limit-label">Bâtiments</div>
+      </div>
+    </div>
+
+    <!-- Fonctionnalités -->
+    <div class="section-title">Fonctionnalités incluses</div>
+    <div class="features-grid">
+      <div class="feat-item" [class.on]="status.features.hasAssistantIA">
+        <span class="feat-icon">🤖</span>
+        <span>Assistant IA</span>
+        <span class="feat-state">{{ status.features.hasAssistantIA ? '✓' : '✗' }}</span>
+      </div>
+      <div class="feat-item" [class.on]="status.features.hasAlertesSms">
+        <span class="feat-icon">📱</span>
+        <span>Alertes SMS</span>
+        <span class="feat-state">{{ status.features.hasAlertesSms ? '✓' : '✗' }}</span>
+      </div>
+      <div class="feat-item" [class.on]="status.features.hasSyntheseComplete">
+        <span class="feat-icon">📊</span>
+        <span>Synthèse complète</span>
+        <span class="feat-state">{{ status.features.hasSyntheseComplete ? '✓' : '✗' }}</span>
+      </div>
+      <div class="feat-item" [class.on]="status.features.hasExportPdf">
+        <span class="feat-icon">📄</span>
+        <span>Export PDF</span>
+        <span class="feat-state">{{ status.features.hasExportPdf ? '✓' : '✗' }}</span>
+      </div>
+      <div class="feat-item" [class.on]="status.features.hasPrevisionPrix">
+        <span class="feat-icon">📈</span>
+        <span>Prévision des prix</span>
+        <span class="feat-state">{{ status.features.hasPrevisionPrix ? '✓' : '✗' }}</span>
+      </div>
+    </div>
+
+  }
+</div>

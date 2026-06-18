@@ -1,0 +1,16 @@
+@if (visible) {
+  <div class="sub-banner" [class.danger]="bannerType === 'danger'" [class.warn]="bannerType === 'warn'">
+    <div class="banner-icon">
+      @if (bannerType === 'danger') { ⚠️ } @else { 🔔 }
+    </div>
+    <div class="banner-body">
+      <span class="banner-msg">{{ message }}</span>
+      <button class="banner-cta" (click)="goToPay()">
+        Renouveler →
+      </button>
+    </div>
+    @if (!isBlocking) {
+      <button class="banner-close" (click)="dismiss()" aria-label="Fermer">✕</button>
+    }
+  </div>
+}

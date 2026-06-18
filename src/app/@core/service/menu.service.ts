@@ -5,7 +5,7 @@ import {
   faKitMedical, faMoneyBillWave, faCircleDollarToSlot, faChartPie,
   faUsers, faUser, faGears, faCow, faWarehouse, faHeartPulse,
   faWheatAwn, faTruck, faCapsules, faDollarSign, faCarrot, faBrain,
-  faListCheck
+  faListCheck, faCreditCard
 } from "@fortawesome/free-solid-svg-icons";
 import { AuthService } from './auth.service';
 import { Roles } from '../security/roles.constants';
@@ -117,6 +117,12 @@ const ALL_MENU: ShamsyMenu[] = [
     // visible par tous
   },
   {
+    title: 'Mon abonnement',
+    icon: faCreditCard,
+    routerLink: '/abonnement/statut',
+    roles: [Roles.ADMINISTRATEUR]  // Seul l'admin ferme gère et paie l'abonnement
+  },
+  {
     title: 'Administration',
     icon: faGears,
     roles: [Roles.ADMINISTRATEUR, Roles.GERANT, Roles.RESPONSABLE],
@@ -134,6 +140,7 @@ const ALL_MENU: ShamsyMenu[] = [
       { title: 'Paramétrage',     icon: faGears,     routerLink: '/parametrage' },
       { title: 'Type de dépense', icon: faDollarSign,routerLink: '/typeDepense' },
       { title: 'Type de vente',   icon: faDollarSign,routerLink: '/typeVente' },
+      
     ]
   },
 ];

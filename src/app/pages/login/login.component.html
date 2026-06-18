@@ -1,99 +1,448 @@
-<div class="lp">
+<div class="landing">
 
-  <!-- ═══════════════════════════════════════════
-       PANNEAU GAUCHE — visuel
- -->
-  <div class="lp__visual">
-
-    <!-- Formes décoratives CSS -->
-    <div class="deco deco--ring1"></div>
-    <div class="deco deco--ring2"></div>
-    <div class="deco deco--blob"></div>
-
-    <!-- Marque -->
-    <div class="lp__brand">
-      <div class="lp__brand-icon">
+  <!-- ═══════════════════════════════════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <nav class="nav">
+    <div class="nav__brand">
+      <div class="nav__logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
       </div>
-      <span class="lp__brand-name">FarmPro</span>
+      <span class="nav__name">FarmPro</span>
     </div>
+    <div class="nav__links">
+      <a href="#features" class="nav__link">Fonctionnalités</a>
+      <a href="#how" class="nav__link">Comment ça marche</a>
+      <a href="#pricing" class="nav__link">Tarifs</a>
+    </div>
+    <div class="nav__actions">
+      <button class="btn-ghost" (click)="scrollToLogin()">Se connecter</button>
+      <a routerLink="/inscription" class="btn-accent">Inscrire ma ferme</a>
+    </div>
+  </nav>
 
-    <!-- Contenu central -->
-    <div class="lp__hero">
-      <p class="lp__eyebrow">Plateforme SaaS · Burkina Faso</p>
-      <h1 class="lp__headline">
+  <!-- ═══════════════════════════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero__content">
+      <div class="hero__eyebrow">
+        <span class="dot"></span>
+        Plateforme SaaS · Burkina Faso
+      </div>
+      <h1 class="hero__h1">
         Gérez votre élevage.<br/>
-        <span class="lp__headline--accent">Intelligemment.</span>
+        <span class="hero__accent">Intelligemment.</span>
       </h1>
-      <p class="lp__tagline">
-        Suivi en temps réel, analyses IA et gestion complète
+      <p class="hero__sub">
+        Suivi en temps réel, recommandations IA et gestion complète
         de votre parc porcin depuis n'importe où.
       </p>
-
-      <!-- Feature pills -->
-      <div class="lp__pills">
-        <div class="pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+      <div class="hero__ctas">
+        <a routerLink="/inscription" class="btn-accent btn-lg">
+          Inscrire ma ferme — 14j gratuits
+        </a>
+        <button class="btn-outline btn-lg" (click)="scrollToLogin()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <polygon points="5 3 19 12 5 21 5 3"/>
           </svg>
-          Meilleur suivi
-        </div>
-        <div class="pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-            <path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>
-          </svg>
-          Recommandations IA
-        </div>
-        <div class="pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="14" rx="2"/>
-            <path d="M8 21h8M12 17v4"/>
-          </svg>
-          Multi-appareils
-        </div>
+          Voir la démo
+        </button>
+      </div>
+      <div class="hero__tags">
+        <span class="tag">Meilleur suivi</span>
+        <span class="tag">IA intégrée</span>
+        <span class="tag">Multi-appareils</span>
+        <span class="tag">Orange Money</span>
       </div>
     </div>
 
-    <!-- Stats -->
-    <div class="lp__stats">
-      <div class="stat">
-        <span class="stat__num">500+</span>
-        <span class="stat__lbl">Fermes actives</span>
-      </div>
-      <div class="stat__sep"></div>
-      <div class="stat">
-        <span class="stat__num">12k+</span>
-        <span class="stat__lbl">Animaux suivis</span>
-      </div>
-      <div class="stat__sep"></div>
-      <div class="stat">
-        <span class="stat__num">98%</span>
-        <span class="stat__lbl">Satisfaction</span>
+    <!-- Mockup de l'app -->
+    <div class="hero__mockup">
+      <div class="mockup-frame">
+        <div class="mockup-bar">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          <span class="mockup-title">Tableau de bord — Ferme Ouédraogo</span>
+        </div>
+        <div class="mockup-body">
+          <div class="mkp-stats">
+            <div class="mkp-stat">
+              <div class="mkp-val">247</div>
+              <div class="mkp-lbl">Animaux</div>
+            </div>
+            <div class="mkp-stat">
+              <div class="mkp-val accent">94%</div>
+              <div class="mkp-lbl">Santé</div>
+            </div>
+            <div class="mkp-stat">
+              <div class="mkp-val warn">12</div>
+              <div class="mkp-lbl">Alertes</div>
+            </div>
+          </div>
+          <div class="mkp-chart">
+            <div class="mkp-chart-label">Croissance moyenne (kg) — 8 semaines</div>
+            <div class="bars">
+              <div class="bar" style="height:30%"></div>
+              <div class="bar" style="height:42%"></div>
+              <div class="bar" style="height:55%"></div>
+              <div class="bar" style="height:50%"></div>
+              <div class="bar" style="height:68%"></div>
+              <div class="bar" style="height:78%"></div>
+              <div class="bar" style="height:72%"></div>
+              <div class="bar hi" style="height:90%"></div>
+            </div>
+          </div>
+          <div class="mkp-alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            IA : Truie N°12 — absence de repas 48h détectée
+          </div>
+        </div>
       </div>
     </div>
+  </section>
 
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-val">500+</div>
+      <div class="stat-lbl">Fermes actives</div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item">
+      <div class="stat-val">12k+</div>
+      <div class="stat-lbl">Animaux suivis</div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item">
+      <div class="stat-val">98%</div>
+      <div class="stat-lbl">Satisfaction</div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item">
+      <div class="stat-val">24/7</div>
+      <div class="stat-lbl">Disponibilité</div>
+    </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════
-       PANNEAU DROIT — formulaire
-  ════════════════════════════════════════════ -->
-  <div class="lp__form-panel">
-    <div class="lp__form-wrap">
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SECTION IA DÉMO
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section ai-section" id="ai">
+    <div class="section__content">
+      <div class="section__label">ASSISTANT IA</div>
+      <h2 class="section__title">L'IA qui pose les bonnes questions</h2>
+      <p class="section__sub">
+        Le système analyse vos données en temps réel et vous guide vers la meilleure
+        décision, même quand vous êtes sur le terrain.
+      </p>
+      <ul class="ai-points">
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+          Alertes automatiques si un animal présente un comportement anormal
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+          Recommandations basées sur l'historique de votre élevage
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+          Prévisions de croissance et de prix du marché local
+        </li>
+      </ul>
+    </div>
+    <div class="chat-demo">
+      <div class="chat-header">
+        <div class="chat-dot on"></div>
+        FarmPro IA — Assistant en direct
+      </div>
+      <div class="chat-body">
+        @for (msg of chatMessages; track $index) {
+          <div class="chat-msg" [class.user]="msg.type === 'user'" [class.ai]="msg.type === 'ai'">
+            @if (msg.type === 'ai') {
+              <div class="chat-avatar">IA</div>
+            }
+            <div class="chat-bubble">
+              <pre class="chat-text">{{ msg.text }}</pre>
+              @if (msg.actions && msg.actions.length) {
+                <div class="chat-actions">
+                  @for (action of msg.actions; track action) {
+                    <button class="chat-btn">{{ action }}</button>
+                  }
+                </div>
+              }
+            </div>
+            @if (msg.type === 'user') {
+              <div class="chat-avatar user-av">IB</div>
+            }
+          </div>
+        }
+        @if (chatMessages.length === 0) {
+          <div class="chat-typing">
+            <span></span><span></span><span></span>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
 
-      <!-- En-tête -->
-      <div class="lp__form-header">
-        <h2 class="lp__form-title">Connexion</h2>
-        <p class="lp__form-sub">Accédez à votre espace de gestion</p>
+  <!-- ═══════════════════════════════════════════════════════════════════
+       FONCTIONNALITÉS
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section features-section" id="features">
+    <div class="section__center">
+      <div class="section__label">FONCTIONNALITÉS</div>
+      <h2 class="section__title">Tout ce dont vous avez besoin</h2>
+      <p class="section__sub">Une plateforme complète, conçue pour les réalités du terrain burkinabè.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+        </div>
+        <h3 class="feat-title">Suivi en temps réel</h3>
+        <p class="feat-desc">Poids, santé, alimentation — chaque animal suivi en continu avec historique complet.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22">
+            <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            <path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>
+          </svg>
+        </div>
+        <h3 class="feat-title">Recommandations IA</h3>
+        <p class="feat-desc">Alertes intelligentes et suggestions d'action basées sur vos données réelles.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22">
+            <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </div>
+        <h3 class="feat-title">Alertes santé SMS</h3>
+        <p class="feat-desc">Notification immédiate par SMS quand un animal présente un signe d'alerte.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+          </svg>
+        </div>
+        <h3 class="feat-title">Gestion alimentation</h3>
+        <p class="feat-desc">Rations, stocks et coûts optimisés selon les ressources alimentaires locales.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <h3 class="feat-title">Rapports & synthèse</h3>
+        <p class="feat-desc">Exports PDF détaillés pour le suivi vétérinaire, financier et les partenaires.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+            <line x1="12" y1="18" x2="12.01" y2="18"/>
+          </svg>
+        </div>
+        <h3 class="feat-title">Mobile & hors-ligne</h3>
+        <p class="feat-desc">Application mobile synchronisée, fonctionnelle même en zone de faible connectivité.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       COMMENT ÇA MARCHE
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section how-section" id="how">
+    <div class="section__center">
+      <div class="section__label">DÉMARRAGE</div>
+      <h2 class="section__title">Opérationnel en 3 étapes</h2>
+      <p class="section__sub">Pas de formation requise. L'interface est conçue pour le terrain.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3 class="step-title">Inscrivez votre ferme</h3>
+        <p class="step-desc">Créez votre espace en 30 secondes. 14 jours d'essai gratuit, sans carte bancaire.</p>
+      </div>
+      <div class="step-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3 class="step-title">Ajoutez vos animaux</h3>
+        <p class="step-desc">Import en masse ou saisie individuelle. L'IA apprend les habitudes dès le premier jour.</p>
+      </div>
+      <div class="step-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3 class="step-title">L'IA prend le relais</h3>
+        <p class="step-desc">Alertes, recommandations et rapports générés automatiquement. Zéro effort manuel.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       TARIFS
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section pricing-section" id="pricing">
+    <div class="section__center">
+      <div class="section__label">TARIFS</div>
+      <h2 class="section__title">Des plans adaptés à chaque ferme</h2>
+      <p class="section__sub">Commencez gratuitement. Évoluez quand vous êtes prêt.</p>
+    </div>
+
+    @if (plans.length > 0) {
+      <div class="plans-grid">
+        @for (plan of plans; track plan.id; let i = $index) {
+          <div class="plan-card"
+               [class.featured]="plan.prixFcfa > 0 && plan.prixFcfa === getProPlan()?.prixFcfa"
+               [class.selected]="activePlanId === plan.id">
+            @if (plan.prixFcfa > 0 && plan.prixFcfa === getProPlan()?.prixFcfa) {
+              <div class="plan-badge">Populaire</div>
+            }
+            <div class="plan-name">{{ plan.nom }}</div>
+            <div class="plan-price">
+              <span class="price-val">{{ formatPrix(plan.prixFcfa) }}</span>
+              @if (plan.prixFcfa > 0) {
+                <span class="price-currency">FCFA</span>
+              }
+              <span class="price-period">{{ formatDuree(plan.dureeDays, plan.trialDays) }}</span>
+            </div>
+            @if (plan.description) {
+              <p class="plan-desc">{{ plan.description }}</p>
+            }
+            <ul class="plan-features">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+                {{ plan.maxAnimaux === -1 ? 'Animaux illimités' : plan.maxAnimaux + ' animaux' }}
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+                {{ plan.maxUtilisateurs === -1 ? 'Utilisateurs illimités' : plan.maxUtilisateurs + ' utilisateur(s)' }}
+              </li>
+              @if (plan.hasAssistantIA) {
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+                  Assistant IA
+                </li>
+              }
+              @if (plan.hasAlertesSms) {
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+                  Alertes SMS
+                </li>
+              }
+              @if (plan.hasExportPdf) {
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+                  Export PDF
+                </li>
+              }
+              @if (plan.hasPrevisionPrix) {
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+                  Prévision des prix
+                </li>
+              }
+            </ul>
+            <button class="plan-cta" [class.plan-cta--accent]="plan.prixFcfa > 0 && plan.prixFcfa === getProPlan()?.prixFcfa" (click)="choosePlan(plan)">
+              {{ plan.prixFcfa === 0 ? 'Commencer gratuitement' : 'Choisir ce plan' }}
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- Plans par défaut si le backend n'est pas encore répondu -->
+      <div class="plans-grid">
+        <div class="plan-card" [class.selected]="activePlanId === -1">
+          <div class="plan-name">STARTER</div>
+          <div class="plan-price"><span class="price-val">Gratuit</span><span class="price-period">14j d'essai</span></div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>5 animaux</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>1 utilisateur</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>Suivi de base</li>
+          </ul>
+          <button class="plan-cta" (click)="chooseStaticPlan(null, null)">Commencer gratuitement</button>
+        </div>
+        <div class="plan-card featured" [class.selected]="activePlanId === -2">
+          <div class="plan-badge">Populaire</div>
+          <div class="plan-name">ÉLEVEUR PRO</div>
+          <div class="plan-price"><span class="price-val">5 000</span><span class="price-currency">FCFA</span><span class="price-period">/ 30j</span></div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>100 animaux</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>5 utilisateurs</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>Assistant IA</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>Alertes SMS</li>
+          </ul>
+          <button class="plan-cta plan-cta--accent" (click)="chooseStaticPlan(-2, 'ÉLEVEUR PRO')">Choisir ce plan</button>
+        </div>
+        <div class="plan-card" [class.selected]="activePlanId === -3">
+          <div class="plan-name">FERME PREMIUM</div>
+          <div class="plan-price"><span class="price-val">15 000</span><span class="price-currency">FCFA</span><span class="price-period">/ 90j</span></div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>500 animaux</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>10 utilisateurs</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>Export PDF</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>Synthèse complète</li>
+          </ul>
+          <button class="plan-cta" (click)="chooseStaticPlan(-3, 'FERME PREMIUM')">Choisir ce plan</button>
+        </div>
+        <div class="plan-card" [class.selected]="activePlanId === -4">
+          <div class="plan-name">ENTREPRISE</div>
+          <div class="plan-price"><span class="price-val">45 000</span><span class="price-currency">FCFA</span><span class="price-period">/ an</span></div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>Illimité</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>Multi-fermes</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>Prévision des prix</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>Support dédié</li>
+          </ul>
+          <button class="plan-cta" (click)="chooseStaticPlan(-4, 'ENTREPRISE')">Choisir ce plan</button>
+        </div>
+      </div>
+    }
+
+    <p class="pricing-note">
+      Paiement sécurisé par Orange Money · Pas de carte bancaire requise
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       FORMULAIRE DE CONNEXION
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="login-section" id="login-section">
+    <div class="login-box">
+      <div class="login-header">
+        <div class="nav__logo" style="margin: 0 auto 16px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <h2 class="login-title">Connexion</h2>
+        <p class="login-sub">Accédez à votre espace de gestion</p>
       </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()" autocomplete="off">
-
-        <!-- EMAIL -->
         <div class="f-group">
           <label class="f-label" for="username">Adresse email</label>
           <div class="f-input-box">
@@ -103,24 +452,14 @@
                 <polyline points="22,6 12,13 2,6"/>
               </svg>
             </span>
-            <input
-              id="username"
-              type="email"
-              class="f-input"
-              formControlName="username"
-              placeholder="vous@exemple.com"
-              autocomplete="email"
-            />
+            <input id="username" type="email" class="f-input" formControlName="username"
+              placeholder="vous@exemple.com" autocomplete="email" />
           </div>
           @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
-            <span class="f-error">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              Email invalide
-            </span>
+            <span class="f-error">Email invalide</span>
           }
         </div>
 
-        <!-- MOT DE PASSE -->
         <div class="f-group">
           <div class="f-label-row">
             <label class="f-label" for="password">Mot de passe</label>
@@ -133,56 +472,34 @@
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
             </span>
-            <p-password
-              id="password"
-              formControlName="password"
-              [toggleMask]="true"
-              [feedback]="false"
-              placeholder="••••••••"
-              styleClass="f-ppassword"
-            ></p-password>
+            <p-password id="password" formControlName="password" [toggleMask]="true"
+              [feedback]="false" placeholder="••••••••" styleClass="f-ppassword"></p-password>
           </div>
           @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-            <span class="f-error">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              Mot de passe requis
-            </span>
+            <span class="f-error">Mot de passe requis</span>
           }
         </div>
 
-        <!-- ERREUR GLOBALE -->
         @if (errorMsg) {
           <div class="f-alert">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
             {{ errorMsg }}
           </div>
         }
 
-        <!-- BOUTON -->
-        <button
-          type="submit"
-          pButton
-          class="f-btn"
-          label="Se connecter"
-          [loading]="processing"
-          [disabled]="loginForm.invalid"
-        ></button>
-
+        <button type="submit" pButton class="f-btn" label="Se connecter"
+          [loading]="processing" [disabled]="loginForm.invalid"></button>
       </form>
 
-      <!-- PIED -->
-      <div class="lp__form-footer">
+      <div class="login-footer">
         <span>Pas encore de compte ?</span>
         <a routerLink="/inscription" class="f-register">Inscrire ma ferme →</a>
       </div>
-
-      <p class="lp__copyright">© 2025 FarmPro · Tous droits réservés</p>
-
+      <p class="login-copy">© 2026 FarmPro · Tous droits réservés</p>
     </div>
-  </div>
+  </section>
 
 </div>

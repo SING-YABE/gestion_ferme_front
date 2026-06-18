@@ -113,6 +113,30 @@ html, body, app-layout, app-root, mat-drawer-container {
   }
 }
 
+/* Pages publiques fullpage (login, inscription, invitation) — scroll autorisé */
+html:has(app-login),
+html:has(app-register-ferme),
+html:has(app-invitation),
+html:has(app-paiement),
+html:has(app-statut-abonnement),
+body:has(app-login),
+body:has(app-register-ferme),
+body:has(app-invitation),
+body:has(app-paiement),
+body:has(app-statut-abonnement) {
+  overflow: auto !important;
+  height: auto !important;
+}
+
+html:has(app-login) app-root,
+html:has(app-register-ferme) app-root,
+html:has(app-invitation) app-root,
+html:has(app-paiement) app-root,
+html:has(app-statut-abonnement) app-root {
+  overflow: auto !important;
+  height: auto !important;
+}
+
 *{
   font-family: 'Montserrat', sans-serif !important;
 }
