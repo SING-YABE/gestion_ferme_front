@@ -13,7 +13,7 @@ import {
   TransactionDTO,
 } from '../../@core/service/super-admin.service';
 
-type Tab = 'overview' | 'fermes' | 'plans' | 'transactions';
+type Tab = 'overview' | 'fermes' | 'plans' | 'transactions' | 'utilisateurs' | 'parametres';
 
 /** Formulaire réactif simplifié pour créer / modifier un PlanConfig. */
 const defaultForm = (): PlanConfigForm => ({

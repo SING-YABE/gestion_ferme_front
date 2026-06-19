@@ -306,6 +306,32 @@ $om:     #ff6600;   // couleur Orange Money
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// Bannière USSD rapide (étape 2)
+// ══════════════════════════════════════════════════════════════════════════════
+.om-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba($om, .08);
+  border: 1px solid rgba($om, .3);
+  border-radius: 10px;
+  padding: 0.85rem 1.1rem;
+  font-size: 0.875rem;
+  color: $white;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+
+  svg { color: $om; flex-shrink: 0; }
+
+  strong {
+    color: $om;
+    font-family: monospace;
+    font-size: 1rem;
+    letter-spacing: .03em;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // Instructions Orange Money (étape 2)
 // ══════════════════════════════════════════════════════════════════════════════
 .instructions {
@@ -348,6 +374,20 @@ $om:     #ff6600;   // couleur Orange Money
   font-size: 0.8rem;
   color: $muted;
   line-height: 1.5;
+}
+
+.inst-ussd {
+  font-family: monospace;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: $om;
+  letter-spacing: .04em;
+  margin-top: 0.25rem;
+  background: rgba($om, .08);
+  border: 1px solid rgba($om, .2);
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  display: inline-block;
 }
 
 .inst-number {

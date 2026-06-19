@@ -91,12 +91,17 @@
       <h2 class="pay-title sm">Effectuez le paiement Orange Money</h2>
       <p class="pay-sub">Suivez ces étapes depuis votre téléphone :</p>
 
+      <div class="om-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6.22 6.22l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Composez <strong>*144*4*6*{{ selectedPlan.prixFcfa }}#</strong> sur votre téléphone Orange Money
+      </div>
+
       <div class="instructions">
         <div class="instruction-step">
           <div class="inst-num">1</div>
           <div class="inst-body">
-            <div class="inst-title">Composez le *144# sur votre téléphone Orange</div>
-            <div class="inst-desc">Ou ouvrez votre application Orange Money.</div>
+            <div class="inst-title">Ouvrez Orange Money ou composez le code</div>
+            <div class="inst-ussd">*144*4*6*{{ selectedPlan.prixFcfa }}#</div>
           </div>
         </div>
         <div class="instruction-step">
@@ -111,7 +116,7 @@
           <div class="inst-body">
             <div class="inst-title">Envoyez exactement ce montant</div>
             <div class="inst-amount">{{ formatPrix(selectedPlan.prixFcfa) }} <span>FCFA</span></div>
-            <div class="inst-warn">⚠️ Montant exact requis — ni plus, ni moins.</div>
+            <div class="inst-warn">⚠️ Montant exact requis</div>
           </div>
         </div>
         <div class="instruction-step">
