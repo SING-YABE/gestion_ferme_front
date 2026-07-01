@@ -42,8 +42,8 @@ export class AnimalHistoriqueComponent {
 
   get dialogHeader(): string {
     return this.isVerrat
-      ? `🐗 Performances — ${this.animal.codeAnimal}`
-      : `🐷 Carrière — ${this.animal.codeAnimal}`;
+      ? `Performances — ${this.animal.codeAnimal}`
+      : `Carrière — ${this.animal.codeAnimal}`;
   }
 
   get totalNesVivants(): number {
