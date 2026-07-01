@@ -247,6 +247,7 @@
         <div class="plans-grid">
           @for (plan of plans; track plan.id) {
             <div class="plan-admin-card" [class.inactive]="!plan.actif">
+
               <div class="plan-admin-head">
                 <div>
                   <div class="plan-admin-name">{{ plan.nom }}</div>
@@ -261,15 +262,32 @@
                 <p class="plan-admin-desc">{{ plan.description }}</p>
               }
 
+              <div class="plan-admin-divider"></div>
+
               <div class="plan-admin-limits">
-                <span> {{ formatLimit(plan.maxAnimaux) }}</span>
-                <span>{{ formatLimit(plan.maxUtilisateurs) }}</span>
-                <span>{{ formatLimit(plan.maxBatiments) }}</span>
-                @if (plan.hasAssistantIA)   { <span class="feat-on">IA</span> }
-                @if (plan.hasAlertesSms)    { <span class="feat-on">SMS</span> }
-                @if (plan.hasExportPdf)     { <span class="feat-on">PDF</span> }
-                @if (plan.hasPrevisionPrix) { <span class="feat-on">Prév.</span> }
+                <div class="limit-row">
+                  <span class="limit-label">Animaux</span>
+                  <span class="limit-value">{{ formatLimit(plan.maxAnimaux) }}</span>
+                </div>
+                <div class="limit-row">
+                  <span class="limit-label">Utilisateurs</span>
+                  <span class="limit-value">{{ formatLimit(plan.maxUtilisateurs) }}</span>
+                </div>
+                <div class="limit-row">
+                  <span class="limit-label">Bâtiments</span>
+                  <span class="limit-value">{{ formatLimit(plan.maxBatiments) }}</span>
+                </div>
               </div>
+
+              @if (plan.hasAssistantIA || plan.hasAlertesSms || plan.hasExportPdf || plan.hasPrevisionPrix || plan.hasSyntheseComplete) {
+                <div class="plan-admin-features">
+                  @if (plan.hasAssistantIA)      { <div class="feat-row"><span class="feat-label">Assistant IA</span><span class="feat-state">Inclus</span></div> }
+                  @if (plan.hasAlertesSms)       { <div class="feat-row"><span class="feat-label">Alertes SMS</span><span class="feat-state">Inclus</span></div> }
+                  @if (plan.hasSyntheseComplete) { <div class="feat-row"><span class="feat-label">Synthèse complète</span><span class="feat-state">Inclus</span></div> }
+                  @if (plan.hasExportPdf)        { <div class="feat-row"><span class="feat-label">Export PDF</span><span class="feat-state">Inclus</span></div> }
+                  @if (plan.hasPrevisionPrix)    { <div class="feat-row"><span class="feat-label">Prévision des prix</span><span class="feat-state">Inclus</span></div> }
+                </div>
+              }
 
               <div class="plan-admin-actions">
                 <button class="sa-action-btn assign" (click)="openEditPlan(plan)">Modifier</button>
